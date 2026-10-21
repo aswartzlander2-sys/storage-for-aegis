@@ -1,0 +1,68 @@
+· robo-storage-aegis 0.1.0: install as burrow · data /home/user/weft-reference/.weft-dev/robo-storage-aegis/data
+  phase    Installing Robo Storage for Aegis
+  progress 15 Checking port 18898
+  progress 40 Writing the settings
+  settings in /home/user/weft-reference/.weft-dev/robo-storage-aegis/data/config.json
+  progress 65 Starting it
+  running as a background process (pid 7011), on http://127.0.0.1:18898/
+  warn     It answers on this machine only, like its host.
+  progress 100 Ready
+  open     http://127.0.0.1:18898/
+· exit 0
+· robo-storage-aegis 0.1.0: install as burrow · data /home/user/weft-reference/.weft-dev/robo-storage-aegis/data
+  phase    Installing Robo Storage for Aegis
+  progress 15 Checking port 18898
+  progress 40 Writing the settings
+  settings in /home/user/weft-reference/.weft-dev/robo-storage-aegis/data/config.json
+  progress 65 Starting it
+  running as a background process (pid 7084), on http://127.0.0.1:18898/
+  warn     It answers on this machine only, like its host.
+  progress 100 Ready
+  open     http://127.0.0.1:18898/
+· exit 0
+· robo-storage-aegis 0.1.0: status as burrow · data /home/user/weft-reference/.weft-dev/robo-storage-aegis/data
+  {"state":"running","url":"http://127.0.0.1:18898/","port":18898,"version":"0.1.0","detail":"on port 18898, its own service"}
+  → running {"state":"running","url":"http://127.0.0.1:18898/","port":18898,"version":"0.1.0","detail":"on port 18898, its own service"}
+· exit 0
+Idempotent second install: one current service, running
+· robo-storage-aegis 0.1.0: detect as burrow · data /home/user/weft-reference/.weft-dev/robo-storage-aegis/data
+  {"version":"0.1.0","url":"http://127.0.0.1:18898/","detail":"robo-storage-aegis 0.1.0 answering on port 18898"}
+  → found {"version":"0.1.0","url":"http://127.0.0.1:18898/","detail":"robo-storage-aegis 0.1.0 answering on port 18898"}
+· exit 0
+Detect: read-only filesystem check passed
+· robo-storage-aegis 0.1.0: update as burrow · data /home/user/weft-reference/.weft-dev/robo-storage-aegis/data
+  phase    Updating Robo Storage for Aegis
+  progress 15 Checking port 18898
+  progress 40 Writing the settings
+  settings in /home/user/weft-reference/.weft-dev/robo-storage-aegis/data/config.json
+  progress 65 Starting it
+  running as a background process (pid 7229), on http://127.0.0.1:18898/
+  warn     It answers on this machine only, like its host.
+  progress 100 Ready
+  open     http://127.0.0.1:18898/
+· exit 0
+· robo-storage-aegis 0.1.0: status as burrow · data /home/user/weft-reference/.weft-dev/robo-storage-aegis/data
+  {"state":"running","url":"http://127.0.0.1:18898/","port":18898,"version":"0.1.0","detail":"on port 18898, its own service"}
+  → running {"state":"running","url":"http://127.0.0.1:18898/","port":18898,"version":"0.1.0","detail":"on port 18898, its own service"}
+· exit 0
+Update: data-retention sentinel preserved
+::phase Linking the robo-storage-aegis already running
+linked: http://127.0.0.1:18898/ is run by another Weft host; this one shows it and leaves it alone
+::open http://127.0.0.1:18898/
+it was linked: the host that owns it keeps running it
+Adopted link: no second process; linked uninstall left owner running
+· robo-storage-aegis 0.1.0: uninstall as burrow · data /home/user/weft-reference/.weft-dev/robo-storage-aegis/data
+  stopped and removed Robo Storage for Aegis; remote files and agents were left intact
+· exit 0
+· robo-storage-aegis 0.1.0: install as burrow · data /home/user/weft-reference/.weft-dev/robo-storage-aegis/data
+  phase    Installing Robo Storage for Aegis
+  progress 15 Checking port 18898
+  Port 18898 is used by something else. Pick another one in the addon's settings.
+· exit 1
+Foreign port: installation refused; other application still answering
+· robo-storage-aegis 0.1.0: uninstall as burrow · data /home/user/weft-reference/.weft-dev/robo-storage-aegis/data
+  warn     Stale service PID was ignored; no unrelated process was signalled.
+  stopped and removed Robo Storage for Aegis; remote files and agents were left intact
+· exit 0
+Stale PID: unrelated process was not signalled
+Lifecycle/linking/idempotence/ownership acceptance: passed

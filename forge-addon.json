@@ -1,0 +1,86 @@
+{
+  "spec": 1,
+  "id": "robo-storage-aegis",
+  "name": "Robo Storage for Aegis",
+  "version": "1.0.0",
+  "description": "Storage groups for IDrive E2, CloudGate and Linux. A dedicated Aegis dashboard with quotas, users, directory permissions and safe draining.",
+  "author": "Robo Storage contributors",
+  "license": "MIT",
+  "logo": "logo.png",
+  "update_card": {
+    "theme": "gray",
+    "icon": "rocket",
+    "badge": "1.0.0",
+    "tagline": "One group address. Every server inherits it. Burrow handles the tunnel.",
+    "highlights": [
+      "Servers inherit the group address; no repeated domain form",
+      "Use default Burrow tunnel inherits existing naming and domain settings",
+      "Live HTTPS identity checks and automatic route-status refresh"
+    ]
+  },
+  "requires": {
+    "burrow": ">=2.24.2",
+    "os": [
+      "linux"
+    ],
+    "commands": [
+      "python3",
+      "curl",
+      "grep",
+      "sed",
+      "setsid",
+      "systemctl",
+      "journalctl"
+    ]
+  },
+  "scripts": {
+    "detect": "weft/detect.sh",
+    "install": "weft/install.sh",
+    "update": "weft/install.sh",
+    "uninstall": "weft/uninstall.sh",
+    "status": "weft/status.sh"
+  },
+  "actions": [
+    {
+      "id": "restart",
+      "label": "Restart",
+      "script": "weft/restart.sh"
+    }
+  ],
+  "settings": [
+    {
+      "key": "PORT",
+      "label": "Dashboard port",
+      "type": "number",
+      "default": 8798,
+      "min": 1024,
+      "max": 65535
+    },
+    {
+      "key": "ADMIN_USER",
+      "label": "Direct dashboard username",
+      "type": "text",
+      "default": "admin"
+    },
+    {
+      "key": "ADMIN_PASSWORD",
+      "label": "Direct dashboard password",
+      "type": "password",
+      "default": "",
+      "help": "At least 12 characters. Optional for the Aegis mount, which authenticates using an internal secret. Direct access is denied without it."
+    }
+  ],
+  "links": [
+    {
+      "label": "Weft Architecture",
+      "url": "https://github.com/alexd-aero/weft"
+    }
+  ],
+  "platforms": [
+    "burrow"
+  ],
+  "burrow": {
+    "extension": "burrow/extension.mjs",
+    "ui": "burrow/ui.js"
+  }
+}

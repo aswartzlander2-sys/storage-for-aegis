@@ -1,0 +1,15 @@
+REAL PUBLIC HTTPS: Burrow-created Cloudflare enrollment route returned app identity + nonce, certificate verification enabled
+Live source: generated curl executed over real public HTTPS; write/read/delete storage probe completed
+Actual signed-in UI: Add Server → Linux → generated public curl → live Verified → Verify & Launch succeeded, with no domain fields
+Live destination: generated curl executed over real public HTTPS; write/read/delete storage probe completed
+Two actual workers became Verified only after authenticated public HTTPS heartbeats
+Default tunnel: stale nested domain ignored; one group tunnel added, shared agent tunnel, no per-server tunnels; both servers inherit group /s/ID/ addresses
+Public group: anonymous request gets native HTTP Basic challenge; administration is not exposed
+Actual public group and inherited per-server file-browser URLs returned 200 after Basic login
+Actual public upload/download checksum matched; hidden/read-only ACLs and server/partition quotas enforced; encoded directory path works
+Public HTTPS browser smoke: PASS; JavaScript errors: []
+Actual public worker migration: copy → read-back checksum → source-change check → source deletion → disconnect: PASS
+Actual public worker erasure and empty-inventory disconnect: PASS
+Real IDrive E2/CloudGate accounts and custom-domain DNS: NOT TESTED; no supplied provider credentials used
+Live group cleanup removed only its owned tunnel; enrollment and other groups unchanged
+LIVE PUBLIC ACCEPTANCE: PASS

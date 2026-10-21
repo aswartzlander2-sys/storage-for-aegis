@@ -1,0 +1,3 @@
+Actual Aegis 2.24.2 uninstall: DONE
+All addon-owned agent and group tunnels removed; no automatic recreation
+Other host services remain running; host health: 200
