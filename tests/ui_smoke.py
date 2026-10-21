@@ -15,8 +15,8 @@ with sync_playwright() as p:
  assert expect_checkbox.is_checked()
  assert page.get_by_label('Group tunnel domain',exact=True).is_disabled()
  assert page.locator('[name=tunnelSub]').count()==0
- expect_checkbox.uncheck();assert page.get_by_label('Group tunnel domain',exact=True).is_enabled()
- expect_checkbox.check();page.screenshot(path=str(ROOT/'docs/default-group-1.0.0.png'))
+ expect_checkbox.uncheck();assert page.get_by_label('Group tunnel domain',exact=True).is_enabled();assert page.get_by_label('Group tunnel domain',exact=True).input_value()=='example.com';assert page.locator('[name=base] option').all_text_contents()==['example.com']
+ expect_checkbox.check();page.screenshot(path=str(ROOT/'docs/default-group-1.0.1.png'))
  page.get_by_label('Close dialog').click()
  print('Group address: default Burrow checkbox below address, checked by default; domain inherited; no nested-domain field')
  page.locator('[data-act=add-server]').first.click();assert page.locator('#launch-server').is_disabled()

@@ -21,6 +21,24 @@ class CoreTests(unittest.TestCase):
   self.g=self.store.group({'name':'Tests','sub':'tests','domain':'example.com'})
   self.s=self.store.server(self.g['id'],{'kind':'linux','name':'Linux','path':'~/storage','limit':1000})
  def tearDown(self):self.tmp.cleanup()
+ def test_one_gb_allocation_is_not_512_gb_disk_capacity(self):
+  self.s['limit']=1_000_000_000
+  self.store.update_inventory(self.s,[{'path':'sample','size':10}],512_000_000_000)
+  view=self.store.view()['servers'][0]
+  self.assertEqual(view['physicalCapacity'],512_000_000_000);self.assertEqual(view['allocationLimit'],1_000_000_000)
+  self.assertEqual(view['allocatedCapacity'],1_000_000_000);self.assertEqual(view['remainingAllocation'],999_999_990)
+  self.store.save();restarted=Store(self.tmp.name)
+  self.assertEqual(restarted.view()['servers'][0]['allocatedCapacity'],1_000_000_000)
+  self.store.update_inventory(self.s,[{'path':'existing','size':999_999_999}],512_000_000_000)
+  with self.assertRaises(Problem) as error:self.store.check_write(self.s,'new',2)
+  self.assertEqual(error.exception.status,507)
+  self.store.check_write(self.s,'new',1)
+ def test_effective_allocation_uses_smaller_physical_size_and_handles_unknown(self):
+  self.assertEqual(capacity_view({'limit':1000,'capacity':100,'used':120})['allocatedCapacity'],100)
+  self.assertEqual(capacity_view({'limit':1000,'capacity':100,'used':120})['remainingAllocation'],0)
+  self.assertEqual(capacity_view({'limit':1000})['allocatedCapacity'],1000)
+  self.assertEqual(capacity_view({'limit':0,'capacity':512_000_000_000})['allocatedCapacity'],512_000_000_000)
+  self.assertIsNone(capacity_view({'limit':0})['allocatedCapacity'])
  def test_initial_files_private(self):self.assertEqual(os.stat(self.store.path).st_mode&0o777,0o600)
  def test_state_persists(self):self.assertEqual(Store(self.tmp.name).state['groups'][0]['name'],'Tests')
  def test_corrupt_state_fails_closed(self):

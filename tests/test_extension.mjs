@@ -12,14 +12,14 @@ const listen=(s,...a)=>new Promise((resolve,reject)=>{s.once('error',reject);s.l
 const close=s=>new Promise(resolve=>s.close(resolve));
 async function fixture(run) {
  const data=mkdtempSync(join(tmpdir(),'robo-extension-test-')), sock=join(data,'control.sock');
- const control=createServer((req,res)=>{assert.equal(req.url,'/tunnels/naming');assert.match(req.headers['x-burrow-client'],/^robo-storage-aegis\//);res.setHeader('Content-Type','application/json');res.end(JSON.stringify({active:true,prefix:'apps'}));});
+ const control=createServer((req,res)=>{assert.equal(req.url,'/tunnels/naming');assert.match(req.headers['x-burrow-client'],/^robo-storage-aegis\//);res.setHeader('Content-Type','application/json');res.end(JSON.stringify({active:f.namingActive!==false,prefix:'apps'}));});
  const upstream=createServer((req,res)=>{res.setHeader('Content-Type','application/json');res.end(JSON.stringify({path:req.url,admin:req.headers['x-robo-admin']||null,authorization:req.headers.authorization||null,cookie:req.headers.cookie||null}));});
  await listen(control,sock);const addr=await listen(upstream,0,'127.0.0.1');
- writeFileSync(join(data,'config.json'),JSON.stringify({port:addr.port,bind:'127.0.0.1',version:'1.0.0',admin_key:'UNIT-TEST-NOT-A-DEPLOYMENT-SECRET',burrow_socket:sock}));
+ writeFileSync(join(data,'config.json'),JSON.stringify({port:addr.port,bind:'127.0.0.1',version:'1.0.1',admin_key:'UNIT-TEST-NOT-A-DEPLOYMENT-SECRET',burrow_socket:sock}));
  const tunnels=[{port:1234,app:'some-other-addon',url:'https://untouched.example.com'}],removed=[];
  const f={data,tunnels,removed,reachable:true,probes:0,createFailure:false};
  globalThis.fetch=async(url,options)=>{
-  if (String(url).startsWith('https://') && (new URL(url).hostname.endsWith('.apps.example.com')||new URL(url).hostname.endsWith('.example.net'))) {
+  if (String(url).startsWith('https://') && (new URL(url).hostname.endsWith('.example.com')||new URL(url).hostname.endsWith('.example.net'))) {
    f.probes++;assert.equal(options.redirect,'error');
    return new Response(JSON.stringify({app:f.reachable?ID:'different-service',group:f.healthGroup||'a000000000000002',ok:true,probe:new URL(url).searchParams.get('probe')}));
   }
@@ -60,7 +60,7 @@ test('group route remains Basic-auth preserving, group-scoped and owned; group a
  assert.equal(extension.mount().prefix,'/__gate/robo-storage');assert.equal(extension.mount().headers['x-robo-admin'],'UNIT-TEST-NOT-A-DEPLOYMENT-SECRET');
  const environment=await extension.handle({method:'GET',path:'/environment'});assert.equal(environment.json.base,'apps.example.com');assert.deepEqual(environment.json.domains,['example.com']);
  const publish=(base,useDefaultTunnel=false)=>extension.handle({method:'POST',path:'/publish',json:async()=>({key:'a000000000000002',group:'a000000000000002',server:'',sub:'files',base,useDefaultTunnel})});
- assert.equal((await publish('wrong.example.com')).status,400);assert.equal((await publish('apps.example.com')).status,200);
+ assert.equal((await publish('wrong.example.com')).status,400);assert.equal((await publish('apps.example.com',true)).status,200);
  const t=f.tunnels.find(t=>t.sub==='files');const r=await realFetch(`http://127.0.0.1:${t.targetPort}/api/files?path=folder%2Ffile.txt`,{headers:{'x-robo-admin':'spoof','authorization':'Basic TEST'}});const body=await r.json();
  assert.equal(body.path,'/g/a000000000000002/api/files?path=folder%2Ffile.txt');assert.equal(body.admin,null);assert.equal(body.authorization,'Basic TEST');
  const routes=JSON.parse(readFileSync(join(f.data,'burrow-routes.json')));assert.ok(routes._agent);assert.ok(routes.a000000000000002);
@@ -109,16 +109,34 @@ test('server-specific routes are rejected and custom bases must be offered by Bu
  const publish=b=>extension.handle({method:'POST',path:'/publish',json:async()=>b});
  assert.equal((await publish(body)).status,400);
  assert.equal((await publish({...body,server:'a000000000000003'})).status,400);
- assert.equal((await publish({...body,base:'apps.example.com'})).json.state,'ready');
+ assert.equal((await publish({...body,base:'apps.example.com'})).status,400);
 }));
 
-test('configured extra wildcard alias is selected without changing primary/global naming',()=>fixture(async f=>{
+test('configured extra root alias is selected without changing primary/global naming',()=>fixture(async f=>{
  await extension.start(f.ctx);await f.route();
  const agent=f.tunnels.find(t=>t.sub?.startsWith('robo-agent-'));
- agent.also=[{zone:'example.net',wild:'media.example.net',url:`https://${agent.sub}.media.example.net`}];
+ agent.pickable=['example.net'];agent.also=[{zone:'example.net',wild:'media.example.net',url:`https://${agent.sub}.media.example.net`}];
  const create=f.ctx.tunnels.create;
- f.ctx.tunnels.create=async spec=>{const t=await create(spec);t.also=[{zone:'example.net',wild:'media.example.net',url:`https://${spec.sub}.media.example.net`}];return t;};
- const b={key:'a000000000000002',group:'a000000000000002',sub:'custom',useDefaultTunnel:false,base:'media.example.net'};
- const result=await extension.handle({method:'POST',path:'/publish',json:async()=>b});assert.equal(result.status,200);assert.equal(result.json.state,'ready');assert.equal(result.json.url,'https://custom.media.example.net');
+ f.ctx.tunnels.create=async spec=>{const t=await create(spec);t.also=[{zone:'example.net',url:`https://${spec.sub}.example.net`}];return t;};
+ const b={key:'a000000000000002',group:'a000000000000002',sub:'custom',useDefaultTunnel:false,base:'example.net'};
+ const result=await extension.handle({method:'POST',path:'/publish',json:async()=>b});assert.equal(result.status,200);assert.equal(result.json.state,'ready');assert.equal(result.json.url,'https://custom.example.net');
  const t=f.tunnels.find(t=>t.sub==='custom');assert.deepEqual(t.domains,['example.net']);assert.equal(t.url,'https://custom.apps.example.com');assert.equal(f.ctx.domain().zone,'example.com');
+}));
+
+test('unchecked rejects prefixed-only host before creating or changing a tunnel',()=>fixture(async f=>{
+ await extension.start(f.ctx);await f.route();const count=f.tunnels.length;
+ const b={key:'a000000000000002',group:'a000000000000002',sub:'root-only',base:'example.com',useDefaultTunnel:false};
+ const result=await extension.handle({method:'POST',path:'/publish',json:async()=>b});
+ assert.equal(result.status,400);assert.match(result.json.error,/no prefixed fallback/i);assert.equal(f.tunnels.length,count);
+ const env=await extension.handle({method:'GET',path:'/environment'});assert.deepEqual(env.json.rootDomains,[{domain:'example.com',available:false}]);
+}));
+
+test('unchecked uses the bare root when the host actually supports root-level routing',()=>fixture(async f=>{
+ f.namingActive=false;const create=f.ctx.tunnels.create;
+ f.ctx.tunnels.create=async spec=>{const t=await create(spec);t.url=`https://${spec.sub}.example.com`;return t;};
+ await extension.start(f.ctx);await f.route();
+ const b={key:'a000000000000002',group:'a000000000000002',sub:'root-only',base:'example.com',useDefaultTunnel:false};
+ const result=await extension.handle({method:'POST',path:'/publish',json:async()=>b});
+ assert.equal(result.status,200);assert.equal(result.json.url,'https://root-only.example.com');assert.equal(result.json.base,'example.com');assert.equal(result.json.useDefaultTunnel,false);
+ assert.ok(!result.json.url.includes('.apps.'));
 }));

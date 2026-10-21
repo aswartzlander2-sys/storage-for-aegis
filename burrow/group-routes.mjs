@@ -19,7 +19,9 @@ export class GroupRoutes {
       }
       for(const zone of t.pickable||[]) if(!choices.has(zone)) choices.set(zone,{base:zone,zone,kind:'extra'});
     }
-    return {connected:true,domain:d,domains:d?[d.zone]:[],base,naming:n,mode:d?'domain':'quick',routingBases:[...choices.values()],tunnels:all.filter(t=>t.app===ID).map(({port,url,sub,dns,quick})=>({port,url,sub,dns,quick})),note:d?'Uses Burrow’s existing domain and naming settings automatically.':'Uses Burrow’s default automatic HTTPS tunnel. No custom domain is required; its temporary address may change.'};
+    const roots = new Set([...(d?[d.zone]:[]), ...[...choices.values()].map(x=>x.zone)]);
+    const rootDomains=[...roots].map(domain=>({domain,available:choices.has(domain)}));
+    return {connected:true,domain:d,domains:[...roots],rootDomains,base,naming:n,mode:d?'domain':'quick',routingBases:[...choices.values()],tunnels:all.filter(t=>t.app===ID).map(({port,url,sub,dns,quick})=>({port,url,sub,dns,quick})),note:d?'Uses Burrow’s existing domain and naming settings automatically.':'Uses Burrow’s default automatic HTTPS tunnel. No custom domain is required; its temporary address may change.'};
   }
   serialize(key, action) {
     const task=(this.queues.get(key)||Promise.resolve()).catch(()=>{}).then(action);
@@ -33,8 +35,10 @@ export class GroupRoutes {
     if(!/^[a-z0-9](?:[a-z0-9-]{0,38}[a-z0-9])?$/.test(b.sub))throw Error('Choose a group subdomain with 1–40 letters, digits or dashes.');
     if(b.useDefaultTunnel!==undefined && typeof b.useDefaultTunnel!=='boolean')throw Error('Invalid default-tunnel option.');
     const useDefaultTunnel=b.useDefaultTunnel!==false, env=await this.environment();
-    const choice=useDefaultTunnel?null:env.routingBases.find(x=>x.base===b.base);
-    if(!useDefaultTunnel&&!choice)throw Error('Select a configured tunnel domain from the list, or check Use default Burrow tunnel.');
+    const root = useDefaultTunnel ? null : env.rootDomains.find(x=>x.domain===b.base);
+    if(!useDefaultTunnel&&!root)throw Error('Unchecked means the root domain directly. Select a root domain, not Burrow’s prefixed tunnel base.');
+    if(root&&!root.available)throw Error(`Burrow does not expose root-level routing for ${b.base}; it currently offers ${env.base||'temporary tunnel addresses'}. The checkbox is unchecked, so no prefixed fallback was published. Global naming was left unchanged.`);
+    const choice=useDefaultTunnel?null:env.routingBases.find(x=>x.base===root.domain);
     const previous=this.load()[b.key],spec={group:b.group,server:'',sub:b.sub,useDefaultTunnel,base:choice?.base||'',zone:choice?.zone||''};
     const targetPort=await this.proxy(b.key,spec);
     if(this.closed)throw Error('Storage routing is stopping.');
@@ -60,18 +64,21 @@ export class GroupRoutes {
     if(h.app!==ID||h.group!==key||h.probe!==nonce||h.ok!==true)return null;
     const result={url,targetPort:t.targetPort,at:Date.now()};this.probes.set(key,result);return result;
   }
+  isRoot(base) { return base===this.ctx.domain()?.zone || this.ctx.tunnels.list().some(t=>(t.pickable||[]).includes(base)||(t.also||[]).some(a=>a.zone===base)); }
   async inspect(key,spec) {
     let t=this.own(spec.port);
-    const pending={port:spec.port,url:'',proposedUrl:'',base:spec.base||'',useDefaultTunnel:spec.useDefaultTunnel!==false,state:'pending',detail:'Burrow is preparing the group’s HTTPS address.'};
+    const pending={port:spec.port,url:'',proposedUrl:'',base:spec.base||'',useDefaultTunnel:spec.useDefaultTunnel!==false,rootDomain:spec.useDefaultTunnel===false&&this.isRoot(spec.base)?spec.base:null,state:'pending',detail:'Burrow is preparing the group’s HTTPS address.'};
+    if(spec.useDefaultTunnel===false&&!this.isRoot(spec.base))return {...pending,state:'blocked',detail:'Unchecked means root-level routing. This saved route still uses a prefix; select the root domain and relaunch. No prefixed URL will be shown as a root address.'};
     if(!t)return {...pending,state:'missing',detail:'This group’s tunnel was removed. Launch the group to recreate it.'};
     if(t.enabled===false){this.probes.delete(key);return {...pending,detail:'The group tunnel is disabled in Burrow.'};}
     try {
       if(!this.closed&&t.dns?.error&&Date.now()-(this.dnsRetry.get(key)||0)>=60000){this.dnsRetry.set(key,Date.now());t=await this.ctx.tunnels.update(t.port,{});}
       const alias=spec.useDefaultTunnel===false?(t.also||[]).find(a=>!a.hidden&&a.url===`https://${spec.sub}.${spec.base}`):null;
       const url=spec.useDefaultTunnel===false?(alias?.url||(spec.base===this.baseFromTunnel(t)?t.url:'')):t.url;
-      if(!url){this.probes.delete(key);return {...pending,detail:t.quick?.error?'Burrow tunnel: '+t.quick.error:pending.detail};}
+      if(!url){this.probes.delete(key);return {...pending,state:spec.useDefaultTunnel===false?'blocked':'pending',detail:spec.useDefaultTunnel===false?'Burrow has not exposed this root-level address. No prefixed fallback will be used.':t.quick?.error?'Burrow tunnel: '+t.quick.error:pending.detail};}
       const parsed=new URL(url);
       if(parsed.protocol!=='https:'||parsed.username||parsed.password||parsed.search||parsed.hash||parsed.pathname!=='/')throw Error('Burrow has not supplied a valid HTTPS address.');
+      if(spec.useDefaultTunnel===false&&parsed.hostname!==`${spec.sub}.${spec.base}`)throw Error('Burrow did not supply the requested root-level address.');
       pending.proposedUrl=url.replace(/\/+$/,'');
       if(spec.useDefaultTunnel!==false)pending.base=t.mode==='quick'?'':this.baseFromTunnel(t);
       if(t.dns?.ready===false){this.probes.delete(key);return {...pending,detail:'Burrow is waiting for DNS/certificate readiness.'};}

@@ -19,7 +19,7 @@ from urllib.parse import parse_qs, unquote, urlsplit
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT.parent / 'weft'))
 import mesh
-from core import Store, Problem, require, uid, digest, password_check, clean_path, quota, label, subdomain, MAX_FILE, validate_partitions
+from core import Store, Problem, require, uid, digest, password_check, clean_path, quota, label, subdomain, MAX_FILE, validate_partitions, capacity_view
 from backends import backend, AgentBroker, host_call
 from enrollment import route_status
 from routing import routing_view
@@ -233,7 +233,7 @@ class App(mesh.Handler):
                 return self.send(200, {**routing_view(DATA, store.view()), 'demo': bool(cfg.get('demo')), 'version': cfg['version'], 'publicUrl': route.get('url', ''), 'agentRoute': route, 'maxFileBytes': MAX_FILE})
             if method == 'GET' and path == '/api/host':
                 if cfg.get('demo'):
-                    return self.send(200, {'domains': ['example.com'], 'base': 'apps.example.com', 'routingBases': [{'base': 'apps.example.com', 'zone': 'example.com', 'kind': 'primary'}], 'mode': 'demo', 'tunnels': [], 'connected': False, 'note': 'Illustrative routing only — no Burrow host is connected.'})
+                    return self.send(200, {'domains': ['example.com'], 'rootDomains': [{'domain': 'example.com', 'available': False}], 'base': 'apps.example.com', 'routingBases': [{'base': 'apps.example.com', 'zone': 'example.com', 'kind': 'primary'}], 'mode': 'demo', 'tunnels': [], 'connected': False, 'note': 'Illustrative routing only — no Burrow host is connected.'})
                 return self.send(200, host_call(cfg, 'GET', '/x/' + cfg['id'] + '/environment'))
             if method == 'POST':
                 body = self.body()
@@ -430,7 +430,7 @@ class App(mesh.Handler):
             s = next((s for s in servers if s['id'] == selected), None)
             require(not sid or selected == sid, 'This link is scoped to one server.', 403)
             files = [f for f in s['inventory'] if visible(user, f['path'])] if s else []
-            return self.send(200, {'group': group['name'], 'username': user['username'], 'servers': [{'id': s['id'], 'name': s['name'], 'status': s['status'], 'used': s['used'], 'limit': s['limit']} for s in servers], 'selected': selected, 'files': files, 'rules': user['rules']})
+            return self.send(200, {'group': group['name'], 'username': user['username'], 'servers': [{'id': s['id'], 'name': s['name'], 'status': s['status'], 'used': s['used'], 'limit': s['limit'], **capacity_view(s)} for s in servers], 'selected': selected, 'files': files, 'rules': user['rules']})
         body = self.body() if method == 'POST' else {}
         selected = body.get('server') or q.get('server', [sid or ''])[0]
         s = next((s for s in servers if s['id'] == selected), None)

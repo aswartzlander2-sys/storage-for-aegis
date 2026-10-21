@@ -1,6 +1,6 @@
 # Robo Storage for Aegis
 
-**1.0.0 — group-inherited routing and live-tested public HTTPS Linux storage.**
+**1.0.1 — root-only unchecked routing and saved, accurately displayed allocation ceilings.**
 
 Linux enrollment, file access, permissions, quotas, migration and erasure were exercised over actual Burrow/Cloudflare public tunnels. Real IDrive E2 and CloudGate accounts remain untested; see the validation report and limits below.
 
@@ -27,11 +27,19 @@ The supplied prompt suggests `requires.burrow: ">=2.0.0"`; the normative SPEC pe
 - Copy/read-back verification, source-change check, conflict refusal, explicit errors and persistent job history. Source entries remain draining on failure; interrupted jobs do not automatically resume deletion.
 - Group activity log, read-only mode, provider status and responsive layout.
 
-## What changed in 1.0.0
+## What changed in 1.0.1
+
+- **Unchecked means the root domain directly:** checked `studio.apps.example.com`, unchecked `studio.example.com`. Only root zones are offered in unchecked mode; a wildcard/prefix base is not treated as the root. A saved legacy unchecked/prefixed route is blocked in the UI rather than advertised as a verified root address.
+- **Host limitation, not a hidden fallback:** Aegis 2.24.2 does not expose a per-tunnel primary-root override when its global primary naming prefix is active. In that configuration, root publication is explicitly unavailable. The addon never changes global naming or substitutes the prefixed/Quick address. Root publication works only when Burrow actually offers the root-level base or a matching configured root alias; HTTPS identity verification still applies. Custom-domain account acceptance has not been run.
+- **Quota edits after generating a Linux command are saved before Launch,** including the server name. A 1 GB quota is 1,000,000,000 bytes, even on a 512 GB physical disk. Contributions, bars and the file browser use effective allocated capacity; physical disk size is separately labeled.
+- **Existing installations:** update without deleting `ADDON_DATA`. If 1.0.0 previously lost a quota edit, open that server’s Settings, explicitly save the intended ceiling and run Test. The missing value cannot be reconstructed automatically. Legacy unchecked groups may need their root domain reselected and relaunched; unavailable root routing is shown explicitly. Existing tunnel resources are not silently deleted merely because a legacy route is blocked in the dashboard.
+- Current regression/lifecycle/host and partial public-network results, including interrupted runs, are recorded in `docs/TEST-REPORT.md`.
+
+## Retained from 1.0.0
 
 - **One group address.** Adding a server no longer asks for a domain, subdomain or tunneling settings. A server link is `<group HTTPS URL>/s/<server-id>/`, served through the group tunnel. No extra per-server tunnel is created.
 - **Use default Burrow tunnel** is checked below the group address by default. It inherits Burrow’s existing domain and active naming base automatically. Stale manual nested-domain values are ignored in default mode. With no linked domain, Burrow can assign a temporary Quick Tunnel when cloudflared is available.
-- Unchecking the box offers only tunnel domains/aliases already configured in Burrow. There is no arbitrary nested-domain input, no global naming change and no invented DNS/TLS coverage.
+- Unchecked behavior was corrected in 1.0.1 as described above; the original 1.0.0 interpretation is superseded.
 - Group route status refreshes automatically as Burrow assigns its URL. A proposed address is not marked ready until a certificate-validated HTTPS nonce/identity check reaches the correct group.
 - Actual public-network Linux and UI acceptance passed, in addition to 69 Python and 7 extension tests.
 
@@ -57,7 +65,7 @@ Create the group once: enter its name and subdomain, then leave **Use default Bu
 
 Servers added to this group inherit that address. Use the group link for the multi-server browser, or its `/s/<server-id>/` links for a server-scoped browser. Creating a server never asks for a second domain. Existing group users and path rules apply; a server-scoped URL cannot select another server.
 
-If you uncheck the box, the dropdown contains Burrow’s configured primary tunnel base plus generic extra/wildcard aliases or selectable zones offered by the actual tunnel registry. Hidden/conflicting fixed-port aliases and arbitrary DNS records are not treated as usable tunnel bases. A selected extra domain is enabled only for this addon’s own group tunnel, not globally.
+If you uncheck the box, the dropdown contains root zones, not Burrow’s prefixed naming bases. `studio` plus `example.com` requests exactly `https://studio.example.com`. If Burrow cannot expose that exact address, Launch reports the limitation before creating/changing a tunnel. It does not fall back to `studio.apps.example.com` or a temporary tunnel. A configured extra root alias is enabled only on this addon’s own group tunnel, not globally. On Aegis 2.24.2, an active primary naming prefix cannot be overridden for just one tunnel through its supported API.
 
 The addon does not configure your Cloudflare account, replace your host’s connector, change global naming, or manufacture certificates. If Burrow reports `cloudflared is not installed`, install/repair the host’s tunnel engine or use its existing linked-domain connector. Connections and group routing show pending/verified status rather than guessing an address.
 

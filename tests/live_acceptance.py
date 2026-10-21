@@ -51,7 +51,7 @@ with sync_playwright() as p:
         return route if route['state']=='ready' else None
     route=wait_for(ready_agent,'Public enrollment HTTPS')
     status,_,body=public(route['url']+'/agent/health?probe='+'c'*32)
-    assert status==200 and json.loads(body)['version']=='1.0.0'
+    assert status==200 and json.loads(body)['version']=='1.0.1'
     print('REAL PUBLIC HTTPS: Burrow-created Cloudflare enrollment route returned app identity + nonce, certificate verification enabled')
     before_ports={t['port'] for t in request.get('/__gate/api/tunnels').json()['tunnels'] if t.get('app')=='robo-storage-aegis'}
     group=admin('api/groups',{'name':'Live public acceptance','sub':'live-'+str(int(time.time())),'domain':'stale.invalid','tunnelSub':'wrong-nested','useDefaultTunnel':True})['group']
@@ -71,10 +71,11 @@ with sync_playwright() as p:
             assert ui.locator('#modal [name=domain], #modal [name=base], #modal [name=sub], #modal [name=tunnelSub]').count()==0
             ui.locator('#modal [name=name]').fill('Live source')
             ui.locator('#linux-path').fill(str(root))
-            ui.locator('#modal [name=limitValue]').fill('0.001')
             ui.get_by_label('Generate Linux enrollment command',exact=True).click()
             ui.locator('.command').wait_for()
             command=ui.locator('.command').inner_text()
+            ui.locator('#modal [name=limitValue]').fill('1')
+            ui.locator('#modal [name=name]').fill('Live source edited after command')
             server=next(s for s in state()['servers'] if s['group']==group['id'] and s.get('path')==str(root))
         else:
             server=admin('api/groups/'+group['id']+'/servers',{'name':'Live destination','kind':'linux','path':str(root),'limit':1000000})['server']
@@ -89,7 +90,14 @@ with sync_playwright() as p:
             expect(ui.locator('#launch-server')).to_be_enabled()
             ui.locator('#launch-server').click()
             ui.locator('#modal').wait_for(state='hidden',timeout=45000)
-            ui.screenshot(path=str(Path(__file__).resolve().parents[1]/'docs/live-ui-server-1.0.0.png'),full_page=True)
+            saved=next(s for s in state()['servers'] if s['id']==server['id'])
+            assert saved['limit']==1_000_000_000 and saved['allocatedCapacity']==1_000_000_000,saved
+            assert saved['name']=='Live source edited after command'
+            assert saved['physicalCapacity']>saved['allocatedCapacity'],saved
+            server=saved;servers[-1]=saved
+            expect(ui.locator('.group-card').filter(has=ui.locator('[data-act=add-server][data-id="'+group['id']+'"]')).locator('.server-row').filter(has_text=saved['name']).locator('.capacity-label')).to_contain_text('of 1.0 GB')
+            print('Quota regression: command generated with no limit, then edited to 1 GB; Launch saved 1,000,000,000 bytes and edited name; physical disk remains separate')
+            ui.screenshot(path=str(Path(__file__).resolve().parents[1]/'docs/live-ui-server-1.0.1.png'),full_page=True)
             ui_browser.close()
             print('Actual signed-in UI: Add Server → Linux → generated public curl → live Verified → Verify & Launch succeeded, with no domain fields')
     def verified():
@@ -126,6 +134,18 @@ with sync_playwright() as p:
         assert status==200 and [x['id'] for x in json.loads(payload)['servers']]==[server['id']]
     assert public(ss[a['id']]['url']+'api/files?server='+b['id'],user=username,password=password)[0]==403
     print('Actual public group and inherited per-server file-browser URLs returned 200 after Basic login')
+    # A sparse file simulates near-full logical allocation without writing a gigabyte.
+    near_full=roots[0]/'quota-boundary.sparse'
+    with near_full.open('wb') as f:f.truncate(999_999_999-len(sample))
+    try:
+        boundary=admin('api/servers/'+a['id']+'/test',{})['server']
+        assert boundary['used']==999_999_999 and boundary['allocatedCapacity']==1_000_000_000
+        status,_,_=group_call('api/upload',{'server':a['id'],'path':'past-one-gb.txt','data':base64.b64encode(b'xx').decode()})
+        assert status==507,status
+        print('Real public 1 GB ceiling: 999,999,999 bytes scanned; a two-byte write returned HTTP 507; physical disk size did not expand allocation')
+    finally:
+        near_full.unlink(missing_ok=True)
+        admin('api/servers/'+a['id']+'/test',{})
     admin('api/servers/'+b['id']+'/settings',{'limit':100,'name':b['name']})
     admin('api/servers/'+b['id']+'/partition',{'name':'Small partition','path':'small','limit':10})
     def upload(path,data):return group_call('api/upload',{'server':b['id'],'path':path,'data':base64.b64encode(data).decode()})[0]

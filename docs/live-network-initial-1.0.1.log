@@ -1,0 +1,6 @@
+REAL PUBLIC HTTPS: Burrow-created Cloudflare enrollment route returned app identity + nonce, certificate verification enabled
+Traceback (most recent call last):
+  File "/home/user/robo-storage-aegis/tests/live_acceptance.py", line 85, in <module>
+    assert result.returncode==0,('Generated public installer failed',result.returncode,result.stderr[-500:])
+           ^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('Generated public installer failed', 7, 'curl: (7) Failed to connect to routers-mud-pos-worldwide.trycloudflare.com port 443 after 11 ms: Could not connect to server\n')

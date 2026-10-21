@@ -58,7 +58,7 @@ class EnrollmentHTTPTests(unittest.TestCase):
         with socket.socket() as sock:
             sock.bind(('127.0.0.1', 0)); port = sock.getsockname()[1]
         cls.base = 'http://127.0.0.1:' + str(port)
-        conf = {'id':'robo-storage-aegis','version':'1.0.0','port':port,'bind':'127.0.0.1','host':'burrow','mesh':str(cls.data/'mesh'),'admin_key':'TEST-ONLY-HTTP-KEY','burrow_socket':str(cls.data/'control.sock'),'public_url':'https://obsolete-setting.example.com'}
+        conf = {'id':'robo-storage-aegis','version':'1.0.1','port':port,'bind':'127.0.0.1','host':'burrow','mesh':str(cls.data/'mesh'),'admin_key':'TEST-ONLY-HTTP-KEY','burrow_socket':str(cls.data/'control.sock'),'public_url':'https://obsolete-setting.example.com'}
         config = cls.data / 'config.json'; config.write_text(json.dumps(conf))
         cls.process = subprocess.Popen([sys.executable, str(ROOT/'app/server.py'), str(config)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         try:

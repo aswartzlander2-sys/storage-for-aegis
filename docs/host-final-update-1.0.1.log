@@ -1,0 +1,3 @@
+Final source actual Aegis update: DONE; health version 1.0.1
+Existing groups, physical-capacity inventory, edited names and every quota retained across actual service restart.
+Previously launched edited-after-command workers still contribute exactly 1,000,000,000 bytes each, not their full physical disk.

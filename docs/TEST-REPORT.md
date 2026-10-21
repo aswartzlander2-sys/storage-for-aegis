@@ -1,149 +1,63 @@
-# Robo Storage for Aegis 1.0.0 — validation report
+# Robo Storage for Aegis 1.0.1 — correction validation
 
-Date: **2026-10-21**. This release was exercised through **actual public Burrow/Cloudflare HTTPS tunnels**, not just a localhost TLS simulation. It is not a claim that every provider, host configuration or failure mode has been certified.
+Date: **2026-10-21**. This report distinguishes successful checks from interrupted public-network runs. Historical 1.0.0 evidence is retained in `TEST-REPORT-1.0.0.md`; its complete public migration/erase pass is **not** claimed as a new full 1.0.1 pass.
 
-## Release changes
+## Corrections
 
-1. **A server inherits its group address.** The Add Server modal no longer contains domain, subdomain or tunneling fields. Group links open the multi-server browser; server links use `<group URL>/s/<server-id>/`. Server-scoped URLs cannot select another server. No per-server tunnel is created.
-2. **Use default Burrow tunnel** is checked below the group address. It uses Burrow’s existing linked domain and active naming base automatically, or the host’s default temporary HTTPS tunnel when no domain is linked. Stale legacy root/nested-domain inputs are ignored in default mode. There is no manual nested-base equality error in this path.
-3. Unchecking the box offers only configured bases/aliases from Burrow’s actual naming and tunnel metadata. A selected extra zone is enabled only on the addon-owned group tunnel. The addon does not change global DNS/naming or invent certificate coverage.
-4. Group status is refreshed as asynchronous public URLs arrive. Proposed addresses are kept separate from verified URLs. Ready status requires a normal certificate-validated HTTPS identity/nonce check for the correct group.
-5. Existing groups, users and storage data remain in `ADDON_DATA`. Legacy independent server tunnels are left owned and recorded until uninstall, rather than silently deleting old public links. Newly launched server links use the group route.
+### Unchecked means the root directly
 
-## Summary
+- Checked: inherit existing Burrow naming, for example `studio.apps.example.com`, or the host's automatic Quick Tunnel when no domain is linked.
+- Unchecked: request exactly `studio.example.com`. The UI offers root zones, not naming/wildcard prefixes. An unsupported root request fails before creating/changing tunnels; no prefixed or temporary fallback is selected and no global naming changes are made.
+- Supported-context tests cover rejection on a prefixed-only host with no tunnel side effects; a host whose primary base really is the root; and an extra configured root alias without altering the primary/global naming. The selected URL must be exactly the requested root URL and pass the normal HTTPS identity/nonce check.
+- Legacy unchecked/prefixed snapshots are blocked immediately, including before the extension refreshes. A root readiness marker and exact address match are required. Blocking a saved URL in the dashboard does not silently delete its existing tunnel resources.
+- **Aegis 2.24.2 limitation:** when its primary naming prefix is active, the supported tunnel API has no per-tunnel override to publish directly under that primary root. Such a request is explicitly unavailable. The addon does not patch the host, scrape credentials, take over other routes, or change global naming. No real custom-domain account/DNS/TLS acceptance was performed.
 
-| Check | Observed result |
+### 1 GB is not the whole disk
+
+- Root cause of lost edits: an existing draft ID caused `ensureServer()` to return without saving settings. Generating the enrollment command creates the draft; subsequent quota/name edits therefore used to be lost at Launch. Existing drafts now save the edited name and quota before testing/publishing.
+- Physical capacity remains inventory metadata. `allocationLimit`, `physicalCapacity`, `allocatedCapacity` and `remainingAllocation` are separately projected by the administrator and public file-list APIs. Effective contribution is the lesser of configured quota and known physical capacity. No configured quota means the known physical capacity, or unknown if neither is known.
+- Group totals, contribution widths, server bars and file-browser usage use effective allocation, not full disk size. The detail view separately labels physical capacity and configured ceiling.
+- A configured 1 GB ceiling means **1,000,000,000 bytes**, enforced on writes through Robo Storage. It is a logical budget, not a physical reservation or control over direct filesystem writes.
+- A previously lost quota cannot be reconstructed: existing affected installations must explicitly save their intended ceiling in server Settings and run Test after updating.
+
+## Results
+
+| Check | Observed result / evidence |
 |---|---|
-| Normative Weft publish checker | Zero errors |
-| Python regressions | **69 passed** |
-| Node extension regressions | **7 passed, 0 failed** |
-| Real Weft Burrow lifecycle | Passed, including install/status/update/status/uninstall |
-| Actual Aegis 2.24.2 install/update/uninstall | **DONE** |
-| Default checkbox / inherited-domain UI | Passed, desktop and mobile |
-| Actual signed-in Linux setup UI through public HTTPS | Passed |
-| Real public Cloudflare enrollment, two Linux workers | Passed |
-| Shared group tunnel and `/s/ID/` links | Passed; no per-server tunnel |
-| Public Basic login, upload/download checksum, ACLs and quotas | Passed |
-| Public-worker migration and explicit erasure | Passed |
-| Real E2/CloudGate accounts | **Not tested**; uploaded credentials not used |
-| Custom-domain DNS/TLS, independent remote-machine deployment, reboot/systemd | **Not tested** |
+| Weft normative `--publish` checker | **Zero errors**, `check-1.0.1.txt` |
+| Python regressions | **74 passed**, `python-1.0.1.log` |
+| Node extension regressions | **9 passed, 0 failed**, `extension-1.0.1.log` |
+| Real Weft lifecycle | **Passed**, `lifecycle-1.0.1.log` |
+| Browser smoke, desktop/mobile, checkbox root-only choices | **Passed**, JavaScript errors `[]`, `ui-1.0.1.log` |
+| Synthetic 512 GB disk / 1 GB UI contribution | **Passed**, `ui-quota-1.0.1.log`, `quota-regression-1.0.1.png` |
+| Actual Aegis 2.24.2 install/update, mount/auth/CSS, route ownership | **Passed**, `host-1.0.1.log` |
+| Final-source actual host restart retains edited quota/name/capacity | **Passed**, `host-final-update-1.0.1.log` |
+| Actual signed-in UI: generate unlimited command, edit to 1 GB, verify and Launch | **Passed** in public-network runs; persisted limit and visible server card both 1 GB |
+| Actual public 1 GB boundary: scanned 999,999,999 bytes; write two bytes | **HTTP 507 observed**, `live-network-write-timeout-1.0.1.log` |
+| Complete 1.0.1 public migration/erase rerun | **Not completed**; interrupted by public-network failures, described below |
+| Real E2/CloudGate/custom-domain provider accounts | **Not tested**; supplied credentials unused |
 
-## Real host and public-network environment
+The Python regressions specifically cover 512,000,000,000-byte physical capacity with a 1,000,000,000-byte allocation, inventory refresh and restart preservation, the precise ceiling boundary, smaller physical disks, unknown capacity, legacy root snapshots and malformed root-route shapes. Existing permission, migration, quota, confinement and enrollment tests remain included.
 
-- Actual upstream **Aegis × Burrow 2.24.2**, commit `3f48e0dbeda3628c33e3c005a9fe19b04816f3bc`.
-- Actual `cloudflared 2026.10.3` installed only into the disposable test host’s private `bin/`. It is **not bundled** in the addon or installed globally.
-- The host’s **real QuickTunnels implementation** created `*.trycloudflare.com` addresses. The extension did not substitute a fake tunnel adapter for this acceptance run.
-- The host was run with `TUNNEL_TRANSPORT_PROTOCOL=http2` for this sandbox network. No TLS verification was disabled. This is test-host configuration, not a change imposed by the addon on users’ hosts.
-- The actual host extension context and real mode-600 Unix control socket were used. The Aegis gate was authenticated; the host’s shield was disabled for the disposable test fixture only.
-- Workers ran in dedicated local disposable directories, but **all enrollment/callback traffic and public file requests traversed the real public HTTPS tunnel**. This does not substitute for a test from a separate physical machine or another network.
+The synthetic browser regression intercepts only the demo's read-only state response. It does **not** claim a real 512 GB disk: it verifies total/group/server contribution of 1.0 GB, 250 MB usage as 25%, and a separately labeled physical 512.0 GB value. The real public tests use the sandbox's actual disk capacity, which is greater than the allocated 1 GB.
 
-### Commands actually run
+Lifecycle acceptance executes real install/status/update/status/uninstall, repeated install, read-only detection, data retention, linked-copy safety, foreign-port refusal and stale-PID handling. The actual host was separately installed and updated through authenticated Aegis API jobs, not a context mock. The final host restart retained every saved quota and edited name.
 
-```text
-ROBO_KEEP_HOST_INSTALLED=1 python tests/host_refresh.py http://127.0.0.1:4310 /home/user/live-host-test
-python tests/live_acceptance.py http://127.0.0.1:4310 /home/user/live-host-test/browser-session.json /home/user/live-host-test/storage-final
-```
+## Public-network run history — deliberately not summarized as a full pass
 
-`host-1.0.0.log` records real host installation, mount/auth/CSS/file-browser checks and an update preserving the same enrollment tunnel identity and group data. Its provider/public-transfer disclaimer applies to that host-smoke script alone; the separate full public test below was then run.
+Tests use real Aegis 2.24.2, Burrow Quick Tunnels and Cloudflare `cloudflared` 2026.10.3 with HTTP/2. Normal public certificate validation remains enabled. No provider secrets were used. Disposable storage is confined under `/home/user/live-host-test/`.
 
-### Final actual public acceptance output
+1. `live-network-initial-1.0.1.log`: enrollment identity check succeeded, but the installer GET then failed to connect. No installer write was replayed.
+2. `live-network-write-timeout-1.0.1.log`: two Linux workers enrolled over public HTTPS and heartbeated. The actual UI generated the source command with no quota, then changed the name and quota to 1 GB before Launch. Stored allocation remained exactly 1 GB, independent of physical disk size. Group/server links, Basic challenge and scoped selector checks passed. A sparse test fixture produced **999,999,999 inventory bytes**, and a two-byte public upload returned **507**. The sparse file was removed in `finally` and inventory refreshed. A later partition-quota request timed out; its write was **not retried**.
+3. `live-ui-selector-1.0.1.log`: a new UI assertion matched two identically named fixtures left by earlier runs. This was a test-selector ambiguity, not a capacity mismatch; both returned matching 1 GB text. The selector was corrected to scope to the exact group ID.
+4. `live-network-final-1.0.1.log`: the corrected, group-scoped UI assertion passed; edited settings, real enrollment, inherited routes, public Basic access and selector isolation passed again. The next public write failed with network unreachable. This interrupted run is **not** a complete acceptance pass. Its sparse fixture was again removed in `finally`.
 
-Exact output is saved in `live-public-1.0.0.log`:
+Uncertain write outcomes were never automatically replayed. Interrupted workers are stopped only after their `/proc` command lines identify this exact disposable test root. Final actual-host uninstall and owned-route cleanup are recorded separately in `host-uninstall-1.0.1.log`.
 
-```text
-REAL PUBLIC HTTPS: Burrow-created Cloudflare enrollment route returned app identity + nonce, certificate verification enabled
-Live source: generated curl executed over real public HTTPS; write/read/delete storage probe completed
-Actual signed-in UI: Add Server → Linux → generated public curl → live Verified → Verify & Launch succeeded, with no domain fields
-Live destination: generated curl executed over real public HTTPS; write/read/delete storage probe completed
-Two actual workers became Verified only after authenticated public HTTPS heartbeats
-Default tunnel: stale nested domain ignored; one group tunnel added, shared agent tunnel, no per-server tunnels; both servers inherit group /s/ID/ addresses
-Public group: anonymous request gets native HTTP Basic challenge; administration is not exposed
-Actual public group and inherited per-server file-browser URLs returned 200 after Basic login
-Actual public upload/download checksum matched; hidden/read-only ACLs and server/partition quotas enforced; encoded directory path works
-Public HTTPS browser smoke: PASS; JavaScript errors: []
-Actual public worker migration: copy → read-back checksum → source-change check → source deletion → disconnect: PASS
-Actual public worker erasure and empty-inventory disconnect: PASS
-Real IDrive E2/CloudGate accounts and custom-domain DNS: NOT TESTED; no supplied provider credentials used
-Live group cleanup removed only its owned tunnel; enrollment and other groups unchanged
-LIVE PUBLIC ACCEPTANCE: PASS
-```
+## References, packaging and remaining limits
 
-The test deliberately supplied a stale nested domain on group creation and wrong server-level address values at launch. Default mode ignored them and inherited the correct group route. The first worker was created through the **actual browser wizard**, its displayed command was executed, its live Verified state appeared, and its Verify & Launch button succeeded.
-
-The public client verified native Basic authentication, both inherited server URLs, server-selector scoping/cross-server rejection, public upload/download including an encoded directory path, file checksums, hidden/read-only rules, server and partition quotas, migration and confirmed erasure. The public browser loaded the actual file browser without JavaScript errors.
-
-**Observed network failure, not hidden:** an earlier extended UI run hit a transient public GET failure (`Network is unreachable`) after the wizard had succeeded. That failed output is retained in `live-network-retry-1.0.0.log`. The final complete run above passed. The test client permits bounded retries for read-only transport failures; it never automatically replays writes with unknown outcomes. This is not an internet-outage/endurance certification.
-
-### Cleanup observed
-
-The test host’s actual uninstall job completed. `host-uninstall-1.0.0.log` records:
-
-```text
-Actual Aegis 2.24.2 uninstall: DONE
-All addon-owned agent and group tunnels removed; no automatic recreation
-Other host services remain running; host health: 200
-```
-
-The disposable Aegis process was then stopped. Completed workers exited after disconnection; workers from the interrupted fixture were explicitly stopped only after their executable/config paths were verified to be inside the disposable test directory. No customer filesystem or provider account was used. Test certificates, host binaries, private runtime state and browser sessions are excluded from the archive. The separately labeled demo remains available.
-
-## Automated regressions
-
-### Python — 69 passed
-
-```text
-python -m unittest discover -s tests -p 'test_*.py' -v
-Ran 69 tests
-OK
-```
-
-Full output: `python-1.0.0.log`. Includes core persistence/secrets/path confinement, ACL/passwords, quotas/nested budgets, worker I/O and endpoint/signing tests; enrollment origin/TTL and URL pinning; read-only group snapshot overlays; stale/corrupt readiness; default/legacy/custom routing; and actual HTTP plus Unix control-socket launch calls. Verified server launches ignore injected server-level domains and publish the group, not the server.
-
-### Extension — 7 passed
-
-```text
-node --test tests/test_extension.mjs
-# tests 7
-# pass 7
-# fail 0
-```
-
-Full output: `extension-1.0.0.log`. These regressions use supported-context fixtures and real local HTTP/Unix listeners, with external HTTPS mocked **in this suite only**. They cover restricted agent proxies, spoofed-header/traversal/absolute-URL rejection, encoded file-path queries, fresh non-sliding probes, URL assignment after creation, default mode ignoring old nested values, no-domain mode, correct group identity, concurrent launches without duplicate tunnels, disabling/cleanup, and configured extra wildcard alias selection without changing global naming.
-
-The real public acceptance above is separate and does not mock HTTPS or the tunnel context.
-
-### Lifecycle and UI
-
-```text
-python tests/lifecycle_acceptance.py /home/user/weft-reference
-Lifecycle/linking/idempotence/ownership acceptance: passed
-
-python tests/ui_smoke.py
-Browser page errors: []
-```
-
-Full outputs: `lifecycle-1.0.0.log`, `ui-1.0.0.log`. Lifecycle executes real install/status/update/status/uninstall, repeated install, read-only detection, retained data, linked-copy safety, foreign-port refusal and stale-PID safety. The sandbox uses background-service mode; actual systemd behavior is not certified.
-
-Chromium covered the default checked checkbox below the address, inherited/disabled domain field, explicit custom-mode toggle, absence of all server address fields, synthetic E2 file gating, Linux command/verification gating, group partitions, 100% redistribution boundaries, move/erase confirmation dialogs and mobile overflow at 390px. Screenshots show either the clearly marked demo or the explicitly disposable live fixture:
-
-- `default-group-1.0.0.png`, `dashboard.png`, `mobile.png`, `linux-setup.png`, `group-settings.png`: labeled demo.
-- `actual-host-dashboard.png`, `actual-host-connections.png`, `files-browser.png`: local actual host.
-- `live-ui-server-1.0.0.png`, `live-public-browser.png`: actual live/public test flow.
-
-## Static, attribution and packaging
-
-The manifest uses spec 1, the unchanged published addon ID and Burrow-only platform requirement `>=2.24.2`. Final exact checker output is in `check-1.0.0.txt`.
-
-- The original addon was copied from hello-weft. Normative `SPEC.md`, every skeleton file, the closest references and shared helpers were reviewed; this update re-inspected actual routing, naming, QuickTunnels and UI implementations.
-- `weft/lib.sh` and `weft/mesh.py` remain byte-identical to Weft reference commit `f4f14b14bf3dabbbddfee2834bd9f46ee1315452`.
-- `app/static/aegis.css` remains byte-identical to upstream Aegis `public/ui.css`. Complete MIT notices remain in `LICENSE` and `AEGIS-LICENSE.txt`; `THIRD-PARTY.md` identifies copied material.
-- Python/JavaScript/shell syntax, mandatory ending README Credits, path confinement, supplied-key absence and ZIP integrity are checked before packaging.
-- Historical `TEST-REPORT-0.1.0.md` and `TEST-REPORT-0.1.1.md` retain prior results and limitations; they do not override this release’s public-network evidence.
-
-## Remaining limits
-
-- No real E2 or CloudGate provider acceptance; no use of the user’s uploaded credentials.
-- No live custom-domain/extra-wildcard certificate test. Those mappings are covered by supported-context regressions, not a real account/zone.
-- Temporary Quick Tunnel addresses can change; workers must be re-enrolled if their callback address changes. Stable linked domains are recommended for long-lived storage.
-- 16 MiB/file remains the gateway limit. Quotas are logical gateway budgets, not reserved disks; direct external changes are discovered by scanning, not prevented by this gateway.
-- Whole-file weighted migration, private mode-600 secrets not encrypted at rest, and detached Linux workers without automatic reboot persistence remain documented behavior.
-- No independent-machine, reboot, systemd or extended network/provider outage acceptance. Back up important data and finish provider-specific acceptance before relying on those integrations.
+- The original implementation copied hello-weft and reviewed normative SPEC, every skeleton file, closest references and helpers. References remain Weft commit `f4f14b14bf3dabbbddfee2834bd9f46ee1315452` and Aegis 2.24.2 commit `3f48e0dbeda3628c33e3c005a9fe19b04816f3bc`.
+- Vendored `weft/lib.sh` and `weft/mesh.py` remain byte-identical; `app/static/aegis.css` remains byte-identical to Aegis `public/ui.css`. Licenses and the required ending README Credits remain preserved.
+- Packaging excludes private runtime/browser state, caches, symlinks and the user's uploads. Python/JavaScript/shell syntax, helper/CSS identity and ZIP integrity are checked separately.
+- Temporary tunnel addresses can change and require re-enrollment. Detached Linux workers do not automatically survive reboot. Systemd/reboot, independent-machine, endurance and real-provider/custom-domain acceptance remain untested.
+- Limits remain 16 MiB per file and 100,000 inventory files. Logical quotas cannot prevent direct external writes. Whole-file weighted migration, private mode-600 but unencrypted-at-rest secrets, and retention of the source until successful verified copy are unchanged.

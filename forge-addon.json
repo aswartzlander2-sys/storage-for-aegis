@@ -2,20 +2,20 @@
   "spec": 1,
   "id": "robo-storage-aegis",
   "name": "Robo Storage for Aegis",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Storage groups for IDrive E2, CloudGate and Linux. A dedicated Aegis dashboard with quotas, users, directory permissions and safe draining.",
   "author": "Robo Storage contributors",
   "license": "MIT",
   "logo": "logo.png",
   "update_card": {
     "theme": "gray",
-    "icon": "rocket",
-    "badge": "1.0.0",
-    "tagline": "One group address. Every server inherits it. Burrow handles the tunnel.",
+    "icon": "wrench",
+    "badge": "FIX",
+    "tagline": "Honor root-domain routing and save the storage ceiling before launch.",
     "highlights": [
-      "Servers inherit the group address; no repeated domain form",
-      "Use default Burrow tunnel inherits existing naming and domain settings",
-      "Live HTTPS identity checks and automatic route-status refresh"
+      "Unchecked tunnel option means root domain, never an automatic prefix",
+      "Quota edits after enrollment command generation are saved before Launch",
+      "Allocated storage and physical disk capacity are reported separately"
     ]
   },
   "requires": {

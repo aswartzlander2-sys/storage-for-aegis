@@ -123,6 +123,16 @@ def file_kind(path):
             return kind
     return 'other'
 
+def capacity_view(server):
+    """Keep physical disk size separate from the maximum managed allocation."""
+    physical = server.get('capacity')
+    physical = physical if type(physical) is int and physical >= 0 else None
+    limit = server.get('limit', 0)
+    allocated = min(limit, physical) if limit and physical is not None else (limit or physical)
+    return {'physicalCapacity': physical, 'allocationLimit': limit or None, 'allocatedCapacity': allocated,
+            'remainingAllocation': max(0, allocated - server.get('used', 0)) if allocated is not None else None}
+
+
 def visible(user, path, operation='read'):
     rules = [r for r in user.get('rules', []) if not r['path'] or path == r['path'] or path.startswith(r['path'] + '/')]
     if not rules:
@@ -176,6 +186,7 @@ class Store:
             for s in state['servers']:
                 s['hasCredentials'] = bool(s.pop('credentials', None))
                 s.pop('agentToken', None)
+                s.update(capacity_view(s))
                 s['online'] = s.get('kind') != 'linux' or time.time() - s.get('lastSeen', 0) < 45
             for u in state['users']:
                 u.pop('passwordHash', None)

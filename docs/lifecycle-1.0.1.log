@@ -1,0 +1,68 @@
+[2m· robo-storage-aegis 1.0.1: install as burrow · data /home/user/weft-reference/.weft-dev/robo-storage-aegis/data[0m
+[36m  phase    Installing Robo Storage for Aegis[0m
+[36m  progress 15 Checking port 18898[0m
+[36m  progress 40 Writing the settings[0m
+  settings in /home/user/weft-reference/.weft-dev/robo-storage-aegis/data/config.json
+[36m  progress 65 Starting it[0m
+  running as a background process (pid 5526), on http://127.0.0.1:18898/
+[36m  warn     It answers on this machine only, like its host.[0m
+[36m  progress 100 Ready[0m
+[36m  open     http://127.0.0.1:18898/[0m
+[2m· exit 0[0m
+[2m· robo-storage-aegis 1.0.1: install as burrow · data /home/user/weft-reference/.weft-dev/robo-storage-aegis/data[0m
+[36m  phase    Installing Robo Storage for Aegis[0m
+[36m  progress 15 Checking port 18898[0m
+[36m  progress 40 Writing the settings[0m
+  settings in /home/user/weft-reference/.weft-dev/robo-storage-aegis/data/config.json
+[36m  progress 65 Starting it[0m
+  running as a background process (pid 5706), on http://127.0.0.1:18898/
+[36m  warn     It answers on this machine only, like its host.[0m
+[36m  progress 100 Ready[0m
+[36m  open     http://127.0.0.1:18898/[0m
+[2m· exit 0[0m
+[2m· robo-storage-aegis 1.0.1: status as burrow · data /home/user/weft-reference/.weft-dev/robo-storage-aegis/data[0m
+  {"state":"running","url":"http://127.0.0.1:18898/","port":18898,"version":"1.0.1","detail":"on port 18898, its own service"}
+[1m  → running[0m {"state":"running","url":"http://127.0.0.1:18898/","port":18898,"version":"1.0.1","detail":"on port 18898, its own service"}
+[2m· exit 0[0m
+Idempotent second install: one current service, running
+[2m· robo-storage-aegis 1.0.1: detect as burrow · data /home/user/weft-reference/.weft-dev/robo-storage-aegis/data[0m
+  {"version":"1.0.1","url":"http://127.0.0.1:18898/","detail":"robo-storage-aegis 1.0.1 answering on port 18898"}
+[1m  → found[0m {"version":"1.0.1","url":"http://127.0.0.1:18898/","detail":"robo-storage-aegis 1.0.1 answering on port 18898"}
+[2m· exit 0[0m
+Detect: read-only filesystem check passed
+[2m· robo-storage-aegis 1.0.1: update as burrow · data /home/user/weft-reference/.weft-dev/robo-storage-aegis/data[0m
+[36m  phase    Updating Robo Storage for Aegis[0m
+[36m  progress 15 Checking port 18898[0m
+[36m  progress 40 Writing the settings[0m
+  settings in /home/user/weft-reference/.weft-dev/robo-storage-aegis/data/config.json
+[36m  progress 65 Starting it[0m
+  running as a background process (pid 5852), on http://127.0.0.1:18898/
+[36m  warn     It answers on this machine only, like its host.[0m
+[36m  progress 100 Ready[0m
+[36m  open     http://127.0.0.1:18898/[0m
+[2m· exit 0[0m
+[2m· robo-storage-aegis 1.0.1: status as burrow · data /home/user/weft-reference/.weft-dev/robo-storage-aegis/data[0m
+  {"state":"running","url":"http://127.0.0.1:18898/","port":18898,"version":"1.0.1","detail":"on port 18898, its own service"}
+[1m  → running[0m {"state":"running","url":"http://127.0.0.1:18898/","port":18898,"version":"1.0.1","detail":"on port 18898, its own service"}
+[2m· exit 0[0m
+Update: data-retention sentinel preserved
+::phase Linking the robo-storage-aegis already running
+linked: http://127.0.0.1:18898/ is run by another Weft host; this one shows it and leaves it alone
+::open http://127.0.0.1:18898/
+it was linked: the host that owns it keeps running it
+Adopted link: no second process; linked uninstall left owner running
+[2m· robo-storage-aegis 1.0.1: uninstall as burrow · data /home/user/weft-reference/.weft-dev/robo-storage-aegis/data[0m
+  stopped and removed Robo Storage for Aegis; remote files and agents were left intact
+[2m· exit 0[0m
+[2m· robo-storage-aegis 1.0.1: install as burrow · data /home/user/weft-reference/.weft-dev/robo-storage-aegis/data[0m
+[36m  phase    Installing Robo Storage for Aegis[0m
+[36m  progress 15 Checking port 18898[0m
+  Port 18898 is used by something else. Pick another one in the addon's settings.
+[2m· exit 1[0m
+Foreign port: installation refused; other application still answering
+[2m· robo-storage-aegis 1.0.1: uninstall as burrow · data /home/user/weft-reference/.weft-dev/robo-storage-aegis/data[0m
+[36m  warn     Stale service PID was ignored; no unrelated process was signalled.[0m
+  stopped and removed Robo Storage for Aegis; remote files and agents were left intact
+[2m· exit 0[0m
+Stale PID: unrelated process was not signalled
+Lifecycle/linking/idempotence/ownership acceptance: passed

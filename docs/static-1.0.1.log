@@ -1,0 +1,7 @@
+Vendored Weft helpers: byte-identical
+Aegis stylesheet: byte-identical
+Python / JavaScript / shell syntax: PASS
+Runtime release labels: 1.0.1
+Exact ending README Credits: PASS
+Logo square and <=512 KB: PASS
+No private certificates/keys or symlinks in addon tree: PASS

@@ -1,0 +1,58 @@
+REAL PUBLIC HTTPS: Burrow-created Cloudflare enrollment route returned app identity + nonce, certificate verification enabled
+Live source: generated curl executed over real public HTTPS; write/read/delete storage probe completed
+Quota regression: command generated with no limit, then edited to 1 GB; Launch saved 1,000,000,000 bytes and edited name; physical disk remains separate
+Actual signed-in UI: Add Server → Linux → generated public curl → live Verified → Verify & Launch succeeded, with no domain fields
+Live destination: generated curl executed over real public HTTPS; write/read/delete storage probe completed
+Two actual workers became Verified only after authenticated public HTTPS heartbeats
+Default tunnel: stale nested domain ignored; one group tunnel added, shared agent tunnel, no per-server tunnels; both servers inherit group /s/ID/ addresses
+Public group: anonymous request gets native HTTP Basic challenge; administration is not exposed
+Actual public group and inherited per-server file-browser URLs returned 200 after Basic login
+Real public 1 GB ceiling: 999,999,999 bytes scanned; a two-byte write returned HTTP 507; physical disk size did not expand allocation
+Traceback (most recent call last):
+  File "/home/user/robo-storage-aegis/tests/live_acceptance.py", line 152, in <module>
+    assert upload('small/too-big.txt',b'x'*11)==507
+           ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/robo-storage-aegis/tests/live_acceptance.py", line 149, in upload
+    def upload(path,data):return group_call('api/upload',{'server':b['id'],'path':path,'data':base64.b64encode(data).decode()})[0]
+                                 ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/robo-storage-aegis/tests/live_acceptance.py", line 125, in group_call
+    def group_call(path,body=None):return public(prefix+path,body,username,password)
+                                          ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/robo-storage-aegis/tests/live_acceptance.py", line 27, in public
+    r=urllib.request.urlopen(req,timeout=40);break
+  File "/usr/local/lib/python3.13/urllib/request.py", line 189, in urlopen
+    return opener.open(url, data, timeout)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/urllib/request.py", line 489, in open
+    response = self._open(req, data)
+  File "/usr/local/lib/python3.13/urllib/request.py", line 506, in _open
+    result = self._call_chain(self.handle_open, protocol, protocol +
+                              '_open', req)
+  File "/usr/local/lib/python3.13/urllib/request.py", line 466, in _call_chain
+    result = func(*args)
+  File "/usr/local/lib/python3.13/urllib/request.py", line 1379, in https_open
+    return self.do_open(http.client.HTTPSConnection, req,
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        context=self._context)
+                        ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/urllib/request.py", line 1335, in do_open
+    r = h.getresponse()
+  File "/usr/local/lib/python3.13/http/client.py", line 1478, in getresponse
+    response.begin()
+    ~~~~~~~~~~~~~~^^
+  File "/usr/local/lib/python3.13/http/client.py", line 343, in begin
+    version, status, reason = self._read_status()
+                              ~~~~~~~~~~~~~~~~~^^
+  File "/usr/local/lib/python3.13/http/client.py", line 304, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+               ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/socket.py", line 723, in readinto
+    return self._sock.recv_into(b)
+           ~~~~~~~~~~~~~~~~~~~~^^^
+  File "/usr/local/lib/python3.13/ssl.py", line 1315, in recv_into
+    return self.read(nbytes, buffer)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/ssl.py", line 1149, in read
+    return self._sslobj.read(len, buffer)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+TimeoutError: The read operation timed out

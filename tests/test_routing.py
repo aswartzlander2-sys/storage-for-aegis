@@ -46,6 +46,22 @@ class RouteViewTests(unittest.TestCase):
         (self.root/'published-routes.json').write_text('{')
         self.assertEqual(routing_view(self.root,self.state(),1000)['servers'][0]['url'],'')
 
+    def test_old_unchecked_prefixed_snapshot_is_blocked_immediately(self):
+        self.write(useDefaultTunnel=False,base='apps.example.com')
+        state=self.state();state['groups'][0].update(useDefaultTunnel=False,base='apps.example.com',sub='group')
+        view=routing_view(self.root,state,1001)
+        self.assertEqual(view['groups'][0]['routeState'],'blocked');self.assertEqual(view['servers'][0]['url'],'');self.assertEqual(view['groups'][0]['proposedUrl'],'')
+    def test_corrupt_root_route_shape_fails_closed(self):
+        (self.root/'published-routes.json').write_text(json.dumps({'updated':1000,'groups':{'a'*16:['corrupt']}}))
+        state=self.state();state['groups'][0].update(useDefaultTunnel=False,base='example.com',sub='group')
+        self.assertEqual(routing_view(self.root,state,1001)['groups'][0]['routeState'],'blocked')
+    def test_root_proof_must_match_exact_requested_address(self):
+        state=self.state();state['groups'][0].update(useDefaultTunnel=False,base='example.com',sub='group')
+        self.write(useDefaultTunnel=False,rootDomain='example.com')
+        self.assertEqual(routing_view(self.root,state,1001)['groups'][0]['routeState'],'ready')
+        self.write(useDefaultTunnel=False,rootDomain='example.com',url='https://group.apps.example.com')
+        self.assertEqual(routing_view(self.root,state,1001)['groups'][0]['routeState'],'blocked')
+
 class GroupModelTests(unittest.TestCase):
     def setUp(self):
         self.tmp=tempfile.TemporaryDirectory();self.addCleanup(self.tmp.cleanup);self.store=Store(self.tmp.name)
@@ -57,8 +73,8 @@ class GroupModelTests(unittest.TestCase):
         self.store.group({'name':'First','sub':'same','domain':'a.invalid'})
         with self.assertRaises(Problem):self.store.group({'name':'Second','sub':'same','domain':'b.invalid'})
     def test_explicit_custom_base_is_preserved(self):
-        g=self.store.group({'name':'Custom','sub':'custom','base':'apps.example.com','useDefaultTunnel':False})
-        self.assertFalse(g['useDefaultTunnel']);self.assertEqual(g['base'],'apps.example.com')
+        g=self.store.group({'name':'Custom','sub':'custom','base':'example.com','useDefaultTunnel':False})
+        self.assertFalse(g['useDefaultTunnel']);self.assertEqual(g['base'],'example.com')
 
 class RoutingHTTPTests(test_enrollment.EnrollmentHTTPTests):
     @classmethod
@@ -68,14 +84,15 @@ class RoutingHTTPTests(test_enrollment.EnrollmentHTTPTests):
             def log_message(self,*args):pass
             def do_POST(self):
                 body=json.loads(self.rfile.read(int(self.headers.get('Content-Length',0))))
-                assert self.headers['X-Burrow-Client']=='robo-storage-aegis/1.0.0'
+                assert self.headers['X-Burrow-Client']=='robo-storage-aegis/1.0.1'
                 if self.path.endswith('/enrollment'):
                     self.send_response(200);self.end_headers();self.wfile.write(b'{"state":"pending"}');return
                 assert self.path.endswith('/publish'),self.path
                 cls.published.append(body)
-                if body.get('useDefaultTunnel') is False and body.get('base')!='apps.example.com':
+                if body.get('useDefaultTunnel') is False and body.get('base')!='example.com':
                     self.send_response(400);self.end_headers();self.wfile.write(b'{"error":"Select a configured tunnel domain or use default Burrow tunnel."}');return
-                route={'port':7000,'url':'https://'+body['sub']+'.apps.example.com','state':'ready','base':'apps.example.com','checkedAt':time.time(),'useDefaultTunnel':body['useDefaultTunnel']}
+                base='apps.example.com' if body['useDefaultTunnel'] else body['base']
+                route={'rootDomain':None if body['useDefaultTunnel'] else base,'port':7000,'url':'https://'+body['sub']+'.'+base,'state':'ready','base':base,'checkedAt':time.time(),'useDefaultTunnel':body['useDefaultTunnel']}
                 (cls.data/'published-routes.json').write_text(json.dumps({'updated':time.time(),'groups':{body['group']:route}}))
                 self.send_response(200);self.end_headers();self.wfile.write(json.dumps(route).encode())
         cls.control=socketserver.UnixStreamServer(str(cls.data/'control.sock'),Control)
@@ -126,9 +143,9 @@ class RoutingHTTPTests(test_enrollment.EnrollmentHTTPTests):
         self.assertEqual(status,200);self.assertEqual(json.loads(body)['group'],g['id']);self.assertEqual(json.loads(body)['probe'],nonce)
         self.assertEqual(self.call('/g/'+g['id']+'/',auth=False)[0],401)
     def test_custom_checkbox_is_respected_without_changing_global_naming(self):
-        g=self.group(useDefaultTunnel=False,base='apps.example.com')
+        g=self.group(useDefaultTunnel=False,base='example.com')
         self.call('/api/groups/'+g['id']+'/users',{'username':'test-user','password':'SYNTHETIC-test-password','enabled':True,'rules':[{'path':'','access':'write'}]})
         self.assertEqual(self.call('/api/groups/'+g['id']+'/launch',{})[0],200)
-        self.assertFalse(self.published[-1]['useDefaultTunnel']);self.assertEqual(self.published[-1]['base'],'apps.example.com')
+        self.assertFalse(self.published[-1]['useDefaultTunnel']);self.assertEqual(self.published[-1]['base'],'example.com')
 
 if __name__=='__main__':unittest.main()

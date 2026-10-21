@@ -17,6 +17,11 @@ def routing_view(directory, state, now=None):
     for group in state['groups']:
         group.setdefault('useDefaultTunnel',True)
         route=routes.get(group['id'])
+        if group['useDefaultTunnel'] is False:
+            expected='https://'+group.get('sub','')+'.'+group.get('base','')
+            root_ok=isinstance(route,dict) and route.get('useDefaultTunnel') is False and route.get('rootDomain')==group.get('base') and route.get('base')==group.get('base')
+            if not root_ok or (route.get('url') and route['url'].rstrip('/')!=expected) or (route.get('proposedUrl') and route['proposedUrl'].rstrip('/')!=expected):
+                route={**(route if isinstance(route,dict) else {}),'state':'blocked','url':'','proposedUrl':'','detail':'Root-level routing has not been confirmed. Select the root domain and relaunch; no Burrow-prefixed fallback will be used.'}
         if isinstance(route,dict):
             ready=route.get('state')=='ready'
             try: ready=ready and -30<=now-float(route.get('checkedAt',0))<=90

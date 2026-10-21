@@ -1,4 +1,4 @@
-"""1.0.0 real Aegis-host acceptance on a NEW DISPOSABLE host, never production.
+"""1.0.1 real Aegis-host acceptance on a NEW DISPOSABLE host, never production.
 Usage: python tests/host_refresh.py http://127.0.0.1:4310 /absolute/test-aegis-home
 Runs install/update/uninstall and keeps the disposable addon data for inspection.
 """
@@ -39,9 +39,9 @@ with sync_playwright() as p:
         raise AssertionError('Host job timeout')
     rec=next((a for a in host('/__gate/api/addons')['addons'] if a['id']=='robo-storage-aegis'),None)
     if rec is None: rec=host('/__gate/api/addons/add',{'source':str(ROOT)})['addon']
-    assert rec['version']=='1.0.0'
+    assert rec['version']=='1.0.1'
     assert 'PUBLIC_URL' not in [s['key'] for s in rec['settings']]
-    print('Actual Aegis add: accepted 1.0.0; no enrollment URL setting')
+    print('Actual Aegis add: accepted 1.0.1; no enrollment URL setting')
     job('install',{'settings':{'PORT':8799,'ADMIN_USER':'admin','ADMIN_PASSWORD':''}})
     page.goto(BASE+'/__gate/robo-storage/')
     expect(page.get_by_role('heading',name='Server groups',exact=True)).to_be_visible()
