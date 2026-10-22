@@ -1,0 +1,2222 @@
+
+    .material-icons { font-family: 'Material Icons'; font-weight: normal; font-style: normal; font-size: 20px; line-height: 1; letter-spacing: normal; text-transform: none; display: inline-block; white-space: nowrap; word-wrap: normal; direction: ltr; -webkit-font-smoothing: antialiased; }
+    .material-icons.md-18 { font-size: 18px; }
+    .material-icons.md-20 { font-size: 20px; }
+  
+
+    body { font-family: 'Helvetica Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 500; letter-spacing: -0.01em; }
+    code, pre { font-family: 'JetBrains Mono', monospace; }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(15,23,42,0.06); }
+    @media (prefers-color-scheme: dark) { ::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); } }
+    ::-webkit-scrollbar-thumb { background: rgba(91, 134, 224, 0.45); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(122, 168, 255, 0.8); }
+
+    /* PDF viewers: plain grey Google-Drive-style scrollbar, slightly thicker than the site default */
+    .pdf-scroll { scrollbar-width: thin; scrollbar-color: rgba(140, 145, 152, 0.65) transparent; }
+    .pdf-scroll::-webkit-scrollbar { width: 10px; height: 10px; }
+    .pdf-scroll::-webkit-scrollbar-track { background: transparent; }
+    .pdf-scroll::-webkit-scrollbar-thumb {
+      background: rgba(140, 145, 152, 0.60);
+      border-radius: 9999px;
+      border: 2px solid transparent;
+      background-clip: padding-box;
+    }
+    .pdf-scroll::-webkit-scrollbar-thumb:hover {
+      background: rgba(140, 145, 152, 0.85);
+      border: 2px solid transparent;
+      background-clip: padding-box;
+    }
+
+    /* Custom Audio Player Range Input */
+    input[type=range] {
+      -webkit-appearance: none;
+      background: transparent;
+    }
+    input[type=range]:focus { outline: none; }
+    input[type=range]::-webkit-slider-runnable-track {
+      width: 100%;
+      height: 6px;
+      cursor: pointer;
+      background: rgba(15,23,42,0.10);
+      border-radius: 9999px;
+    }
+    @media (prefers-color-scheme: dark) {
+      input[type=range]::-webkit-slider-runnable-track { background: rgba(255, 255, 255, 0.14); }
+    }
+    input[type=range]::-webkit-slider-thumb {
+      height: 14px;
+      width: 14px;
+      border-radius: 50%;
+      background: #305CDE;
+      cursor: pointer;
+      -webkit-appearance: none;
+      margin-top: -4px;
+      box-shadow: 0 0 10px rgba(48, 92, 222, 0.55);
+    }
+
+    /* Soundwave equalizer animation */
+    @keyframes barBounce {
+      0%, 100% { height: 4px; }
+      50% { height: 20px; }
+    }
+    .wave-bar {
+      width: 3px;
+      background-color: #305CDE;
+      border-radius: 2px;
+      display: inline-block;
+    }
+    .wave-playing .wave-bar:nth-child(1) { animation: barBounce 1s infinite ease-in-out; }
+    .wave-playing .wave-bar:nth-child(2) { animation: barBounce 0.8s infinite ease-in-out 0.2s; }
+    .wave-playing .wave-bar:nth-child(3) { animation: barBounce 1.2s infinite ease-in-out 0.4s; }
+    .wave-playing .wave-bar:nth-child(4) { animation: barBounce 0.9s infinite ease-in-out 0.1s; }
+    .wave-playing .wave-bar:nth-child(5) { animation: barBounce 1.1s infinite ease-in-out 0.3s; }
+
+    /* ==== Robo Universal UI 3.0 · glassmorphism materials — light + dark via prefers-color-scheme ==== */
+    .glass {
+      background: rgba(255, 255, 255, 0.58);
+      backdrop-filter: blur(16px) saturate(150%);
+      -webkit-backdrop-filter: blur(16px) saturate(150%);
+      border: 1px solid rgba(255, 255, 255, 0.65);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.85);
+    }
+    .glass-strong {
+      background: rgba(255, 255, 255, 0.76);
+      backdrop-filter: blur(22px) saturate(170%);
+      -webkit-backdrop-filter: blur(22px) saturate(170%);
+      border: 1px solid rgba(255, 255, 255, 0.70);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.44);
+      backdrop-filter: blur(14px) saturate(140%);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
+      border: 1px solid rgba(255, 255, 255, 0.55);
+    }
+    .glass-chip {
+      background: rgba(255, 255, 255, 0.62);
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 4px 18px rgba(0,0,0,0.06);
+    }
+    @media (prefers-color-scheme: dark) {
+      .glass {
+        background: rgba(15, 23, 42, 0.55);
+        border-color: rgba(255, 255, 255, 0.10);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      }
+      .glass-strong {
+        background: rgba(15, 23, 42, 0.72);
+        border-color: rgba(255, 255, 255, 0.12);
+        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      }
+      .glass-panel {
+        background: rgba(15, 23, 42, 0.38);
+        border-color: rgba(255, 255, 255, 0.08);
+        box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+      }
+      .glass-chip {
+        background: rgba(255, 255, 255, 0.06);
+        border-color: rgba(255, 255, 255, 0.10);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      }
+    }
+    /* Storage tab in the sidebar (same metrics as the category tabs) */
+    .storage-seg { transition: filter .15s ease, opacity .15s ease; }
+    .storage-seg:hover { filter: brightness(1.15); }
+    /* Usage line: Helvetica Medium, bold */
+    .storage-usage-line, .storage-usage-line * {
+      font-family: 'Helvetica Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 700;
+    }
+    /* Perfect-circle icon-only buttons (refresh, menu, close, options...) */
+    .icon-circle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      border-radius: 9999px;
+      aspect-ratio: 1 / 1;
+      flex: 0 0 auto;
+      line-height: 1;
+    }
+    .icon-circle-lg { width: 2.5rem;  height: 2.5rem; }
+    .icon-circle-md { width: 2rem;    height: 2rem; }
+    .icon-circle-sm { width: 1.75rem; height: 1.75rem; }
+    /* Robo white pill CTA (site banner / Sign-In button style) */
+    .robo-btn-white {
+      background: rgba(255, 255, 255, 0.95);
+      color: #0f172a;
+      border-radius: 9999px;
+      font-weight: 800;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+    }
+    .robo-btn-white:hover { background: #fff; transform: translateY(-1px); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
+    .robo-btn-white:active { transform: scale(0.96); }
+    /* Robo link style (#page-content a) */
+    .robo-link {
+      font-weight: 700;
+      color: #7aa8ff;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(122, 168, 255, 0.4);
+      transition: color .2s ease, border-color .2s ease;
+    }
+    .robo-link:hover { color: #5b86e0; border-bottom-color: rgba(91, 134, 224, 0.7); }
+    /* Ambient aurora backdrop (gives the glass something to blur) */
+    .aurora { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+    .aurora-blob { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.18; }
+    @media (prefers-color-scheme: dark) { .aurora-blob { opacity: 0.30; } .aurora-blob-2 { opacity: 0.22 !important; } .aurora-blob-3 { opacity: 0.18 !important; } }
+    .aurora-blob-1 { width: 46vw; height: 46vw; left: -12vw; top: -18vw; background: radial-gradient(circle, #305CDE 0%, rgba(48, 92, 222, 0) 65%); animation: auroraDrift1 22s ease-in-out infinite alternate; }
+    .aurora-blob-2 { width: 40vw; height: 40vw; right: -10vw; top: 10vh; background: radial-gradient(circle, #7c3aed 0%, rgba(124, 58, 237, 0) 65%); opacity: 0.14; animation: auroraDrift2 26s ease-in-out infinite alternate; }
+    .aurora-blob-3 { width: 36vw; height: 36vw; left: 24vw; bottom: -20vw; background: radial-gradient(circle, #0ea5e9 0%, rgba(14, 165, 233, 0) 65%); opacity: 0.10; animation: auroraDrift3 30s ease-in-out infinite alternate; }
+    @keyframes auroraDrift1 { to { transform: translate(6vw, 8vh) scale(1.12); } }
+    @keyframes auroraDrift2 { to { transform: translate(-5vw, 6vh) scale(1.08); } }
+    @keyframes auroraDrift3 { to { transform: translate(4vw, -7vh) scale(1.15); } }
+    @media (prefers-reduced-motion: reduce) { .aurora-blob { animation: none; } }
+
+    /* Google Drive viewer glass — copied from screenshot */
+    .drive-glass-dark {
+      background: rgba(32,33,36,0.88);
+      backdrop-filter: blur(20px) saturate(140%);
+      -webkit-backdrop-filter: blur(20px) saturate(140%);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+    .drive-pill-dark {
+      background: rgba(36,37,40,0.55);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.12);
+    }
+    .drive-pill-white {
+      background: #fff;
+      border-radius: 9999px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.35);
+    }
+    .drive-progress {
+      height: 4px;
+      background: rgba(255,255,255,0.28);
+      border-radius: 9999px;
+      position: relative;
+      cursor: pointer;
+      box-shadow: 0 1px 8px rgba(0,0,0,0.25);
+    }
+    .drive-progress-fill {
+      position: absolute;
+      left: 0; top: 0;
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+      border-radius: 9999px;
+      pointer-events: none;
+      transform: scaleX(0);
+      transform-origin: left center;
+      will-change: transform;
+    }
+    .media-play-btn {
+      width: 84px;
+      height: 44px;
+      border-radius: 9999px;
+      background: #fff;
+      color: #000;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.35);
+      border: 1px solid transparent;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      overflow: hidden;
+      transition: border-radius .34s cubic-bezier(.22,1,.36,1), background .34s ease, box-shadow .34s ease, border-color .34s ease, color .28s ease, width .34s cubic-bezier(.22,1,.36,1), height .34s cubic-bezier(.22,1,.36,1), transform .2s ease;
+    }
+    .media-play-btn.lg { width: 96px; height: 48px; }
+    /* Playing: identical chrome to the time/mute pill beside it (.drive-pill-dark) */
+    .media-play-btn.is-playing {
+      width: 84px;
+      height: 52px;
+      border-radius: 20px;
+      background: rgba(36, 37, 40, 0.55);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      color: #fff;
+    }
+    .media-play-btn.lg.is-playing { width: 96px; height: 56px; border-radius: 20px; }
+    /* Audio player neighbors use .glass-strong — match that recipe instead */
+    .media-play-btn.use-app-glass.is-playing {
+      background: rgba(255, 255, 255, 0.76);
+      backdrop-filter: blur(22px) saturate(170%);
+      -webkit-backdrop-filter: blur(22px) saturate(170%);
+      border: 1px solid rgba(255, 255, 255, 0.70);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      color: #0f172a;
+    }
+    @media (prefers-color-scheme: dark) {
+      .media-play-btn.use-app-glass.is-playing {
+        background: rgba(15, 23, 42, 0.72);
+        border-color: rgba(255, 255, 255, 0.12);
+        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        color: #fff;
+      }
+    }
+    .drive-progress-thumb {
+      width: 3px;
+      height: 16px;
+      background: #fff;
+      border-radius: 9999px;
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      pointer-events: none;
+      will-change: transform;
+    }
+    .drive-menu-item {
+      background: rgba(255,255,255,0.09);
+      backdrop-filter: blur(16px) saturate(160%);
+      -webkit-backdrop-filter: blur(16px) saturate(160%);
+      border: 1px solid rgba(255,255,255,0.13);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.09), 0 4px 16px rgba(0,0,0,0.30);
+    }
+    .drive-menu-item:hover {
+      background: rgba(255,255,255,0.10);
+      border-color: rgba(255,255,255,0.12);
+      transform: translateY(-0.5px);
+    }
+    .drive-menu-item.active {
+      background: rgba(48,92,222,0.18);
+      border-color: rgba(122,168,255,0.28);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 2px 12px rgba(0,0,0,0.25);
+    }
+    .drive-menu {
+      background: rgba(32,33,36,0.58);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border: 1px solid rgba(255,255,255,0.16);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.14);
+      border-radius: 20px;
+    }
+    .drive-video-wrap {
+      position: relative;
+      background: #000;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .drive-video-wrap,
+    .audio-wrap,
+    .media-play-btn,
+    [data-drive-menu],
+    [data-audio-menu] {
+      font-family: 'Helvetica Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 700;
+    }
+    .drive-video-wrap .font-mono,
+    .audio-wrap .font-mono,
+    [data-drive-menu] .font-mono,
+    [data-audio-menu] .font-mono {
+      font-family: 'Helvetica Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+      font-weight: 700 !important;
+    }
+    /* Now-playing: zoomed cover fills every pixel, then a full glass-strong sheet over it */
+    .audio-art-bg {
+      position: absolute;
+      max-width: none;
+      max-height: none;
+      pointer-events: none;
+      will-change: transform;
+    }
+    .audio-wrap { background: transparent !important; }
+    .audio-wrap:not(.has-album-art) .audio-art-bg { display: none !important; }
+    .audio-wrap.has-album-art #audioFileIcon { display: none; }
+    .audio-wrap:not(.has-album-art) #audioAlbumArtTile { display: none; }
+    .drive-controls-hidden {
+      opacity: 0 !important;
+      pointer-events: none !important;
+      transform: translateY(8px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+    .drive-controls-visible {
+      opacity: 1 !important;
+      pointer-events: auto !important;
+      transform: translateY(0);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    /* Expanded preview modal entrance animation */
+    @keyframes previewModalIn {
+      from { opacity: 0; transform: scale(0.94) translateY(14px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .preview-modal-open { animation: previewModalIn 0.18s ease-out; }
+
+    /* ==== Mobile responsiveness: sidebar = slide-in overlay, preview = bottom sheet, no horizontal scrolling ==== */
+    html, body { max-width: 100%; }
+    @media (max-width: 767.98px) {
+      html, body { overflow-x: hidden; }
+      /* Left sidebar becomes a fixed slide-in panel opened by the hamburger button */
+      #sidebarAside {
+        display: flex;               /* overrides `hidden` on mobile */
+        position: fixed;
+        top: 0; bottom: 0; left: 0;
+        width: min(80vw, 320px);
+        margin: 0;
+        z-index: 50;
+        border-radius: 0 20px 20px 0;
+        transform: translateX(-105%);
+        transition: transform .3s ease;
+      }
+      #sidebarAside.sidebar-open { transform: translateX(0); }
+      /* Right preview drawer becomes a bottom sheet occupying the lower half of the screen */
+      #previewDrawer {
+        top: auto;
+        left: 0; right: 0;
+        width: 100%;
+        height: 50vh;
+        border-radius: 20px 20px 0 0;
+        transform: translateY(105%);
+      }
+      #previewDrawer:not(.translate-x-full) { transform: translateY(0); }
+    }
+  
+
+    /* Drive/NexChat-style fullscreen media viewer — app UI remains unchanged. */
+    #expandedPreviewModal {
+      padding: 0 !important;
+      background: rgba(3, 5, 10, .84) !important;
+      backdrop-filter: blur(14px) saturate(72%) !important;
+      -webkit-backdrop-filter: blur(14px) saturate(72%) !important;
+      align-items: stretch !important;
+      justify-content: stretch !important;
+    }
+    #expandedModalCard {
+      width: 100vw !important;
+      height: 100vh !important;
+      max-width: none !important;
+      max-height: none !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+    #expandedModalCard > div:first-child {
+      height: 64px;
+      padding: 10px 14px !important;
+      border: 0 !important;
+      background: linear-gradient(to bottom, rgba(3,5,10,.62), rgba(3,5,10,0)) !important;
+      position: relative;
+      z-index: 5;
+    }
+    #expandedPreviewIcon {
+      width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center;
+      color: #5b9cff !important; font-size: 16px !important;
+    }
+    #expandedPreviewFileName { color: #f5f7fb !important; font-size: 13px !important; font-weight: 700 !important; }
+    #expandedModalCard > div:first-child .icon-circle {
+      width: 34px !important; height: 34px !important; color: rgba(255,255,255,.78) !important;
+      background: transparent !important; border: 0 !important;
+    }
+    #expandedModalCard > div:first-child .icon-circle:hover { color: #fff !important; background: rgba(255,255,255,.09) !important; }
+    #expandedPreviewViewer {
+      flex: 1 1 auto !important;
+      background: transparent !important;
+      margin-top: -64px;
+      min-height: 100vh !important;
+    }
+    #expandedPreviewContent {
+      width: 100% !important; height: 100% !important; min-height: 100vh !important;
+      padding: 76px 44px 42px !important; overflow: auto !important;
+    }
+    #expandedPreviewContent > .drive-image-stage {
+      width: 100%; height: 100%; min-height: calc(100vh - 118px);
+      display: flex; align-items: center; justify-content: center;
+      background: transparent !important; overflow: visible !important;
+    }
+    #expandedPreviewContent > .drive-image-stage img {
+      display: block; width: auto; height: auto;
+      max-width: min(92vw, 1500px) !important;
+      max-height: calc(100vh - 126px) !important;
+      object-fit: contain; border-radius: 10px;
+      box-shadow: 0 18px 70px rgba(0,0,0,.52);
+      cursor: zoom-in;
+    }
+    #expandedModalCard.preview-modal-open { animation: drivePreviewFade .18s ease-out !important; }
+    @keyframes drivePreviewFade { from { opacity:0; } to { opacity:1; } }
+    @media (max-width: 640px) {
+      #expandedModalCard > div:first-child { height: 58px; padding: 8px 9px !important; }
+      #expandedPreviewViewer { margin-top: -58px; }
+      #expandedPreviewContent { padding: 68px 12px 24px !important; }
+      #expandedPreviewContent > .drive-image-stage { min-height: calc(100vh - 92px); }
+      #expandedPreviewContent > .drive-image-stage img { max-width: 96vw !important; max-height: calc(100vh - 100px) !important; }
+    }
+  
+    #expandedPreviewMeta { color: rgba(255,255,255,.48) !important; line-height: 1.2; margin-top: 2px; }
+    #previewDrawer.preview-info-over-modal {
+      position: fixed !important; top: 10px !important; right: 10px !important; bottom: 10px !important;
+      left: auto !important; height: auto !important; width: min(430px, calc(100vw - 20px)) !important;
+      z-index: 90 !important; border-radius: 18px !important;
+      background: rgba(15,18,27,.94) !important; border: 1px solid rgba(255,255,255,.11) !important;
+      box-shadow: 0 24px 80px rgba(0,0,0,.7) !important;
+      backdrop-filter: blur(24px) saturate(130%) !important;
+      -webkit-backdrop-filter: blur(24px) saturate(130%) !important;
+    }
+    @media (max-width: 640px) {
+      #previewDrawer.preview-info-over-modal { top:auto !important; right:0 !important; bottom:0 !important; left:0 !important; width:100% !important; height:62vh !important; border-radius:20px 20px 0 0 !important; }
+    }
+
+    /* The information panel belongs to the dark fullscreen viewer, regardless of OS theme. */
+    #previewDrawer.preview-info-over-modal,
+    #previewDrawer.preview-info-over-modal .glass-chip,
+    #previewDrawer.preview-info-over-modal .glass-strong {
+      color-scheme: dark !important;
+      color: #eef0f6 !important;
+    }
+    #previewDrawer.preview-info-over-modal > div { border-color: rgba(255,255,255,.09) !important; }
+    #previewDrawer.preview-info-over-modal .glass-chip {
+      background: rgba(255,255,255,.055) !important;
+      border-color: rgba(255,255,255,.10) !important;
+      box-shadow: inset 0 1px rgba(255,255,255,.035) !important;
+    }
+    #previewDrawer.preview-info-over-modal .text-slate-900,
+    #previewDrawer.preview-info-over-modal .text-slate-800,
+    #previewDrawer.preview-info-over-modal .text-slate-700,
+    #previewDrawer.preview-info-over-modal .dark\:text-slate-100,
+    #previewDrawer.preview-info-over-modal .dark\:text-slate-200 { color:#eef0f6 !important; }
+    #previewDrawer.preview-info-over-modal .text-slate-600,
+    #previewDrawer.preview-info-over-modal .text-slate-500,
+    #previewDrawer.preview-info-over-modal .text-slate-400,
+    #previewDrawer.preview-info-over-modal .dark\:text-slate-300,
+    #previewDrawer.preview-info-over-modal .dark\:text-slate-400,
+    #previewDrawer.preview-info-over-modal .dark\:text-slate-500 { color:#9ca3b5 !important; }
+    #previewDrawer.preview-info-over-modal input,
+    #previewDrawer.preview-info-over-modal textarea {
+      background:rgba(0,0,0,.28) !important; color:#eef0f6 !important;
+      border-color:rgba(255,255,255,.12) !important;
+    }
+    #previewDrawer.preview-info-over-modal #previewViewer,
+    #previewDrawer.preview-info-over-modal .bg-white\/70,
+    #previewDrawer.preview-info-over-modal .dark\:bg-black\/30 { background:rgba(5,7,12,.52) !important; }
+    #previewDrawer.preview-info-over-modal .ace_editor {
+      background:#0c0f16 !important; border-color:rgba(255,255,255,.12) !important;
+    }
+    #previewDrawer.preview-info-over-modal #copySignedUrlBtn,
+    #previewDrawer.preview-info-over-modal #renameFileBtn {
+      background:rgba(255,255,255,.08) !important; color:#eef0f6 !important;
+      border:1px solid rgba(255,255,255,.1) !important;
+    }
+    /* Expanded code files use the same edge-to-edge dark viewer as images. */
+    #expandedPreviewContent .ace_editor { border-radius:12px; box-shadow:0 18px 70px rgba(0,0,0,.45); }
+
+    /* Stronger glassmorphism for the fullscreen experience. */
+    #expandedPreviewModal {
+      background: rgba(5, 7, 13, .66) !important;
+      backdrop-filter: blur(22px) saturate(135%) brightness(.62) !important;
+      -webkit-backdrop-filter: blur(22px) saturate(135%) brightness(.62) !important;
+    }
+    #expandedModalCard > div:first-child {
+      top: 10px; left: 12px; right: 12px; width: calc(100% - 24px);
+      height: 54px !important; padding: 8px 10px !important;
+      border: 1px solid rgba(255,255,255,.11) !important;
+      border-radius: 17px !important;
+      background: linear-gradient(135deg,rgba(28,31,40,.66),rgba(13,16,24,.42)) !important;
+      box-shadow: 0 14px 44px rgba(0,0,0,.3), inset 0 1px rgba(255,255,255,.12) !important;
+      backdrop-filter: blur(24px) saturate(160%) !important;
+      -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
+    }
+    #expandedModalCard > div:first-child .icon-circle:hover {
+      background:rgba(255,255,255,.11) !important;
+      box-shadow:inset 0 1px rgba(255,255,255,.08) !important;
+    }
+    #expandedPreviewContent .audio-wrap,
+    #expandedPreviewContent > .glass-strong {
+      border:1px solid rgba(255,255,255,.14) !important;
+      background:linear-gradient(135deg,rgba(29,33,45,.64),rgba(12,15,23,.48)) !important;
+      box-shadow:0 28px 80px rgba(0,0,0,.42),inset 0 1px rgba(255,255,255,.13) !important;
+      backdrop-filter:blur(28px) saturate(165%) !important;
+      -webkit-backdrop-filter:blur(28px) saturate(165%) !important;
+    }
+    #expandedPreviewContent .drive-pill-dark,
+    #expandedPreviewContent .media-play-btn.is-playing {
+      background:rgba(24,27,36,.55) !important;
+      border-color:rgba(255,255,255,.15) !important;
+      box-shadow:0 12px 34px rgba(0,0,0,.38),inset 0 1px rgba(255,255,255,.13) !important;
+      backdrop-filter:blur(22px) saturate(170%) !important;
+      -webkit-backdrop-filter:blur(22px) saturate(170%) !important;
+    }
+    #previewDrawer.preview-info-over-modal {
+      background:linear-gradient(145deg,rgba(24,27,37,.82),rgba(10,13,20,.74)) !important;
+      border-color:rgba(255,255,255,.14) !important;
+      box-shadow:0 30px 90px rgba(0,0,0,.58),inset 0 1px rgba(255,255,255,.11) !important;
+      backdrop-filter:blur(30px) saturate(165%) !important;
+      -webkit-backdrop-filter:blur(30px) saturate(165%) !important;
+    }
+    @media (max-width:640px) {
+      #expandedModalCard > div:first-child { top:7px; left:7px; right:7px; width:calc(100% - 14px); }
+    }
+
+    /* Keep the moved audio player dark-glass in light OS mode too. */
+    #expandedPreviewContent #audioPlayerWrap {
+      background: rgba(8,11,18,.42) !important;
+      border: 1px solid rgba(255,255,255,.13) !important;
+      box-shadow: 0 30px 90px rgba(0,0,0,.48), inset 0 1px rgba(255,255,255,.12) !important;
+    }
+    #expandedPreviewContent #audioGlassSheet {
+      background: linear-gradient(145deg,rgba(26,31,43,.72),rgba(9,12,20,.62)) !important;
+      border: 0 !important;
+      box-shadow: inset 0 1px rgba(255,255,255,.1) !important;
+      backdrop-filter: blur(30px) saturate(150%) !important;
+      -webkit-backdrop-filter: blur(30px) saturate(150%) !important;
+    }
+    #expandedPreviewContent #audioIconSquare,
+    #expandedPreviewContent .media-play-btn.use-app-glass.is-playing {
+      background: rgba(18,22,31,.62) !important;
+      color: #fff !important;
+      border: 1px solid rgba(255,255,255,.14) !important;
+      box-shadow: 0 20px 55px rgba(0,0,0,.4), inset 0 1px rgba(255,255,255,.12) !important;
+      backdrop-filter: blur(22px) saturate(150%) !important;
+      -webkit-backdrop-filter: blur(22px) saturate(150%) !important;
+    }
+    #expandedPreviewContent #audioPlayerWrap .drive-pill-dark {
+      color:#fff !important;
+      background:rgba(12,16,24,.62) !important;
+      border:1px solid rgba(255,255,255,.14) !important;
+    }
+    #expandedPreviewContent #audioPlayerWrap .drive-progress { background:rgba(255,255,255,.24) !important; }
+    #expandedPreviewContent #audioPlayerWrap .drive-progress-fill,
+    #expandedPreviewContent #audioPlayerWrap .drive-progress-thumb { background:#fff !important; }
+    #expandedPreviewContent #audioPlayerWrap button { color:#fff; }
+    #expandedPreviewContent #audioPlayerWrap:not(.has-album-art) .audio-art-bg { display:none !important; }
+
+    /* Final media-glass correction: preserve transparency instead of painting over the blur. */
+    #expandedPreviewModal {
+      background: rgba(4,6,11,.30) !important;
+      backdrop-filter: blur(20px) saturate(125%) brightness(.72) !important;
+      -webkit-backdrop-filter: blur(20px) saturate(125%) brightness(.72) !important;
+    }
+    #expandedPreviewContent #audioPlayerWrap {
+      background: rgba(12,16,24,.10) !important;
+      border-color: rgba(255,255,255,.18) !important;
+    }
+    #expandedPreviewContent #audioGlassSheet {
+      background: linear-gradient(145deg,rgba(22,27,38,.25),rgba(8,11,18,.14)) !important;
+      backdrop-filter: blur(26px) saturate(155%) !important;
+      -webkit-backdrop-filter: blur(26px) saturate(155%) !important;
+    }
+    #expandedPreviewContent #audioIconSquare {
+      background: rgba(18,22,31,.28) !important;
+    }
+    /* Play and pause use the same crisp white Drive pill with a black glyph. */
+    #expandedPreviewContent #audioPlayPauseBtn,
+    #expandedPreviewContent #audioPlayPauseBtn.is-playing,
+    #expandedPreviewContent .media-play-btn.use-app-glass.is-playing {
+      background: rgba(255,255,255,.96) !important;
+      color: #090b10 !important;
+      border-color: rgba(255,255,255,.8) !important;
+      box-shadow: 0 10px 30px rgba(0,0,0,.32), inset 0 1px #fff !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+    #expandedPreviewContent #audioPlayPauseBtn i,
+    #expandedPreviewContent #audioPlayPauseBtn .material-icons,
+    #expandedPreviewContent #audioPlayPauseBtn svg { color:#090b10 !important; fill:currentColor !important; }
+
+    /* Repo-style flush preview header (not a floating capsule). */
+    #expandedModalCard > div:first-child {
+      top:0 !important; left:0 !important; right:0 !important; width:100% !important;
+      height:58px !important; padding:10px 14px !important;
+      border:0 !important; border-bottom:1px solid rgba(255,255,255,.07) !important;
+      border-radius:0 !important;
+      background:linear-gradient(to bottom,rgba(8,11,17,.68),rgba(8,11,17,.18),transparent) !important;
+      box-shadow:none !important;
+      backdrop-filter:none !important; -webkit-backdrop-filter:none !important;
+    }
+    #expandedPreviewViewer { margin-top:-58px !important; }
+    #expandedPreviewContent { padding-top:70px !important; }
+
+    /* Glass-aware code editor palette instead of an opaque black rectangle. */
+    #expandedPreviewContent:has(#expandedCodeEditorContainer) {
+      background:linear-gradient(145deg,rgba(18,22,31,.34),rgba(7,10,16,.22)) !important;
+      border:1px solid rgba(255,255,255,.12) !important;
+      border-radius:14px !important;
+      box-shadow:0 24px 75px rgba(0,0,0,.42),inset 0 1px rgba(255,255,255,.09) !important;
+      backdrop-filter:blur(24px) saturate(145%) !important;
+      -webkit-backdrop-filter:blur(24px) saturate(145%) !important;
+    }
+    #expandedCodeEditorContainer,
+    #expandedCodeEditorContainer.ace_editor,
+    #expandedCodeEditorContainer .ace_scroller,
+    #expandedCodeEditorContainer .ace_content {
+      background:rgba(8,11,17,.62) !important;
+    }
+    #expandedCodeEditorContainer .ace_gutter {
+      background:rgba(18,22,31,.72) !important;
+      color:#687083 !important;
+      border-right:1px solid rgba(255,255,255,.07) !important;
+    }
+    #expandedCodeEditorContainer .ace_gutter-active-line { background:rgba(124,108,255,.11) !important; }
+    #expandedCodeEditorContainer .ace_marker-layer .ace_active-line { background:rgba(255,255,255,.045) !important; }
+    #expandedCodeEditorContainer .ace_marker-layer .ace_selection { background:rgba(124,108,255,.28) !important; }
+    #expandedCodeEditorContainer .ace_cursor { color:#a99fff !important; border-left-color:#a99fff !important; }
+    #expandedCodeEditorContainer .ace_keyword,
+    #expandedCodeEditorContainer .ace_storage { color:#c792ea !important; }
+    #expandedCodeEditorContainer .ace_string { color:#9bdc8b !important; }
+    #expandedCodeEditorContainer .ace_constant.ace_numeric,
+    #expandedCodeEditorContainer .ace_constant.ace_language { color:#f2b76e !important; }
+    #expandedCodeEditorContainer .ace_comment { color:#687083 !important; font-style:italic; }
+    #expandedCodeEditorContainer .ace_support,
+    #expandedCodeEditorContainer .ace_entity.ace_name.ace_tag { color:#67c7ef !important; }
+    #expandedCodeEditorContainer .ace_variable { color:#f08da7 !important; }
+    #expandedCodeEditorContainer .ace_scrollbar-v::-webkit-scrollbar-thumb { background:rgba(124,108,255,.42) !important; }
+    #expandedPreviewContent:has(#expandedCodeEditorContainer) > div:first-child {
+      background:rgba(14,18,27,.58) !important;
+      border-color:rgba(255,255,255,.08) !important;
+    }
+    @media(max-width:640px){
+      #expandedModalCard > div:first-child { top:0 !important; left:0 !important; right:0 !important; width:100% !important; }
+    }
+
+    /* No divider beneath the repo-style preview header. */
+    #expandedModalCard > div:first-child { border-bottom:0 !important; }
+
+    /* Media glass follows the active light/dark system palette. */
+    @media (prefers-color-scheme: light) {
+      #expandedPreviewModal {
+        background:rgba(232,235,242,.28) !important;
+        backdrop-filter:blur(20px) saturate(135%) brightness(.9) !important;
+        -webkit-backdrop-filter:blur(20px) saturate(135%) brightness(.9) !important;
+      }
+      #expandedPreviewContent #audioPlayerWrap {
+        background:rgba(255,255,255,.13) !important;
+        border-color:rgba(255,255,255,.52) !important;
+        box-shadow:0 30px 80px rgba(15,23,42,.22),inset 0 1px rgba(255,255,255,.72) !important;
+      }
+      #expandedPreviewContent #audioGlassSheet {
+        background:linear-gradient(145deg,rgba(255,255,255,.28),rgba(226,232,240,.16)) !important;
+        box-shadow:inset 0 1px rgba(255,255,255,.7) !important;
+      }
+      #expandedPreviewContent #audioIconSquare {
+        background:rgba(255,255,255,.3) !important;
+        border-color:rgba(255,255,255,.58) !important;
+        box-shadow:0 18px 50px rgba(15,23,42,.18),inset 0 1px rgba(255,255,255,.78) !important;
+      }
+      #expandedPreviewContent #audioPlayerWrap .drive-pill-dark,
+      #expandedPreviewContent .drive-video-wrap .drive-pill-dark {
+        background:rgba(255,255,255,.72) !important;
+        color:#111827 !important;
+        border-color:rgba(255,255,255,.76) !important;
+        box-shadow:0 8px 28px rgba(15,23,42,.2),inset 0 1px #fff !important;
+      }
+      #expandedPreviewContent #audioPlayerWrap .drive-pill-dark button,
+      #expandedPreviewContent #audioPlayerWrap .drive-pill-dark span,
+      #expandedPreviewContent .drive-video-wrap .drive-pill-dark button,
+      #expandedPreviewContent .drive-video-wrap .drive-pill-dark span { color:#111827 !important; }
+      #expandedPreviewContent #audioPlayerWrap .drive-progress { background:rgba(15,23,42,.2) !important; }
+      #expandedPreviewContent #audioPlayerWrap .drive-progress-fill,
+      #expandedPreviewContent #audioPlayerWrap .drive-progress-thumb { background:#111827 !important; }
+    }
+    @media (prefers-color-scheme: dark) {
+      #expandedPreviewContent #audioPlayerWrap {
+        background:rgba(8,11,18,.1) !important;
+        border-color:rgba(255,255,255,.18) !important;
+      }
+      #expandedPreviewContent #audioGlassSheet {
+        background:linear-gradient(145deg,rgba(22,27,38,.25),rgba(8,11,18,.14)) !important;
+      }
+      #expandedPreviewContent #audioPlayerWrap .drive-pill-dark,
+      #expandedPreviewContent .drive-video-wrap .drive-pill-dark {
+        background:rgba(12,16,24,.62) !important; color:#fff !important;
+      }
+    }
+
+    /* Light media contrast correction: translucent, not washed out. */
+    @media (prefers-color-scheme: light) {
+      #expandedPreviewModal {
+        background:rgba(218,223,232,.18) !important;
+        backdrop-filter:blur(18px) saturate(125%) brightness(.82) !important;
+        -webkit-backdrop-filter:blur(18px) saturate(125%) brightness(.82) !important;
+      }
+      #expandedPreviewContent #audioPlayerWrap {
+        background:rgba(24,30,42,.16) !important;
+        border-color:rgba(255,255,255,.48) !important;
+      }
+      #expandedPreviewContent #audioGlassSheet {
+        background:linear-gradient(145deg,rgba(255,255,255,.18),rgba(115,126,145,.13)) !important;
+      }
+      #expandedPreviewContent #audioIconSquare {
+        background:rgba(255,255,255,.58) !important;
+      }
+      #expandedPreviewContent #audioPlayerWrap .drive-pill-dark,
+      #expandedPreviewContent .drive-video-wrap .drive-pill-dark {
+        background:rgba(255,255,255,.84) !important;
+        color:#0f172a !important;
+        border-color:rgba(255,255,255,.9) !important;
+      }
+      #expandedPreviewContent #audioPlayerWrap .drive-pill-dark *,
+      #expandedPreviewContent .drive-video-wrap .drive-pill-dark *,
+      #expandedPreviewContent #audioPlayerWrap [data-audio-time],
+      #expandedPreviewContent #audioPlayerWrap [data-audio-mute],
+      #expandedPreviewContent #audioPlayerWrap [data-audio-speed],
+      #expandedPreviewContent #audioPlayerWrap [data-audio-settings] {
+        color:#0f172a !important;
+        fill:currentColor !important;
+        opacity:1 !important;
+      }
+      #expandedPreviewContent #audioPlayerWrap [data-audio-progress] {
+        background:rgba(15,23,42,.24) !important;
+        box-shadow:0 1px 3px rgba(15,23,42,.18) !important;
+      }
+      #expandedPreviewContent #audioPlayerWrap .drive-progress-fill,
+      #expandedPreviewContent #audioPlayerWrap .drive-progress-thumb {
+        background:#172033 !important;
+        box-shadow:0 1px 5px rgba(15,23,42,.32) !important;
+      }
+      #expandedPreviewContent #audioPlayPauseBtn,
+      #expandedPreviewContent #audioPlayPauseBtn.is-playing {
+        background:#fff !important; color:#080b12 !important;
+        border-color:rgba(255,255,255,.95) !important;
+      }
+      #expandedPreviewContent #audioPlayPauseBtn * { color:#080b12 !important; opacity:1 !important; }
+    }
+
+    /* Code has two repo-style modes: compact preview and full editable workspace. */
+    #expandedModalCard:not(.code-edit-mode) #expandedPreviewContent:has(#expandedCodeEditorContainer) {
+      width:min(800px,calc(100vw - 48px)) !important;
+      height:min(640px,calc(100vh - 128px)) !important;
+      min-height:0 !important;
+      padding:0 !important;
+      margin:auto !important;
+      border-radius:16px !important;
+      overflow:hidden !important;
+    }
+    #expandedModalCard:not(.code-edit-mode) [data-expanded-code-toolbar] { display:none !important; }
+    #expandedModalCard:not(.code-edit-mode) #expandedCodeEditorContainer .ace_cursor { opacity:0 !important; }
+    #expandedModalCard.code-edit-mode #expandedPreviewContent:has(#expandedCodeEditorContainer) {
+      width:calc(100vw - 28px) !important;
+      height:calc(100vh - 72px) !important;
+      min-height:0 !important;
+      max-width:none !important;
+      padding:0 !important;
+      margin:58px 14px 14px !important;
+      border-radius:12px !important;
+    }
+    #expandedModalCard.code-edit-mode [data-expanded-code-toolbar] { display:flex !important; }
+    #expandedModalCard.code-edit-mode #expandedPreviewViewer { margin-top:-58px !important; }
+    #expandedCodeModeBtn { color:rgba(255,255,255,.78) !important; }
+    @media(max-width:640px){
+      #expandedModalCard:not(.code-edit-mode) #expandedPreviewContent:has(#expandedCodeEditorContainer){width:calc(100vw - 20px)!important;height:calc(100vh - 100px)!important;}
+      #expandedModalCard.code-edit-mode #expandedPreviewContent:has(#expandedCodeEditorContainer){width:calc(100vw - 12px)!important;height:calc(100vh - 66px)!important;margin:58px 6px 8px!important;}
+    }
+
+    /* Vivid, extension-aware editor tokens (loaded after the Ace theme via !important). */
+    #expandedCodeEditorContainer.ace-monokai,
+    #expandedCodeEditorContainer.ace_editor,
+    #expandedCodeEditorContainer .ace_scroller { background:#0d1119 !important; color:#e8ecf4 !important; }
+    #expandedCodeEditorContainer .ace_gutter { background:#111722 !important; color:#667085 !important; }
+    #expandedCodeEditorContainer .ace_heading,
+    #expandedCodeEditorContainer .ace_markup.ace_heading { color:#ffd166 !important; font-weight:700 !important; }
+    #expandedCodeEditorContainer .ace_markup.ace_bold { color:#f8d57e !important; font-weight:700 !important; }
+    #expandedCodeEditorContainer .ace_markup.ace_italic { color:#a9b7c9 !important; font-style:italic !important; }
+    #expandedCodeEditorContainer .ace_markup.ace_list { color:#ff8fab !important; }
+    #expandedCodeEditorContainer .ace_markup.ace_raw,
+    #expandedCodeEditorContainer .ace_support.ace_function { color:#76d7ff !important; }
+    #expandedCodeEditorContainer .ace_meta.ace_tag,
+    #expandedCodeEditorContainer .ace_entity.ace_name.ace_tag { color:#ff6f91 !important; }
+    #expandedCodeEditorContainer .ace_entity.ace_other.ace_attribute-name { color:#c7a0ff !important; }
+    #expandedCodeEditorContainer .ace_string { color:#9ee493 !important; }
+    #expandedCodeEditorContainer .ace_keyword,
+    #expandedCodeEditorContainer .ace_storage { color:#c792ea !important; font-weight:600 !important; }
+    #expandedCodeEditorContainer .ace_constant.ace_numeric { color:#ffb86c !important; }
+    #expandedCodeEditorContainer .ace_variable { color:#82d9ff !important; }
+    #expandedCodeEditorContainer .ace_comment { color:#697386 !important; font-style:italic !important; }
+    #expandedCodeEditorContainer .ace_punctuation,
+    #expandedCodeEditorContainer .ace_paren { color:#c9d1df !important; }
+    #expandedCodeEditorContainer .ace_marker-layer .ace_active-line { background:rgba(124,108,255,.10) !important; }
+    #expandedCodeEditorContainer .ace_gutter-active-line { background:rgba(124,108,255,.13) !important; }
+
+    /* Edit mode is edge-to-edge; only compact preview mode is rounded. */
+    #expandedModalCard.code-edit-mode #expandedPreviewContent:has(#expandedCodeEditorContainer) {
+      width:100vw !important;
+      height:calc(100vh - 58px) !important;
+      margin:58px 0 0 !important;
+      border:0 !important;
+      border-radius:0 !important;
+      box-shadow:none !important;
+      backdrop-filter:none !important;
+      -webkit-backdrop-filter:none !important;
+    }
+    #expandedModalCard.code-edit-mode #expandedCodeEditorContainer,
+    #expandedModalCard.code-edit-mode #expandedCodeEditorContainer.ace_editor { border-radius:0 !important; }
+
+    /* Automatic editor palette follows OS light/dark mode. */
+    @media (prefers-color-scheme: light) {
+      #expandedCodeEditorContainer.ace_editor,
+      #expandedCodeEditorContainer .ace_scroller,
+      #expandedCodeEditorContainer .ace_content { background:#f7f8fb !important; color:#202532 !important; }
+      #expandedCodeEditorContainer .ace_gutter { background:#edf0f5 !important; color:#7a8292 !important; border-right-color:#dce1e9 !important; }
+      #expandedCodeEditorContainer .ace_gutter-active-line { background:#e1e5f5 !important; }
+      #expandedCodeEditorContainer .ace_marker-layer .ace_active-line { background:rgba(99,82,220,.075) !important; }
+      #expandedCodeEditorContainer .ace_marker-layer .ace_selection { background:rgba(99,82,220,.18) !important; }
+      #expandedCodeEditorContainer .ace_cursor { color:#5b49d6 !important; border-left-color:#5b49d6 !important; }
+      #expandedCodeEditorContainer .ace_heading,
+      #expandedCodeEditorContainer .ace_markup.ace_heading { color:#9a5b00 !important; }
+      #expandedCodeEditorContainer .ace_markup.ace_bold { color:#7a4800 !important; }
+      #expandedCodeEditorContainer .ace_markup.ace_list,
+      #expandedCodeEditorContainer .ace_meta.ace_tag,
+      #expandedCodeEditorContainer .ace_entity.ace_name.ace_tag { color:#c72c55 !important; }
+      #expandedCodeEditorContainer .ace_entity.ace_other.ace_attribute-name,
+      #expandedCodeEditorContainer .ace_keyword,
+      #expandedCodeEditorContainer .ace_storage { color:#7046b8 !important; }
+      #expandedCodeEditorContainer .ace_string { color:#247a3c !important; }
+      #expandedCodeEditorContainer .ace_constant.ace_numeric { color:#b75300 !important; }
+      #expandedCodeEditorContainer .ace_variable,
+      #expandedCodeEditorContainer .ace_support.ace_function { color:#076c9c !important; }
+      #expandedCodeEditorContainer .ace_comment { color:#7b8494 !important; }
+      #expandedCodeEditorContainer .ace_punctuation,
+      #expandedCodeEditorContainer .ace_paren { color:#394150 !important; }
+      #expandedPreviewContent:has(#expandedCodeEditorContainer) > [data-expanded-code-toolbar] { background:rgba(245,247,251,.86) !important; color:#202532 !important; border-color:#dce1e9 !important; }
+    }
+    @media (prefers-color-scheme: dark) {
+      #expandedCodeEditorContainer.ace_editor,
+      #expandedCodeEditorContainer .ace_scroller,
+      #expandedCodeEditorContainer .ace_content { background:#0d1119 !important; color:#e8ecf4 !important; }
+    }
+
+    /* Complete automatic light mode: preview chrome follows the editor too. */
+    @media (prefers-color-scheme: light) {
+      #expandedModalCard > div:first-child {
+        background:linear-gradient(to bottom,rgba(247,249,252,.82),rgba(247,249,252,.34),transparent) !important;
+        color:#18202d !important;
+      }
+      #expandedPreviewFileName { color:#18202d !important; }
+      #expandedPreviewMeta { color:rgba(24,32,45,.55) !important; }
+      #expandedModalCard > div:first-child .icon-circle,
+      #expandedCodeModeBtn { color:rgba(24,32,45,.72) !important; }
+      #expandedModalCard > div:first-child .icon-circle:hover { color:#111827 !important; background:rgba(15,23,42,.07) !important; }
+      #expandedPreviewContent > [data-expanded-code-toolbar] {
+        background:#edf0f5 !important;
+        color:#202532 !important;
+        border-bottom:1px solid #d9dee7 !important;
+      }
+      #expandedPreviewContent > [data-expanded-code-toolbar] .text-slate-400 { color:#667085 !important; }
+      #expandedPreviewContent > [data-expanded-code-toolbar] #expandedSaveCodeBtn,
+      #expandedPreviewContent > [data-expanded-code-toolbar] #expandedToggleHtmlRender {
+        background:rgba(91,73,214,.10) !important;
+        color:#5b49d6 !important;
+        border-color:rgba(91,73,214,.24) !important;
+      }
+      #expandedPreviewContent > [data-expanded-code-toolbar] #expandedSaveCodeBtn:not(:disabled):hover,
+      #expandedPreviewContent > [data-expanded-code-toolbar] #expandedToggleHtmlRender:hover {
+        background:#5b49d6 !important; color:#fff !important;
+      }
+    }
+
+    /* Deterministic scheme classes (avoids embedded-viewer media-query mismatches). */
+    #expandedModalCard.preview-light > div:first-child {
+      background:linear-gradient(to bottom,rgba(247,249,252,.94),rgba(247,249,252,.48),transparent) !important;
+      color:#18202d !important;
+    }
+    #expandedModalCard.preview-light #expandedPreviewFileName { color:#18202d !important; }
+    #expandedModalCard.preview-light #expandedPreviewMeta { color:rgba(24,32,45,.58) !important; }
+    #expandedModalCard.preview-light > div:first-child .icon-circle,
+    #expandedModalCard.preview-light #expandedCodeModeBtn { color:#485264 !important; }
+    #expandedModalCard.preview-light > div:first-child .icon-circle:hover { color:#111827 !important; background:rgba(15,23,42,.08) !important; }
+    #expandedModalCard.preview-light #expandedPreviewContent > [data-expanded-code-toolbar] {
+      background:#edf0f5 !important;
+      color:#202532 !important;
+      border-color:#d7dde7 !important;
+    }
+    #expandedModalCard.preview-light #expandedPreviewContent > [data-expanded-code-toolbar] * { border-color:rgba(91,73,214,.22); }
+    #expandedModalCard.preview-light #expandedPreviewContent > [data-expanded-code-toolbar] .text-slate-400 { color:#667085 !important; }
+    #expandedModalCard.preview-light #expandedSaveCodeBtn,
+    #expandedModalCard.preview-light #expandedToggleHtmlRender {
+      background:rgba(91,73,214,.11) !important; color:#5b49d6 !important; border-color:rgba(91,73,214,.25) !important;
+    }
+    #expandedModalCard.preview-light #expandedCodeEditorContainer.ace_editor,
+    #expandedModalCard.preview-light #expandedCodeEditorContainer .ace_scroller,
+    #expandedModalCard.preview-light #expandedCodeEditorContainer .ace_content { background:#f7f8fb !important; color:#202532 !important; }
+    #expandedModalCard.preview-light #expandedCodeEditorContainer .ace_gutter { background:#edf0f5 !important; color:#7a8292 !important; border-right-color:#dce1e9 !important; }
+    #expandedModalCard.preview-dark #expandedCodeEditorContainer.ace_editor,
+    #expandedModalCard.preview-dark #expandedCodeEditorContainer .ace_scroller,
+    #expandedModalCard.preview-dark #expandedCodeEditorContainer .ace_content { background:#0d1119 !important; color:#e8ecf4 !important; }
+
+    /* Deterministic audio control contrast (the controls use .glass-strong, not .drive-pill-dark). */
+    #expandedModalCard.preview-light #audioPlayerWrap .glass-strong {
+      background:rgba(255,255,255,.82) !important;
+      color:#111827 !important;
+      border:1px solid rgba(255,255,255,.9) !important;
+      box-shadow:0 8px 26px rgba(15,23,42,.18),inset 0 1px #fff !important;
+    }
+    #expandedModalCard.preview-light #audioPlayerWrap #audioGlassSheet {
+      background:linear-gradient(145deg,rgba(255,255,255,.20),rgba(132,145,165,.14)) !important;
+      border-color:rgba(255,255,255,.42) !important;
+    }
+    #expandedModalCard.preview-light #audioRewindBtn,
+    #expandedModalCard.preview-light #audioForwardBtn,
+    #expandedModalCard.preview-light #audioMuteBtn,
+    #expandedModalCard.preview-light #audioSpeedBtn,
+    #expandedModalCard.preview-light #audioPlayerWrap [data-audio-settings],
+    #expandedModalCard.preview-light #audioCurrentTime,
+    #expandedModalCard.preview-light #audioDuration,
+    #expandedModalCard.preview-light #audioPlayerWrap .glass-strong .material-icons {
+      color:#111827 !important;
+      opacity:1 !important;
+      visibility:visible !important;
+    }
+    #expandedModalCard.preview-light #audioPlayPauseBtn,
+    #expandedModalCard.preview-light #audioPlayPauseBtn.is-playing {
+      background:#fff !important; color:#080b12 !important; border-color:#fff !important;
+    }
+    #expandedModalCard.preview-light #audioPlayPauseBtn .material-icons { color:#080b12 !important; opacity:1 !important; }
+    #expandedModalCard.preview-dark #audioPlayerWrap .glass-strong {
+      background:rgba(14,18,27,.68) !important; color:#fff !important;
+      border-color:rgba(255,255,255,.14) !important;
+    }
+    #expandedModalCard.preview-dark #audioPlayerWrap .glass-strong button,
+    #expandedModalCard.preview-dark #audioPlayerWrap .glass-strong span { color:#fff !important; opacity:1 !important; }
+
+    /* Video controls: real translucent glass, not opaque white pills. */
+    #expandedModalCard.preview-light .drive-video-wrap .drive-pill-dark {
+      background:rgba(248,250,255,.40) !important;
+      color:#101827 !important;
+      border:1px solid rgba(255,255,255,.58) !important;
+      box-shadow:0 10px 30px rgba(15,23,42,.18),inset 0 1px rgba(255,255,255,.72) !important;
+      backdrop-filter:blur(18px) saturate(165%) !important;
+      -webkit-backdrop-filter:blur(18px) saturate(165%) !important;
+    }
+    #expandedModalCard.preview-light .drive-video-wrap .drive-pill-dark *,
+    #expandedModalCard.preview-light .drive-video-wrap .drive-pill-dark .material-icons {
+      color:#101827 !important; opacity:1 !important;
+    }
+    #expandedModalCard.preview-light .drive-video-wrap .media-play-btn {
+      background:rgba(255,255,255,.64) !important;
+      color:#080b12 !important;
+      border:1px solid rgba(255,255,255,.76) !important;
+      box-shadow:0 10px 30px rgba(15,23,42,.2),inset 0 1px rgba(255,255,255,.88) !important;
+      backdrop-filter:blur(18px) saturate(160%) !important;
+      -webkit-backdrop-filter:blur(18px) saturate(160%) !important;
+    }
+    #expandedModalCard.preview-light .drive-video-wrap .media-play-btn * { color:#080b12 !important; }
+    #expandedModalCard.preview-dark .drive-video-wrap .drive-pill-dark {
+      background:rgba(18,21,29,.48) !important;
+      border-color:rgba(255,255,255,.14) !important;
+      box-shadow:0 10px 32px rgba(0,0,0,.38),inset 0 1px rgba(255,255,255,.11) !important;
+      backdrop-filter:blur(20px) saturate(160%) !important;
+      -webkit-backdrop-filter:blur(20px) saturate(160%) !important;
+    }
+    #expandedModalCard.preview-dark .drive-video-wrap .drive-pill-dark * { color:#fff !important; }
+
+    /* PDF viewer must fit between the header and viewport edges; global media sizing was making it overflow. */
+    #expandedPreviewContent.expanded-pdf-content {
+      width:min(1100px,calc(100vw - 32px)) !important;
+      height:calc(100vh - 88px) !important;
+      min-height:0 !important;
+      max-width:none !important;
+      padding:0 !important;
+      margin:70px auto 18px !important;
+      overflow:hidden !important;
+      flex:none !important;
+    }
+    #expandedPreviewContent.expanded-pdf-content > div {
+      width:100% !important; height:100% !important;
+      border-radius:16px !important;
+    }
+    @media(max-width:640px){
+      #expandedPreviewContent.expanded-pdf-content {
+        width:calc(100vw - 12px) !important;
+        height:calc(100vh - 72px) !important;
+        margin:62px 6px 10px !important;
+      }
+      #expandedPreviewContent.expanded-pdf-content > div { border-radius:12px !important; }
+    }
+
+    /* Native PDF document: page-shaped frame with selectable/searchable text and browser OCR support. */
+    #expandedPreviewContent.expanded-native-pdf {
+      width:min(calc((100vh - 92px) * var(--pdf-page-ratio)),calc(100vw - 36px)) !important;
+      height:min(calc(100vh - 92px),calc((100vw - 36px) / var(--pdf-page-ratio))) !important;
+      min-height:0 !important;
+      max-width:none !important;
+      padding:0 !important;
+      margin:70px auto 18px !important;
+      flex:none !important;
+      border-radius:10px !important;
+      background:#fff !important;
+      border:1px solid rgba(255,255,255,.28) !important;
+      box-shadow:0 24px 70px rgba(0,0,0,.36) !important;
+    }
+    #expandedPreviewContent.expanded-native-pdf .native-pdf-frame {
+      display:block; width:100%; height:100%; border:0; border-radius:inherit; background:#fff;
+    }
+    @media(max-width:640px){
+      #expandedPreviewContent.expanded-native-pdf {
+        width:min(calc((100vh - 76px) * var(--pdf-page-ratio)),calc(100vw - 12px)) !important;
+        height:min(calc(100vh - 76px),calc((100vw - 12px) / var(--pdf-page-ratio))) !important;
+        margin:62px auto 8px !important; border-radius:8px !important;
+      }
+    }
+
+    /* Selectable text/OCR layer over the custom PDF renderer. */
+    .pdf-page-stage { max-width:100%; }
+    .pdf-text-layer { z-index:2; line-height:1; text-align:initial; pointer-events:auto; }
+    .pdf-text-layer span {
+      position:absolute; white-space:pre; transform-origin:0 0;
+      color:transparent; cursor:text; user-select:text; -webkit-user-select:text;
+    }
+    .pdf-text-layer ::selection { background:rgba(70,120,255,.35); color:transparent; }
+
+    /* Information drawer: one translucent glass material instead of stacked opaque grey cards. */
+    #previewDrawer.preview-info-over-modal {
+      background:linear-gradient(145deg,rgba(22,27,38,.54),rgba(8,11,18,.42)) !important;
+      border:1px solid rgba(255,255,255,.16) !important;
+      box-shadow:0 28px 90px rgba(0,0,0,.46),inset 0 1px rgba(255,255,255,.12) !important;
+      backdrop-filter:blur(32px) saturate(155%) !important;
+      -webkit-backdrop-filter:blur(32px) saturate(155%) !important;
+    }
+    #previewDrawer.preview-info-over-modal .glass-chip,
+    #previewDrawer.preview-info-over-modal .glass-strong {
+      background:rgba(255,255,255,.065) !important;
+      border-color:rgba(255,255,255,.12) !important;
+      box-shadow:inset 0 1px rgba(255,255,255,.075) !important;
+      backdrop-filter:blur(16px) saturate(135%) !important;
+      -webkit-backdrop-filter:blur(16px) saturate(135%) !important;
+    }
+    #previewDrawer.preview-info-over-modal input,
+    #previewDrawer.preview-info-over-modal textarea {
+      background:rgba(4,7,12,.24) !important;
+      border-color:rgba(255,255,255,.14) !important;
+      box-shadow:inset 0 1px 3px rgba(0,0,0,.16) !important;
+    }
+    #previewDrawer.preview-info-over-modal #previewViewer { background:rgba(0,0,0,.12) !important; }
+
+    /* Dialogs and notifications must stack above fullscreen preview and its info drawer. */
+    #newFileModal,
+    #uploadModal,
+    #newFolderModal,
+    #deleteModal,
+    #renameModal { z-index:130 !important; }
+    #toastNotification { z-index:150 !important; }
+    #newFileModal > .glass-strong,
+    #uploadModal > .glass-strong,
+    #newFolderModal > .glass-strong,
+    #deleteModal > .glass-strong,
+    #renameModal > .glass-strong {
+      position:relative; z-index:1;
+    }
+
+    /* Drive grid cards: rounded squares, never wide rectangles. */
+    #fileGrid > div {
+      width:100% !important;
+      height:auto !important;
+      aspect-ratio:1 / 1 !important;
+      min-height:0 !important;
+      border-radius:20px !important;
+      padding:14px !important;
+      overflow:hidden;
+    }
+    #fileGrid > div .w-10.h-10 { border-radius:14px !important; }
+    @media(max-width:640px){
+      #fileGrid > div { border-radius:17px !important; padding:12px !important; }
+    }
+
+    /* Grid thumbnails: images show their real preview; audio/video retain category icons. */
+    #fileGrid > div .grid-image-thumb {
+      position:relative; width:100%; height:clamp(68px,8vw,104px);
+      border-radius:14px; overflow:hidden;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.1);
+    }
+    #fileGrid > div .grid-image-thumb img {
+      width:100%; height:100%; display:block; object-fit:cover;
+      opacity:0; transform:scale(1.025);
+      transition:opacity .2s ease,transform .35s cubic-bezier(.16,1,.3,1);
+    }
+    #fileGrid > div .grid-image-thumb img.is-loaded { opacity:1; transform:scale(1); }
+    #fileGrid > div:hover .grid-image-thumb img.is-loaded { transform:scale(1.035); }
+    #fileGrid > div .grid-image-loading {
+      position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:20px;
+    }
+    #fileGrid > div:has(.grid-image-thumb) > div:first-child > div:first-child { flex:1 1 auto; width:100%; }
+    @media(max-width:640px){ #fileGrid > div .grid-image-thumb{height:72px;border-radius:12px;} }
+
+    /* NexChat-style card anatomy: large preview tile above, filename/meta below. */
+    #fileGrid > div > div:first-child {
+      position:relative; width:100%; height:68%; min-height:0;
+    }
+    #fileGrid > div > div:first-child > div:first-child {
+      width:100%; height:100%; min-width:0;
+    }
+    #fileGrid > div .grid-image-thumb,
+    #fileGrid > div .grid-file-icon {
+      width:100% !important; height:100% !important;
+      border-radius:15px !important; overflow:hidden;
+    }
+    #fileGrid > div .grid-file-icon {
+      font-size:30px !important;
+      background:linear-gradient(145deg,rgba(255,255,255,.065),rgba(255,255,255,.025)) !important;
+    }
+    #fileGrid > div > div:first-child > .flex.items-center.gap-1 {
+      position:absolute; top:7px; right:7px; z-index:4;
+      padding:2px; border-radius:999px;
+      background:rgba(10,13,20,.48); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    }
+    #fileGrid > div > div:last-child { min-width:0; padding:0 2px 1px; }
+    #fileGrid > div > div:last-child h4 { font-size:12px !important; font-weight:700 !important; }
+    #fileGrid > div > div:last-child p { font-size:10px !important; }
+    @media(max-width:640px){
+      #fileGrid > div > div:first-child{height:64%;}
+      #fileGrid > div .grid-image-thumb,#fileGrid > div .grid-file-icon{border-radius:12px!important;}
+      #fileGrid > div .grid-file-icon{font-size:25px!important;}
+    }
+
+    /* Glassmorphic Font Awesome context menu. */
+    #fileContextMenu {
+      color-scheme:dark;
+      background:linear-gradient(145deg,rgba(26,31,43,.76),rgba(9,12,20,.66));
+      border:1px solid rgba(255,255,255,.16);
+      box-shadow:0 22px 65px rgba(0,0,0,.52),inset 0 1px rgba(255,255,255,.12);
+      backdrop-filter:blur(26px) saturate(170%);
+      -webkit-backdrop-filter:blur(26px) saturate(170%);
+      animation:ctxIn .14s cubic-bezier(.16,1,.3,1);
+    }
+    @keyframes ctxIn{from{opacity:0;transform:scale(.96) translateY(-3px)}to{opacity:1;transform:none}}
+    #fileContextMenu .ctx-action {
+      width:100%; height:38px; padding:0 11px; border:0; border-radius:11px;
+      display:flex; align-items:center; gap:11px; background:transparent;
+      color:#e9edf5; font:600 12px/1 'Inter',system-ui,sans-serif; text-align:left; cursor:pointer;
+      transition:background .14s,color .14s,transform .14s;
+    }
+    #fileContextMenu .ctx-action:hover { background:rgba(255,255,255,.095); transform:translateX(1px); }
+    #fileContextMenu .ctx-action i { width:16px; color:#aeb6c8; text-align:center; font-size:12px; }
+    #fileContextMenu .ctx-separator { height:1px; margin:5px 7px; background:rgba(255,255,255,.1); }
+    #fileContextMenu .ctx-danger { color:#ff8b91; }
+    #fileContextMenu .ctx-danger i { color:#ff727a; }
+    #fileContextMenu .ctx-danger:hover { background:rgba(242,85,90,.14); }
+    #fileContextMenu .ctx-disabled { opacity:.36; pointer-events:none; }
+
+    #fileContextMenu { border:none !important; }
+    #fileContextMenu .ctx-action:focus,
+    #fileContextMenu .ctx-action:focus-visible { outline:none !important; box-shadow:none !important; }
+
+    #fileGrid > div .grid-file-icon { border:none !important; }
+
+    /* Slightly taller card shell leaves room for labels while keeping the preview itself square. */
+    #fileGrid > div {
+      aspect-ratio: .88 / 1 !important;
+    }
+    #fileGrid > div > div:first-child {
+      width:100% !important;
+      height:auto !important;
+      aspect-ratio:1 / 1 !important;
+      flex:0 0 auto !important;
+    }
+
+    /* Denser drive grid without sacrificing the square preview tile. */
+    #fileGrid {
+      grid-template-columns:repeat(auto-fill,minmax(132px,1fr)) !important;
+      gap:12px !important;
+      align-items:start;
+    }
+    #fileGrid > div {
+      aspect-ratio:.78 / 1 !important;
+      padding:10px !important;
+      border-radius:18px !important;
+    }
+    #fileGrid > div > div:last-child {
+      width:100%; min-width:0; overflow:hidden;
+    }
+    #fileGrid > div > div:last-child h4 {
+      display:block !important; width:100%; max-width:100%;
+      overflow:hidden !important; text-overflow:ellipsis !important; white-space:nowrap !important;
+      line-height:1.25 !important;
+    }
+    #fileGrid > div > div:last-child p {
+      overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+    }
+    .list-image-thumb {
+      position:relative; width:36px; height:36px; border-radius:10px; overflow:hidden;
+      background:rgba(255,255,255,.06); display:flex; align-items:center; justify-content:center;
+    }
+    .list-image-thumb img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity .18s ease; }
+    .list-image-thumb.is-loaded img { opacity:1; }
+    .list-image-thumb.is-loaded > i { display:none; }
+    @media(max-width:640px){
+      #fileGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important;}
+      #fileGrid > div{padding:9px!important;border-radius:16px!important;}
+    }
+
+    /* PDF page previews follow each page's exact dimensions instead of a fixed thumbnail card. */
+    .pdf-thumb-stage { width:auto; height:auto; max-width:100%; flex:none; }
+    .pdf-thumb-stage canvas { width:100% !important; height:100% !important; object-fit:fill !important; }
+
+    /* Slightly wider desktop cards, matching the NexChat drive proportions. */
+    #fileGrid { grid-template-columns:repeat(auto-fill,minmax(160px,1fr)) !important; }
+    #fileGrid > div { aspect-ratio:.88 / 1 !important; }
+    @media(max-width:900px) and (min-width:641px){
+      #fileGrid{grid-template-columns:repeat(auto-fill,minmax(145px,1fr))!important;}
+    }
+
+    /* Compact cards with dedicated label space so text never gets squeezed. */
+    #fileGrid { grid-template-columns:repeat(auto-fill,minmax(148px,1fr)) !important; }
+    #fileGrid > div { aspect-ratio:.80 / 1 !important; gap:8px !important; }
+    #fileGrid > div > div:first-child { flex:0 0 auto !important; }
+    #fileGrid > div > div:last-child {
+      flex:0 0 34px !important; height:34px !important;
+      display:flex; flex-direction:column; justify-content:center;
+    }
+    #fileGrid > div > div:last-child h4 { line-height:15px !important; min-height:15px; }
+    #fileGrid > div > div:last-child p { line-height:13px !important; min-height:13px; margin-top:1px !important; }
+    @media(max-width:900px) and (min-width:641px){
+      #fileGrid{grid-template-columns:repeat(auto-fill,minmax(138px,1fr))!important;}
+    }
+
+    .sidebar-new-btn { background:linear-gradient(135deg,#7c6cff,#5f7dff); box-shadow:0 10px 24px rgba(105,92,255,.28),inset 0 1px rgba(255,255,255,.22); }
+    .sidebar-new-btn:hover { filter:brightness(1.08); transform:translateY(-1px); }
+    .sidebar-new-btn.is-open i { transform:rotate(45deg); }
+    .sidebar-new-btn i { transition:transform .2s ease; }
+    #sidebarNewMenu { background:rgba(12,15,23,.84); border:1px solid rgba(255,255,255,.11); box-shadow:0 18px 48px rgba(0,0,0,.5),inset 0 1px rgba(255,255,255,.08); backdrop-filter:blur(22px) saturate(160%); -webkit-backdrop-filter:blur(22px) saturate(160%); }
+    .sidebar-new-action { width:100%; height:38px; padding:0 11px; border:0; border-radius:10px; display:flex; align-items:center; gap:11px; background:transparent; color:#e9edf5; font-size:12px; font-weight:600; text-align:left; }
+    .sidebar-new-action:hover { background:rgba(255,255,255,.08); }
+    .sidebar-new-action i { width:16px; color:#aeb6c8; text-align:center; }
+    @media(min-width:768px){ body > header #openNewFileModalBtn, body > header #openUploadModalBtn { display:none !important; } }
+
+    #sidebarNewMenu {
+      background:linear-gradient(145deg,rgba(25,30,42,.62),rgba(8,11,18,.48)) !important;
+      border:1px solid rgba(255,255,255,.14) !important;
+      box-shadow:0 22px 64px rgba(0,0,0,.48),inset 0 1px rgba(255,255,255,.12) !important;
+      backdrop-filter:blur(28px) saturate(175%) !important;
+      -webkit-backdrop-filter:blur(28px) saturate(175%) !important;
+    }
+    .sidebar-new-separator { height:1px; margin:5px 8px; background:rgba(255,255,255,.11); }
+    @media(prefers-color-scheme:light){
+      #sidebarNewMenu { background:linear-gradient(145deg,rgba(255,255,255,.62),rgba(235,240,248,.46)) !important; border-color:rgba(255,255,255,.72)!important; box-shadow:0 20px 55px rgba(15,23,42,.2),inset 0 1px #fff!important; }
+      .sidebar-new-action { color:#18202d!important; }
+      .sidebar-new-action i { color:#667085!important; }
+      .sidebar-new-action:hover { background:rgba(15,23,42,.07)!important; }
+      .sidebar-new-separator { background:rgba(15,23,42,.1); }
+    }
+
+    /* Black primary action; portalled menu gets a genuine page-level backdrop blur. */
+    .sidebar-new-btn,
+    .sidebar-new-btn:hover,
+    .sidebar-new-btn:active {
+      background:#05070b !important;
+      color:#fff !important;
+      border:1px solid rgba(255,255,255,.12) !important;
+      box-shadow:0 10px 28px rgba(0,0,0,.34),inset 0 1px rgba(255,255,255,.1) !important;
+      filter:none !important;
+    }
+    #sidebarNewMenu {
+      position:fixed !important;
+      right:auto !important;
+      bottom:auto !important;
+      z-index:170 !important;
+      background:rgba(12,16,24,.46) !important;
+      border:1px solid rgba(255,255,255,.17) !important;
+      box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px rgba(255,255,255,.13) !important;
+      backdrop-filter:blur(30px) saturate(180%) !important;
+      -webkit-backdrop-filter:blur(30px) saturate(180%) !important;
+      isolation:isolate;
+    }
+    @media(prefers-color-scheme:light){
+      #sidebarNewMenu {
+        background:rgba(245,248,253,.42) !important;
+        border-color:rgba(255,255,255,.76) !important;
+        box-shadow:0 22px 62px rgba(15,23,42,.22),inset 0 1px #fff !important;
+        backdrop-filter:blur(30px) saturate(175%) !important;
+        -webkit-backdrop-filter:blur(30px) saturate(175%) !important;
+      }
+    }
+
+    .sidebar-new-btn,
+    .sidebar-new-btn:hover,
+    .sidebar-new-btn:active,
+    #sidebarNewMenu { box-shadow:none !important; }
+
+    /* True transparent glass: blur is isolated on its own material layer. */
+    #sidebarNewMenu {
+      overflow:hidden !important;
+      background:rgba(10,14,22,.18) !important;
+      background-image:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.025)) !important;
+      border:1px solid rgba(255,255,255,.22) !important;
+      box-shadow:none !important;
+      backdrop-filter:blur(22px) saturate(190%) contrast(108%) !important;
+      -webkit-backdrop-filter:blur(22px) saturate(190%) contrast(108%) !important;
+    }
+    #sidebarNewMenu::before {
+      content:''; position:absolute; inset:0; z-index:-1; pointer-events:none;
+      background:linear-gradient(135deg,rgba(255,255,255,.16),transparent 38%,rgba(124,108,255,.07) 100%);
+      backdrop-filter:blur(22px) saturate(190%) !important;
+      -webkit-backdrop-filter:blur(22px) saturate(190%) !important;
+    }
+    #sidebarNewMenu::after {
+      content:''; position:absolute; left:10px; right:10px; top:0; height:1px; pointer-events:none;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.72),transparent);
+    }
+    #sidebarNewMenu > * { position:relative; z-index:1; }
+    @media(prefers-color-scheme:light){
+      #sidebarNewMenu {
+        background:rgba(255,255,255,.22) !important;
+        background-image:linear-gradient(145deg,rgba(255,255,255,.52),rgba(255,255,255,.09)) !important;
+        border-color:rgba(255,255,255,.68) !important;
+      }
+      #sidebarNewMenu::before { background:linear-gradient(135deg,rgba(255,255,255,.5),transparent 42%,rgba(91,73,214,.06)); }
+    }
+
+    /* Real glass layer + fluid visibility transition. */
+    #sidebarNewMenu {
+      background:rgba(12,16,24,.16) !important;
+      backdrop-filter:blur(34px) saturate(200%) !important;
+      -webkit-backdrop-filter:blur(34px) saturate(200%) !important;
+      opacity:0; visibility:hidden; pointer-events:none;
+      transform:translateY(-8px) scale(.975);
+      transition:opacity .22s ease,transform .3s cubic-bezier(.16,1,.3,1),visibility 0s linear .3s;
+    }
+    #sidebarNewMenu.is-visible {
+      opacity:1; visibility:visible; pointer-events:auto; transform:translateY(0) scale(1);
+      transition:opacity .2s ease,transform .3s cubic-bezier(.16,1,.3,1),visibility 0s;
+    }
+    #sidebarNewMenu::before { z-index:0 !important; }
+    #sidebarNewMenu > * { position:relative; z-index:1; }
+    #fileGrid > div { animation:gridCardIn .34s cubic-bezier(.16,1,.3,1) both; }
+    @keyframes gridCardIn { from{opacity:0;transform:translateY(8px) scale(.985)} to{opacity:1;transform:none} }
+    #fileList > div { animation:listRowIn .28s cubic-bezier(.16,1,.3,1) both; }
+    @keyframes listRowIn { from{opacity:0;transform:translateX(-5px)} to{opacity:1;transform:none} }
+    #fileDisplayArea { transition:opacity .18s ease; }
+    @media(prefers-reduced-motion:reduce){#sidebarNewMenu,#fileGrid>div,#fileList>div{animation:none!important;transition:none!important;}}
+
+    /* Chrome-inspired fluid media controls and menus. */
+    .drive-video-wrap::after { content:''; position:absolute; left:0; right:0; bottom:0; height:30%; pointer-events:none; background:linear-gradient(transparent,rgba(0,0,0,.58)); z-index:0; }
+    .drive-video-wrap [data-drive-progress],.drive-video-wrap > .absolute.bottom-4 { z-index:3 !important; }
+    .drive-menu {
+      background:rgba(38,38,42,.62) !important; border:1px solid rgba(255,255,255,.13) !important;
+      border-radius:15px !important; box-shadow:none !important;
+      backdrop-filter:blur(24px) saturate(155%) !important; -webkit-backdrop-filter:blur(24px) saturate(155%) !important;
+    }
+    .video-menu-row { width:100%; min-height:38px; padding:0 11px; border:0; border-radius:8px; background:transparent; color:#fff; display:flex; align-items:center; justify-content:space-between; font-size:13px; text-align:left; }
+    .video-menu-row>span { display:flex; align-items:center; gap:11px; }
+    .video-menu-row .material-icons { font-size:18px; color:rgba(255,255,255,.82); }
+    .video-menu-row:hover,.video-menu-row.active { background:rgba(255,255,255,.1); }
+    .video-menu-row.disabled { opacity:.38; }
+    .video-menu-row .menu-check { font-size:16px; }
+    .video-menu-row .menu-chevron { font-size:17px; }
+    .video-submenu { max-height:310px; overflow:auto; padding:2px 0; }
+    .media-volume-popover {
+      position:absolute; right:0; bottom:calc(100% + 8px); width:190px; height:46px; padding:0 12px;
+      display:flex; align-items:center; gap:8px; opacity:0; visibility:hidden; transform:translateY(6px) scale(.97);
+      transition:opacity .16s ease,transform .22s cubic-bezier(.16,1,.3,1),visibility 0s linear .22s;
+      border-radius:13px; background:rgba(35,36,40,.58); border:1px solid rgba(255,255,255,.14);
+      backdrop-filter:blur(22px) saturate(160%); -webkit-backdrop-filter:blur(22px) saturate(160%); z-index:40;
+    }
+    .media-volume-popover.is-visible { opacity:1; visibility:visible; transform:none; transition-delay:0s; }
+    .media-volume-popover .material-icons { color:#fff !important; font-size:17px; }
+    .media-volume-popover input { flex:1; accent-color:#fff; }
+
+    .drive-menu .menu-value { margin-left:auto; display:flex; align-items:center; gap:3px; color:rgba(255,255,255,.72); font-size:12px; }
+    .drive-menu .video-menu-separator { height:1px; margin:3px 4px 6px; background:rgba(255,255,255,.12); }
+    .drive-menu .submenu-title { font-weight:600; }
+    .drive-menu .video-submenu { max-height:360px; overflow-y:auto; }
+    .drive-menu .video-submenu .video-menu-row { padding-left:14px; }
+
+    /* Volume flyout matches the settings/options menu width exactly. */
+    .media-volume-popover {
+      width:276px !important;
+      min-width:276px !important;
+      height:54px !important;
+      padding:0 14px !important;
+      right:0 !important;
+      border-radius:15px !important;
+      background:rgba(38,38,42,.62) !important;
+      border:1px solid rgba(255,255,255,.13) !important;
+      box-shadow:none !important;
+      backdrop-filter:blur(24px) saturate(155%) !important;
+      -webkit-backdrop-filter:blur(24px) saturate(155%) !important;
+    }
+    .media-volume-popover input { min-width:0; width:100%; }
+    @media(max-width:420px){
+      .media-volume-popover { width:min(276px,calc(100vw - 28px)) !important; min-width:0 !important; }
+    }
+
+    /* Media flyouts align exactly with the right-side controls capsule. */
+    .drive-video-wrap .drive-menu,
+    .drive-video-wrap .media-volume-popover,
+    #audioPlayerWrap .drive-menu,
+    #audioPlayerWrap .media-volume-popover {
+      width:256px !important;
+      min-width:256px !important;
+      background:linear-gradient(145deg,rgba(34,36,42,.38),rgba(18,20,27,.28)) !important;
+      border:1px solid rgba(255,255,255,.18) !important;
+      box-shadow:none !important;
+      backdrop-filter:blur(28px) saturate(175%) !important;
+      -webkit-backdrop-filter:blur(28px) saturate(175%) !important;
+    }
+    .drive-video-wrap .media-volume-popover,
+    #audioPlayerWrap .media-volume-popover {
+      right:0 !important;
+      padding:0 13px !important;
+    }
+    @media(max-width:420px){
+      .drive-video-wrap .drive-menu,
+      .drive-video-wrap .media-volume-popover,
+      #audioPlayerWrap .drive-menu,
+      #audioPlayerWrap .media-volume-popover {
+        width:min(256px,calc(100vw - 28px)) !important;
+        min-width:0 !important;
+      }
+    }
+
+    /* Audio uses the same glass, width, spacing, and row system as video. */
+    #customAudioPlayerUI [data-audio-menu] {
+      width:256px !important;
+      min-width:256px !important;
+      padding:8px !important;
+      gap:4px !important;
+      border-radius:15px !important;
+      background:linear-gradient(145deg,rgba(34,36,42,.38),rgba(18,20,27,.28)) !important;
+      border:1px solid rgba(255,255,255,.18) !important;
+      box-shadow:none !important;
+      backdrop-filter:blur(28px) saturate(175%) !important;
+      -webkit-backdrop-filter:blur(28px) saturate(175%) !important;
+    }
+    #customAudioPlayerUI [data-audio-menu] .drive-menu-item {
+      width:100% !important;
+      min-height:38px !important;
+      padding:0 11px !important;
+      border:0 !important;
+      border-radius:8px !important;
+      background:transparent !important;
+      box-shadow:none !important;
+      display:flex !important;
+      align-items:center !important;
+      justify-content:space-between !important;
+      color:#fff !important;
+      font-size:13px !important;
+    }
+    #customAudioPlayerUI [data-audio-menu] .drive-menu-item:hover,
+    #customAudioPlayerUI [data-audio-menu] .drive-menu-item.active {
+      background:rgba(255,255,255,.10) !important;
+    }
+    #customAudioPlayerUI [data-audio-menu] .drive-menu-item .material-icons {
+      color:rgba(255,255,255,.82) !important;
+    }
+    #customAudioPlayerUI [data-audio-speed-submenu],
+    #customAudioPlayerUI [data-audio-eq-submenu] {
+      margin-left:0 !important;
+      padding:4px 0 0 !important;
+      border-left:0 !important;
+      max-height:290px;
+      overflow-y:auto;
+    }
+    #customAudioPlayerUI [data-audio-speed-submenu] .drive-menu-item,
+    #customAudioPlayerUI [data-audio-eq-submenu] .drive-menu-item {
+      min-height:36px !important;
+    }
+    #audioPlayerWrap .glass-strong:not(#audioGlassSheet),
+    #audioPlayerWrap .media-play-btn.is-playing {
+      background:linear-gradient(145deg,rgba(34,36,42,.34),rgba(18,20,27,.24)) !important;
+      border:1px solid rgba(255,255,255,.17) !important;
+      box-shadow:none !important;
+      backdrop-filter:blur(24px) saturate(170%) !important;
+      -webkit-backdrop-filter:blur(24px) saturate(170%) !important;
+    }
+    #audioPlayerWrap .media-volume-popover {
+      width:256px !important;
+      min-width:256px !important;
+      background:linear-gradient(145deg,rgba(34,36,42,.38),rgba(18,20,27,.28)) !important;
+      border-color:rgba(255,255,255,.18) !important;
+      box-shadow:none !important;
+    }
+    @media(max-width:420px){
+      #customAudioPlayerUI [data-audio-menu],
+      #audioPlayerWrap .media-volume-popover {
+        width:min(256px,calc(100vw - 28px)) !important;
+        min-width:0 !important;
+      }
+    }
+
+    #customAudioPlayerUI [data-audio-menu] .audio-submenu-title {
+      font-weight:700 !important;
+      border-bottom:1px solid rgba(255,255,255,.11) !important;
+      border-radius:8px 8px 3px 3px !important;
+      margin-bottom:4px !important;
+    }
+    #customAudioPlayerUI [data-audio-menu] .audio-submenu-title .material-icons { font-size:18px !important; }
+    #customAudioPlayerUI [data-audio-speed-submenu],
+    #customAudioPlayerUI [data-audio-eq-submenu] {
+      width:100% !important;
+      max-height:340px !important;
+      animation:audioMenuPageIn .2s cubic-bezier(.16,1,.3,1) both;
+    }
+    @keyframes audioMenuPageIn { from{opacity:0;transform:translateX(8px)} to{opacity:1;transform:none} }
+
+    /* Menus inherit the live width of the controls capsule that opened them. */
+    .drive-video-wrap .drive-menu,
+    .drive-video-wrap .media-volume-popover,
+    #customAudioPlayerUI [data-audio-menu],
+    #audioPlayerWrap .media-volume-popover {
+      width:var(--media-menu-width,256px) !important;
+      min-width:var(--media-menu-width,256px) !important;
+      max-width:calc(100vw - 28px) !important;
+    }
+
+    #customAudioPlayerUI [data-audio-menu] .drive-menu-item { gap:6px !important; }
+    #customAudioPlayerUI [data-audio-menu] .drive-menu-item > span { min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    #customAudioPlayerUI [data-audio-menu] .font-mono { flex:0 0 auto; }
+
+    #customAudioPlayerUI [data-audio-speed-submenu] > [data-audio-menu-back] {
+      min-height:42px !important;
+      margin-bottom:5px !important;
+      border-bottom:1px solid rgba(255,255,255,.12) !important;
+      background:transparent !important;
+    }
+
+
+    /* Keep audio's page-style navigation, but restore live capsule-based width. */
+    #customAudioPlayerUI [data-audio-menu],
+    #audioPlayerWrap .media-volume-popover {
+      width:var(--media-menu-width,256px) !important;
+      min-width:var(--media-menu-width,256px) !important;
+      max-width:calc(100vw - 28px) !important;
+    }
+    #customAudioPlayerUI [data-audio-menu] .audio-submenu-title {
+      padding-left:8px !important;
+      padding-right:8px !important;
+    }
+    #customAudioPlayerUI [data-audio-menu] .audio-submenu-title > span {
+      overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+    }
+
+    /* Hidden must win over the audio row's display:flex so submenu pages truly replace the main page. */
+    #customAudioPlayerUI [data-audio-menu] > .hidden,
+    #customAudioPlayerUI [data-audio-menu] .hidden {
+      display:none !important;
+    }
+
+    /* Final media glass material: transparent, blurred, and content-responsive. */
+    .drive-video-wrap .drive-menu,
+    .drive-video-wrap .media-volume-popover,
+    #customAudioPlayerUI [data-audio-menu],
+    #audioPlayerWrap .media-volume-popover {
+      width:clamp(220px,var(--media-menu-width,256px),280px) !important;
+      min-width:0 !important;
+      max-width:min(280px,calc(100vw - 24px)) !important;
+      background:rgba(14,18,27,.14) !important;
+      background-image:linear-gradient(145deg,rgba(255,255,255,.13),rgba(255,255,255,.025)) !important;
+      border:1px solid rgba(255,255,255,.22) !important;
+      box-shadow:none !important;
+      backdrop-filter:blur(32px) saturate(190%) contrast(108%) !important;
+      -webkit-backdrop-filter:blur(32px) saturate(190%) contrast(108%) !important;
+      overflow:hidden;
+    }
+    .drive-video-wrap .drive-menu::before,
+    .drive-video-wrap .media-volume-popover::before,
+    #customAudioPlayerUI [data-audio-menu]::before,
+    #audioPlayerWrap .media-volume-popover::before {
+      content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
+      background:linear-gradient(135deg,rgba(255,255,255,.14),transparent 42%,rgba(124,108,255,.05));
+    }
+    .drive-video-wrap .drive-menu > *,
+    .drive-video-wrap .media-volume-popover > *,
+    #customAudioPlayerUI [data-audio-menu] > *,
+    #audioPlayerWrap .media-volume-popover > * { position:relative; z-index:1; }
+    .drive-video-wrap .drive-pill-dark,
+    #audioPlayerWrap .glass-strong:not(#audioGlassSheet) {
+      background:rgba(18,22,31,.18) !important;
+      background-image:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.02)) !important;
+      border:1px solid rgba(255,255,255,.2) !important;
+      box-shadow:none !important;
+      backdrop-filter:blur(26px) saturate(180%) !important;
+      -webkit-backdrop-filter:blur(26px) saturate(180%) !important;
+    }
+    @media(max-width:420px){
+      .drive-video-wrap .drive-menu,
+      .drive-video-wrap .media-volume-popover,
+      #customAudioPlayerUI [data-audio-menu],
+      #audioPlayerWrap .media-volume-popover {
+        width:min(240px,calc(100vw - 20px)) !important;
+      }
+    }
+
+    /* Restore exact live width; no artificial clamp changes the measured capsule width. */
+    .drive-video-wrap .drive-menu,
+    .drive-video-wrap .media-volume-popover,
+    #customAudioPlayerUI [data-audio-menu],
+    #audioPlayerWrap .media-volume-popover {
+      width:min(var(--media-menu-width,256px),calc(100vw - 24px)) !important;
+      min-width:0 !important;
+      max-width:calc(100vw - 24px) !important;
+    }
+    /* Loop and Equalizer are individual glass options on the audio main page. */
+    #customAudioPlayerUI [data-audio-menu] > [data-audio-menu-loop],
+    #customAudioPlayerUI [data-audio-menu] > [data-audio-menu-eq],
+    #customAudioPlayerUI [data-audio-menu] > [data-audio-menu-speed] {
+      background:rgba(18,22,31,.18) !important;
+      background-image:linear-gradient(145deg,rgba(255,255,255,.11),rgba(255,255,255,.025)) !important;
+      border:1px solid rgba(255,255,255,.14) !important;
+      backdrop-filter:blur(16px) saturate(165%) !important;
+      -webkit-backdrop-filter:blur(16px) saturate(165%) !important;
+    }
+    #customAudioPlayerUI [data-audio-menu] > [data-audio-menu-loop]:hover,
+    #customAudioPlayerUI [data-audio-menu] > [data-audio-menu-eq]:hover,
+    #customAudioPlayerUI [data-audio-menu] > [data-audio-menu-speed]:hover {
+      background:rgba(255,255,255,.13) !important;
+    }
+
+    /* Final audio glass: width comes only from the live measured controls capsule. */
+    #customAudioPlayerUI [data-audio-menu],
+    #audioPlayerWrap .media-volume-popover {
+      width:min(var(--media-menu-width),calc(100vw - 24px)) !important;
+      min-width:0 !important;
+      max-width:calc(100vw - 24px) !important;
+      background:rgba(255,255,255,.055) !important;
+      background-image:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.018)) !important;
+      border:1px solid rgba(255,255,255,.2) !important;
+      box-shadow:none !important;
+      backdrop-filter:blur(34px) saturate(190%) contrast(108%) !important;
+      -webkit-backdrop-filter:blur(34px) saturate(190%) contrast(108%) !important;
+    }
+    #customAudioPlayerUI [data-audio-menu]::before,
+    #audioPlayerWrap .media-volume-popover::before {
+      background:linear-gradient(135deg,rgba(255,255,255,.13),transparent 45%,rgba(124,108,255,.045)) !important;
+    }
+
+
+  /* Final media control material — kept last so theme rules cannot make it opaque. */
+  html body .drive-video-wrap .drive-pill-dark,
+  html body #audioPlayerWrap .glass-strong:not(#audioGlassSheet),
+  html body .drive-video-wrap .media-volume-popover,
+  html body #audioPlayerWrap .media-volume-popover,
+  html body .drive-video-wrap .drive-menu,
+  html body #customAudioPlayerUI [data-audio-menu] {
+    background-color:rgba(16,20,29,.14) !important;
+    background-image:linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.025) 58%,rgba(125,115,255,.035)) !important;
+    border:1px solid rgba(255,255,255,.24) !important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.12) !important;
+    backdrop-filter:blur(30px) saturate(185%) contrast(106%) !important;
+    -webkit-backdrop-filter:blur(30px) saturate(185%) contrast(106%) !important;
+  }
+  html body .drive-video-wrap .drive-pill-dark button:not(.media-play-btn),
+  html body #audioPlayerWrap .glass-strong button,
+  html body .drive-video-wrap .drive-menu button,
+  html body #customAudioPlayerUI [data-audio-menu] button {
+    background-color:transparent !important;
+    box-shadow:none !important;
+    border-color:transparent !important;
+    transition:background-color .18s ease,border-color .18s ease,transform .18s ease !important;
+  }
+  html body .drive-video-wrap .drive-pill-dark button:not(.media-play-btn):hover,
+  html body #audioPlayerWrap .glass-strong button:hover,
+  html body .drive-video-wrap .drive-menu button:hover,
+  html body #customAudioPlayerUI [data-audio-menu] button:hover,
+  html body .drive-video-wrap .drive-menu button.active,
+  html body #customAudioPlayerUI [data-audio-menu] button.active {
+    background-color:rgba(255,255,255,.13) !important;
+    border-color:rgba(255,255,255,.08) !important;
+  }
+  /* Preserve the requested white primary play/pause pill. */
+  html body .drive-video-wrap .media-play-btn,
+  html body #audioPlayerWrap .media-play-btn {
+    background:#fff !important;
+    color:#0b0f18 !important;
+    border:1px solid rgba(255,255,255,.72) !important;
+    box-shadow:none !important;
+  }
+  html body .drive-video-wrap .drive-progress {
+    background:rgba(255,255,255,.2) !important;
+    backdrop-filter:blur(12px) saturate(160%) !important;
+    -webkit-backdrop-filter:blur(12px) saturate(160%) !important;
+  }
+
+
+  /* Keep icons/labels readable after the control rows become translucent dark glass. */
+  html body #expandedModalCard.preview-light .drive-video-wrap .drive-pill-dark *,
+  html body #expandedModalCard.preview-dark .drive-video-wrap .drive-pill-dark *,
+  html body #expandedPreviewContent #audioPlayerWrap .glass-strong:not(#audioGlassSheet) *,
+  html body #previewDrawer .drive-video-wrap .drive-pill-dark *,
+  html body #previewDrawer #audioPlayerWrap .glass-strong:not(#audioGlassSheet) * {
+    color:rgba(255,255,255,.96) !important;
+  }
+  html body #expandedModalCard .drive-video-wrap .media-play-btn *,
+  html body #expandedPreviewContent #audioPlayerWrap .media-play-btn *,
+  html body #previewDrawer .drive-video-wrap .media-play-btn *,
+  html body #previewDrawer #audioPlayerWrap .media-play-btn * {
+    color:#080b12 !important;
+  }
+  html body #expandedModalCard .drive-video-wrap .drive-pill-dark,
+  html body #expandedPreviewContent #audioPlayerWrap .glass-strong:not(#audioGlassSheet),
+  html body #previewDrawer .drive-video-wrap .drive-pill-dark,
+  html body #previewDrawer #audioPlayerWrap .glass-strong:not(#audioGlassSheet) {
+    background:linear-gradient(145deg,rgba(20,24,33,.26),rgba(10,13,20,.13)) !important;
+    border:1px solid rgba(255,255,255,.25) !important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.12) !important;
+    backdrop-filter:blur(28px) saturate(180%) !important;
+    -webkit-backdrop-filter:blur(28px) saturate(180%) !important;
+  }
+
+
+  /* Clean media chrome: no rectangular outlines around players, controls, or menus. */
+  html body .drive-video-wrap,
+  html body #audioPlayerWrap,
+  html body .drive-video-wrap .drive-pill-dark,
+  html body #audioPlayerWrap .glass-strong:not(#audioGlassSheet),
+  html body .drive-video-wrap .drive-menu,
+  html body #customAudioPlayerUI [data-audio-menu],
+  html body .drive-video-wrap .media-volume-popover,
+  html body #audioPlayerWrap .media-volume-popover,
+  html body .drive-video-wrap button,
+  html body #audioPlayerWrap button,
+  html body #customAudioPlayerUI [data-audio-menu] button {
+    border:none !important;
+    outline:none !important;
+    box-shadow:none !important;
+  }
+  /* Play and pause share one stable white pill and never jump between materials. */
+  html body .drive-video-wrap .media-play-btn,
+  html body .drive-video-wrap .media-play-btn.is-playing,
+  html body #audioPlayerWrap .media-play-btn,
+  html body #audioPlayerWrap .media-play-btn.is-playing {
+    background:#fff !important;
+    background-image:none !important;
+    color:#080b12 !important;
+    border:none !important;
+    outline:none !important;
+    box-shadow:none !important;
+    backdrop-filter:none !important;
+    -webkit-backdrop-filter:none !important;
+  }
+  html body .drive-video-wrap .media-play-btn *,
+  html body #audioPlayerWrap .media-play-btn * { color:#080b12 !important; }
+  html body .drive-video-wrap button:focus-visible,
+  html body #audioPlayerWrap button:focus-visible,
+  html body #customAudioPlayerUI [data-audio-menu] button:focus-visible {
+    outline:none !important;
+    box-shadow:inset 0 0 0 2px rgba(255,255,255,.28) !important;
+  }
+
+
+  html body #expandedModalCard.preview-light .drive-video-wrap .drive-pill-dark,
+  html body #expandedModalCard.preview-dark .drive-video-wrap .drive-pill-dark,
+  html body #expandedPreviewContent #audioPlayerWrap .glass-strong:not(#audioGlassSheet),
+  html body #previewDrawer .drive-video-wrap .drive-pill-dark,
+  html body #previewDrawer #audioPlayerWrap .glass-strong:not(#audioGlassSheet) {
+    border:0 !important;
+    outline:0 !important;
+    box-shadow:none !important;
+    background-clip:padding-box !important;
+  }
+  html body #expandedModalCard .drive-video-wrap,
+  html body #expandedPreviewContent #audioPlayerWrap,
+  html body #previewDrawer .drive-video-wrap,
+  html body #previewDrawer #audioPlayerWrap {
+    border:0 !important;
+    outline:0 !important;
+    box-shadow:none !important;
+  }
+
+
+  /* Play/pause uses the same borderless blurred glass as the adjacent controls. */
+  html body #expandedModalCard .drive-video-wrap .media-play-btn,
+  html body #expandedModalCard .drive-video-wrap .media-play-btn.is-playing,
+  html body #expandedPreviewContent #audioPlayerWrap .media-play-btn,
+  html body #expandedPreviewContent #audioPlayerWrap .media-play-btn.is-playing,
+  html body #previewDrawer .drive-video-wrap .media-play-btn,
+  html body #previewDrawer .drive-video-wrap .media-play-btn.is-playing,
+  html body #previewDrawer #audioPlayerWrap .media-play-btn,
+  html body #previewDrawer #audioPlayerWrap .media-play-btn.is-playing {
+    background:linear-gradient(145deg,rgba(20,24,33,.25),rgba(10,13,20,.12)) !important;
+    color:#fff !important;
+    border:0 !important;
+    outline:0 !important;
+    box-shadow:none !important;
+    backdrop-filter:blur(28px) saturate(180%) !important;
+    -webkit-backdrop-filter:blur(28px) saturate(180%) !important;
+  }
+  html body #expandedModalCard .drive-video-wrap .media-play-btn *,
+  html body #expandedPreviewContent #audioPlayerWrap .media-play-btn *,
+  html body #previewDrawer .drive-video-wrap .media-play-btn *,
+  html body #previewDrawer #audioPlayerWrap .media-play-btn * {
+    color:#fff !important;
+  }
+
+
+  /* Pure neutral glass: no black tint, including play and pause states. */
+  html body #expandedModalCard .drive-video-wrap .drive-pill-dark,
+  html body #expandedModalCard .drive-video-wrap .media-play-btn,
+  html body #expandedModalCard .drive-video-wrap .media-play-btn.is-playing,
+  html body #expandedPreviewContent #audioPlayerWrap .glass-strong:not(#audioGlassSheet),
+  html body #expandedPreviewContent #audioPlayerWrap .media-play-btn,
+  html body #expandedPreviewContent #audioPlayerWrap .media-play-btn.is-playing,
+  html body #previewDrawer .drive-video-wrap .drive-pill-dark,
+  html body #previewDrawer .drive-video-wrap .media-play-btn,
+  html body #previewDrawer .drive-video-wrap .media-play-btn.is-playing,
+  html body #previewDrawer #audioPlayerWrap .glass-strong:not(#audioGlassSheet),
+  html body #previewDrawer #audioPlayerWrap .media-play-btn,
+  html body #previewDrawer #audioPlayerWrap .media-play-btn.is-playing,
+  html body .drive-video-wrap .drive-menu,
+  html body #customAudioPlayerUI [data-audio-menu],
+  html body .drive-video-wrap .media-volume-popover,
+  html body #audioPlayerWrap .media-volume-popover {
+    background-color:rgba(255,255,255,.10) !important;
+    background-image:linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.035)) !important;
+    border:0 !important;
+    outline:0 !important;
+    box-shadow:none !important;
+    backdrop-filter:blur(30px) saturate(155%) !important;
+    -webkit-backdrop-filter:blur(30px) saturate(155%) !important;
+  }
+  html body #expandedModalCard .drive-video-wrap .drive-pill-dark *,
+  html body #expandedModalCard .drive-video-wrap .media-play-btn *,
+  html body #expandedPreviewContent #audioPlayerWrap .glass-strong:not(#audioGlassSheet) *,
+  html body #expandedPreviewContent #audioPlayerWrap .media-play-btn *,
+  html body #previewDrawer .drive-video-wrap .drive-pill-dark *,
+  html body #previewDrawer .drive-video-wrap .media-play-btn *,
+  html body #previewDrawer #audioPlayerWrap .glass-strong:not(#audioGlassSheet) *,
+  html body #previewDrawer #audioPlayerWrap .media-play-btn * {
+    color:#111827 !important;
+  }
+  html body .drive-video-wrap .drive-menu button,
+  html body #customAudioPlayerUI [data-audio-menu] button {
+    background-color:transparent !important;
+    background-image:none !important;
+    border:0 !important;
+    box-shadow:none !important;
+  }
+  html body .drive-video-wrap .drive-menu button:hover,
+  html body #customAudioPlayerUI [data-audio-menu] button:hover,
+  html body .drive-video-wrap .drive-menu button.active,
+  html body #customAudioPlayerUI [data-audio-menu] button.active {
+    background-color:rgba(255,255,255,.14) !important;
+  }
+
+
+  html body #sidebarNewMenu {
+    background-color:rgba(255,255,255,.08) !important;
+    background-image:linear-gradient(145deg,rgba(255,255,255,.15),rgba(255,255,255,.025)) !important;
+    border:0 !important;
+    outline:0 !important;
+    box-shadow:none !important;
+    backdrop-filter:blur(30px) saturate(155%) !important;
+    -webkit-backdrop-filter:blur(30px) saturate(155%) !important;
+  }
+  html body #sidebarNewMenu::before {
+    background:linear-gradient(135deg,rgba(255,255,255,.13),transparent 48%) !important;
+    opacity:1 !important;
+  }
+  html body #sidebarNewMenu::after { display:none !important; }
+  html body #sidebarNewMenu button {
+    background:transparent !important;
+    border:0 !important;
+    outline:0 !important;
+    box-shadow:none !important;
+  }
+  html body #sidebarNewMenu button:hover { background:rgba(255,255,255,.14) !important; }
+  html body #sidebarNewMenu hr,
+  html body #sidebarNewMenu .border-t,
+  html body #sidebarNewMenu .border-b { border-color:rgba(255,255,255,.16) !important; }
+
+
+  #fileGrid .grid-select-checkbox {
+    position:absolute !important;
+    top:10px !important;
+    left:10px !important;
+    margin:0 !important;
+    border:1px solid rgba(148,163,184,.48) !important;
+    outline:0 !important;
+    box-shadow:none !important;
+    backdrop-filter:blur(10px) saturate(150%) !important;
+    -webkit-backdrop-filter:blur(10px) saturate(150%) !important;
+  }
+  #fileGrid .grid-select-checkbox.is-selected {
+    background:#000 !important;
+    border-color:#000 !important;
+  }
+  #fileGrid .grid-select-checkbox.is-selected i { color:#fff !important; opacity:1 !important; }
+
+
+  html body #selectToggleBtn[aria-pressed="true"],
+  html body #selectToggleBtn.is-selection-active {
+    background:#000 !important;
+    color:#fff !important;
+    border:0 !important;
+    outline:0 !important;
+    box-shadow:none !important;
+  }
+  html body #selectToggleBtn[aria-pressed="true"] i { color:#fff !important; }
+
+
+  /* One final glass material for every popup/menu/flyout, including volume. */
+  html body .drive-video-wrap .drive-menu,
+  html body #customAudioPlayerUI [data-audio-menu],
+  html body .drive-video-wrap .media-volume-popover,
+  html body #audioPlayerWrap .media-volume-popover,
+  html body #fileContextMenu,
+  html body #sidebarNewMenu {
+    background:rgba(255,255,255,.075) !important;
+    background-image:linear-gradient(145deg,rgba(255,255,255,.15),rgba(255,255,255,.018)) !important;
+    border:0 !important;
+    outline:0 !important;
+    box-shadow:none !important;
+    backdrop-filter:blur(34px) saturate(165%) contrast(104%) !important;
+    -webkit-backdrop-filter:blur(34px) saturate(165%) contrast(104%) !important;
+    isolation:isolate;
+  }
+  html body .drive-video-wrap .drive-menu::before,
+  html body #customAudioPlayerUI [data-audio-menu]::before,
+  html body .drive-video-wrap .media-volume-popover::before,
+  html body #audioPlayerWrap .media-volume-popover::before,
+  html body #fileContextMenu::before,
+  html body #sidebarNewMenu::before {
+    background:linear-gradient(135deg,rgba(255,255,255,.12),transparent 48%) !important;
+    opacity:1 !important;
+    pointer-events:none !important;
+  }
+  html body .drive-video-wrap .drive-menu button,
+  html body #customAudioPlayerUI [data-audio-menu] button,
+  html body #fileContextMenu button,
+  html body #sidebarNewMenu button {
+    background:transparent !important;
+    background-image:none !important;
+    border:0 !important;
+    outline:0 !important;
+    box-shadow:none !important;
+  }
+  html body .drive-video-wrap .drive-menu button:hover,
+  html body #customAudioPlayerUI [data-audio-menu] button:hover,
+  html body #fileContextMenu button:hover,
+  html body #sidebarNewMenu button:hover,
+  html body .drive-video-wrap .drive-menu button.active,
+  html body #customAudioPlayerUI [data-audio-menu] button.active {
+    background:rgba(255,255,255,.14) !important;
+  }
+  html body .media-volume-popover input[type="range"] {
+    background:rgba(255,255,255,.22) !important;
+    border:0 !important;
+    outline:0 !important;
+    box-shadow:none !important;
+  }
+  html body .media-volume-popover input[type="range"]::-webkit-slider-thumb {
+    background:#fff !important; border:0 !important; box-shadow:none !important;
+  }
+  html body .media-volume-popover input[type="range"]::-moz-range-thumb {
+    background:#fff !important; border:0 !important; box-shadow:none !important;
+  }
+
+
+  /* Fully transparent blur layer: no tinting sheet hiding the backdrop. */
+  html body .drive-video-wrap .drive-pill-dark,
+  html body #audioPlayerWrap .glass-strong:not(#audioGlassSheet),
+  html body .drive-video-wrap .media-play-btn,
+  html body #audioPlayerWrap .media-play-btn,
+  html body .drive-video-wrap .drive-menu,
+  html body #customAudioPlayerUI [data-audio-menu],
+  html body .drive-video-wrap .media-volume-popover,
+  html body #audioPlayerWrap .media-volume-popover,
+  html body #fileContextMenu,
+  html body #sidebarNewMenu {
+    background:rgba(255,255,255,.035) !important;
+    background-image:none !important;
+    border:0 !important;
+    outline:0 !important;
+    box-shadow:none !important;
+    backdrop-filter:blur(48px) saturate(180%) !important;
+    -webkit-backdrop-filter:blur(48px) saturate(180%) !important;
+  }
+  html body .drive-video-wrap .drive-menu::before,
+  html body #customAudioPlayerUI [data-audio-menu]::before,
+  html body .drive-video-wrap .media-volume-popover::before,
+  html body #audioPlayerWrap .media-volume-popover::before,
+  html body #fileContextMenu::before,
+  html body #sidebarNewMenu::before,
+  html body #sidebarNewMenu::after { display:none !important; }
+  html body .drive-video-wrap .drive-menu button,
+  html body #customAudioPlayerUI [data-audio-menu] button,
+  html body #fileContextMenu button,
+  html body #sidebarNewMenu button { background:transparent !important; background-image:none !important; }
+  html body .drive-video-wrap .drive-menu button:hover,
+  html body #customAudioPlayerUI [data-audio-menu] button:hover,
+  html body #fileContextMenu button:hover,
+  html body #sidebarNewMenu button:hover,
+  html body .drive-video-wrap .drive-menu button.active,
+  html body #customAudioPlayerUI [data-audio-menu] button.active { background:rgba(255,255,255,.12) !important; }
+
+
+  /* Visible neutral glass for every interactive floating element. */
+  html body .drive-video-wrap .drive-pill-dark,
+  html body #audioPlayerWrap .glass-strong:not(#audioGlassSheet),
+  html body .drive-video-wrap .media-play-btn,
+  html body #audioPlayerWrap .media-play-btn,
+  html body .drive-video-wrap .drive-menu,
+  html body #customAudioPlayerUI [data-audio-menu],
+  html body .drive-video-wrap .media-volume-popover,
+  html body #audioPlayerWrap .media-volume-popover,
+  html body #fileContextMenu,
+  html body #sidebarNewMenu {
+    background-color:rgba(255,255,255,.22) !important;
+    background-image:none !important;
+    border:none !important;
+    outline:none !important;
+    box-shadow:none !important;
+    backdrop-filter:blur(36px) saturate(180%) !important;
+    -webkit-backdrop-filter:blur(36px) saturate(180%) !important;
+  }
+  html body .drive-video-wrap .drive-menu::before,
+  html body #customAudioPlayerUI [data-audio-menu]::before,
+  html body .drive-video-wrap .media-volume-popover::before,
+  html body #audioPlayerWrap .media-volume-popover::before,
+  html body #fileContextMenu::before,
+  html body #sidebarNewMenu::before,
+  html body #sidebarNewMenu::after { content:none !important; display:none !important; }
+  html body .drive-video-wrap button,
+  html body #audioPlayerWrap button,
+  html body .drive-video-wrap .drive-menu button,
+  html body #customAudioPlayerUI [data-audio-menu] button,
+  html body #fileContextMenu button,
+  html body #sidebarNewMenu button {
+    border:none !important; outline:none !important; box-shadow:none !important;
+  }
+
+
+  /* Keep the page matched to the controls width without clipping its heading. */
+  html body #customAudioPlayerUI [data-audio-speed-submenu] > [data-audio-menu-back] {
+    padding:8px 5px !important;
+    min-height:40px !important;
+    gap:3px !important;
+  }
+  html body #customAudioPlayerUI [data-audio-speed-submenu] > [data-audio-menu-back] > span {
+    gap:4px !important;
+    overflow:visible !important;
+    text-overflow:clip !important;
+    white-space:nowrap !important;
+    font-size:11px !important;
+    letter-spacing:-.015em !important;
+  }
+  html body #customAudioPlayerUI [data-audio-speed-submenu] > [data-audio-menu-back] .material-icons {
+    font-size:16px !important;
+    flex:0 0 16px !important;
+  }
+  html body #customAudioPlayerUI [data-audio-speed-submenu],
+  html body #customAudioPlayerUI [data-audio-eq-submenu] {
+    scrollbar-width:none !important;
+  }
+  html body #customAudioPlayerUI [data-audio-speed-submenu]::-webkit-scrollbar,
+  html body #customAudioPlayerUI [data-audio-eq-submenu]::-webkit-scrollbar { display:none !important; }
+  html body #customAudioPlayerUI [data-audio-menu] {
+    background:rgba(255,255,255,.10) !important;
+    background-image:none !important;
+    backdrop-filter:blur(38px) saturate(175%) !important;
+    -webkit-backdrop-filter:blur(38px) saturate(175%) !important;
+  }
+  html body #customAudioPlayerUI [data-audio-speed-submenu] .drive-menu-item {
+    padding-left:10px !important;
+    padding-right:8px !important;
+  }
+
+
+  /* Let popups sample the actual player/page behind them; isolation was blocking the backdrop. */
+  html body .drive-video-wrap .drive-menu,
+  html body #customAudioPlayerUI [data-audio-menu],
+  html body .drive-video-wrap .media-volume-popover,
+  html body #audioPlayerWrap .media-volume-popover,
+  html body #fileContextMenu,
+  html body #sidebarNewMenu {
+    isolation:auto !important;
+    background-color:rgba(255,255,255,.045) !important;
+    background-image:none !important;
+    border:0 !important;
+    outline:0 !important;
+    box-shadow:none !important;
+    backdrop-filter:blur(18px) saturate(165%) !important;
+    -webkit-backdrop-filter:blur(18px) saturate(165%) !important;
+  }
+  html body #customAudioPlayerUI [data-audio-menu] button,
+  html body .drive-video-wrap .drive-menu button,
+  html body #fileContextMenu button,
+  html body #sidebarNewMenu button {
+    background:transparent !important;
+    background-image:none !important;
+  }
+  html body #customAudioPlayerUI [data-audio-menu] button:hover,
+  html body #customAudioPlayerUI [data-audio-menu] button.active,
+  html body .drive-video-wrap .drive-menu button:hover,
+  html body .drive-video-wrap .drive-menu button.active,
+  html body #fileContextMenu button:hover,
+  html body #sidebarNewMenu button:hover {
+    background:rgba(255,255,255,.105) !important;
+  }
+  html body #customAudioPlayerUI [data-audio-menu]::before,
+  html body .drive-video-wrap .drive-menu::before,
+  html body .media-volume-popover::before,
+  html body #fileContextMenu::before,
+  html body #sidebarNewMenu::before,
+  html body #sidebarNewMenu::after { display:none !important; content:none !important; }
+
+
+  html body #audioPlayerWrap.is-midi #audioGlassSheet,
+  html body #audioPlayerWrap.is-midi .glass-strong:not(#audioGlassSheet),
+  html body #audioPlayerWrap.is-midi .media-play-btn,
+  html body #audioPlayerWrap.is-midi .media-volume-popover,
+  html body #audioPlayerWrap.is-midi + [data-audio-menu],
+  html body #audioPlayerWrap.is-midi [data-audio-menu] {
+    background:rgba(255,255,255,.055) !important;
+    background-image:none !important;
+    border:0 !important;
+    outline:0 !important;
+    box-shadow:none !important;
+    backdrop-filter:blur(22px) saturate(170%) !important;
+    -webkit-backdrop-filter:blur(22px) saturate(170%) !important;
+  }
+  html body #audioPlayerWrap .media-volume-popover {
+    top:auto !important;
+    left:auto !important;
+    right:0 !important;
+    bottom:calc(100% + 10px) !important;
+    transform:none !important;
+    z-index:60 !important;
+  }
+  html body #audioPlayerWrap.is-midi #audioIconSquare {
+    background:rgba(255,255,255,.09) !important;
+    backdrop-filter:blur(24px) saturate(170%) !important;
+    -webkit-backdrop-filter:blur(24px) saturate(170%) !important;
+    border:0 !important;
+    box-shadow:none !important;
+  }
+
+
+  /* The full-player sheet was flattening the backdrop before child glass could sample it. */
+  html body #audioGlassSheet {
+    background:transparent !important;
+    background-image:none !important;
+    backdrop-filter:none !important;
+    -webkit-backdrop-filter:none !important;
+    border:0 !important;
+    box-shadow:none !important;
+  }
+  /* Popovers are now siblings in the media root, not nested in another backdrop-filter. */
+  html body .drive-video-wrap > .media-volume-popover,
+  html body #audioPlayerWrap > .media-volume-popover,
+  html body .drive-video-wrap > .drive-menu,
+  html body #audioPlayerWrap > [data-audio-menu] {
+    background:rgba(255,255,255,.06) !important;
+    background-image:none !important;
+    border:0 !important;
+    outline:0 !important;
+    box-shadow:none !important;
+    isolation:auto !important;
+    backdrop-filter:blur(24px) saturate(175%) !important;
+    -webkit-backdrop-filter:blur(24px) saturate(175%) !important;
+  }
+  html body .drive-video-wrap .drive-pill-dark,
+  html body #audioPlayerWrap .glass-strong:not(#audioGlassSheet),
+  html body .drive-video-wrap .media-play-btn,
+  html body #audioPlayerWrap .media-play-btn {
+    background:rgba(255,255,255,.06) !important;
+    background-image:none !important;
+    border:0 !important;
+    box-shadow:none !important;
+    backdrop-filter:blur(24px) saturate(175%) !important;
+    -webkit-backdrop-filter:blur(24px) saturate(175%) !important;
+  }

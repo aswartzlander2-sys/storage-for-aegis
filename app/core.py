@@ -1,4 +1,4 @@
-"""Robo Storage core. Standard library only; state never lives in ADDON_DIR."""
+"""Robo Cloud core. Standard library only; state never lives in ADDON_DIR."""
 import base64
 import copy
 import hashlib

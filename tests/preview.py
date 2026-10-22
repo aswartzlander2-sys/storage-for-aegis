@@ -9,7 +9,7 @@ sys.path.insert(0, str(ROOT / 'app'))
 from core import Store
 DATA = Path(sys.argv[1]).resolve()
 DATA.mkdir(parents=True, exist_ok=True)
-cfg = {'id': 'robo-storage-aegis', 'version': '1.1.0', 'bind': '0.0.0.0', 'port': 8080, 'host': 'burrow', 'demo': True, 'mesh': str(DATA / 'mesh')}
+cfg = {'id': 'robo-storage-aegis', 'version': '1.2.0', 'bind': '0.0.0.0', 'port': 8080, 'host': 'burrow', 'demo': True, 'mesh': str(DATA / 'mesh')}
 config = DATA / 'config.json'
 config.write_text(json.dumps(cfg))
 os.chmod(config, 0o600)

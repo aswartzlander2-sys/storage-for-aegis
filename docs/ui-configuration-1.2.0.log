@@ -1,0 +1,4 @@
+Group address: default Burrow checkbox below address, checked by default; domain inherited; no nested-domain field
+E2 upload gate: disabled without file, enabled after synthetic import; no provider request made
+UI smoke checks passed: desktop/mobile, Linux command hidden/verification gating, group bars, partitions, draggable redistribution shares, migration and erase confirmation modals.
+Browser page errors: []

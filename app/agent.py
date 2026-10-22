@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Robo Storage Linux worker: outbound HTTPS only; no listening port or root required.
+"""Robo Cloud Linux worker: outbound HTTPS only; no listening port or root required.
 All storage I/O uses no-follow directory descriptors beneath the selected root.
 """
 import base64
@@ -160,10 +160,10 @@ def bootstrap(encoded):
     try:
         fd = os.open(probe, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
         with os.fdopen(fd, 'wb') as f:
-            f.write(b'Robo Storage probe')
+            f.write(b'Robo Cloud probe')
             f.flush()
             os.fsync(f.fileno())
-        if probe.read_bytes() != b'Robo Storage probe':
+        if probe.read_bytes() != b'Robo Cloud probe':
             raise ValueError('Storage probe failed')
     finally:
         probe.unlink(missing_ok=True)

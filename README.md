@@ -1,10 +1,10 @@
-# Robo Storage for Aegis
+# Robo Cloud for Aegis
 
-**1.1.0 — FreeCandy-inspired Robo glass UI for both management and file browsing.**
+**1.2.0 — actual supplied Robo interface, minimally connected to the storage gateway.**
 
-The 1.1.0 interfaces were exercised with real Linux workers through a local CA-trusted HTTPS fixture and an actual Aegis host. Earlier public Burrow/Cloudflare results are preserved separately; no new public-network or real E2/CloudGate/custom-domain acceptance is claimed for this UI release. See the validation report.
+The rejected inspired redesign is replaced by the original application markup/styles/controls. Real Linux-worker and actual Aegis-host checks passed; real E2/CloudGate/custom-domain/systemd/reboot acceptance is not claimed. See the validation report.
 
-A Weft addon with its own Aegis dashboard, home-screen tile and storage groups spanning **IDrive E2**, a deployed **CloudGate client**, and **Linux directories**. Uses the supplied Robo Storage logo. The uploaded access-key example and the credentials/configuration in the supplied reference dashboards are **not included or used**.
+A Weft addon with its own Aegis dashboard, home-screen tile and storage groups spanning **IDrive E2**, a deployed **CloudGate client**, and **Linux directories**. Uses the user-supplied Robo logo. The uploaded access-key example and the credentials/configuration in the supplied reference dashboards are **not included or used**.
 
 ## Compatibility and specification note
 
@@ -20,24 +20,26 @@ The supplied prompt suggests `requires.burrow: ">=2.0.0"`; the normative SPEC pe
 - Linux directory accepts `~/…` and `/…`. Press the square enter button before any enrollment command is shown. The directory is created if missing. Verification requires a successful storage probe plus an authenticated worker heartbeat.
 - Server cards, real inventory tests, capacity contributions, 150 px group distribution bars, 75 px server usage bars, and file-type color legends.
 - Server and nested-directory quota budgets; child partitions display with a 15% indent. **Logical quotas only**: no loopback images, disks, placeholder files or fake reservations.
-- FreeCandy-inspired standalone file explorer: floating glass header, category sidebar, folder breadcrumbs, grid/list views, name/size sorting, search, recent previews, allocation breakdown and a storage-server selector. Upload/download, create text files and exact-path-confirmed deletion use the authenticated gateway.
-- Safe text/code, image and browser-native audio/video/PDF preview paths. HTML is displayed as inert source text, never executed. Media codec and native PDF support depend on the browser; unsupported formats remain download-only. No Office viewer, Ace editor, PDF.js suite, bulk operations or rename/move/new-empty-folder controls are claimed.
-- Matching Robo light/dark management surfaces and dialogs, with a saved theme preference; Aegis top navigation remains unchanged. All assets are self-hosted; no reference credentials, direct S3 browser client or external CDNs are copied.
+- The actual supplied file explorer, with its original viewers/editor/dialogs and safely integrated storage operations. Signed-in addon and public group entry points share that document; existing provider/allocation/user configuration remains under Manage Robo Cloud.
+- Aegis top navigation remains unchanged. All browser dependencies are self-hosted; no embedded reference credentials or direct S3 browser signing is distributed.
 - Multiple users per group; enable/disable accounts, change usernames and rotate passwords. File/directory rules support read/write, view-only and hidden. The most-specific rule wins; unmatched paths are denied.
 - Browser-native HTTP Basic login on storage links; scrypt password hashes; passwords never appear in links. Use HTTPS.
 - Server removal: drain first, choose redistribution or strongly confirmed erasure. Shares are adjustable with draggable boundaries and percentage inputs. Whole-file placement approximates requested byte shares.
 - Copy/read-back verification, source-change check, conflict refusal, explicit errors and persistent job history. Source entries remain draining on failure; interrupted jobs do not automatically resume deletion.
 - Group activity log, read-only mode, provider status and responsive layout.
 
-## What changed in 1.1.0
+## What changed in 1.2.0
 
-The user-supplied `freecandy5-drive (46).html` is the **visual reference for both Robo interfaces**, superseding the earlier Aegis-only look inside addon panels. The surrounding host navigation is still Aegis. This is an adapted interface over the existing gateway, not deployment of the uploaded direct-S3 page.
+This release uses the **actual supplied `freecandy5-drive (46).html`**, not the rejected 1.1.0 approximation. All 19 original custom CSS blocks are byte-preserved; original control IDs and application layout are retained. `docs/REFERENCE-FIDELITY.json` records the input/style/MIDI-sample hashes and targeted changes. The original file contained literal provider credentials: the untouched input is not distributed, and its credentials are neither used nor copied.
 
-- Frosted glass surfaces, blue/purple ambient color, white pill actions, rounded icon controls and light/dark themes.
-- The public file explorer now groups visible file paths into folders. Folders reflect managed files, not independent empty-directory resources. Category totals include only visible paths; overall server usage can include hidden files. Hidden names are never used to build folders or previews.
-- **Recent** means files previewed in this tab, not invented modification dates. The inventory does not promise modification timestamps. View and color-theme preferences are saved locally; preview paths are kept only in memory.
-- Preview reads use the same Basic-authenticated, group/server-scoped download endpoint. Preview payloads are bounded to 16 MiB. Only the file-browser document allows blob media/frames in its CSP; dashboard policy stays unchanged. Text/HTML is rendered with `textContent`.
-- Real browser tests cover actual Linux reads/writes, negative ACL/quota requests, dangerous HTML as inert text, storage isolation, exact deletion confirmation, mobile navigation and theme persistence. See `docs/TEST-REPORT.md` for exact results and limitations.
+- The original document is used for both the signed-in addon landing/file browser and Basic-authenticated group pages. Aegis navigation stays outside it. **Manage Robo Cloud** opens the existing provider/group/user/quota configuration controls at `/manage`; those configuration forms are not claimed to have existed in the uploaded file.
+- Original search, categories, Recent, grid/list, allocation view, dialogs, Ace editor, PDF/media viewers, MIDI sample bank, folder/file upload, new-file, rename, folder creation and selection controls are retained. Only storage/authentication/quota bindings and necessary safety fixes were substituted. Keeping a feature does not certify every browser codec or MIDI export path.
+- No browser S3 credentials or signing. Original `s3*` calls are bound to the same-origin authenticated gateway. Selected storage is explicit, editor cache is cleared on switching, and the selector is locked during outstanding lists/mutations.
+- Effective decimal allocations replace the hard-coded 10 GB display. Inventory/ACLs/quota remain server-authoritative; hidden names are not sent to group clients. Zero-byte `.keep` objects represent newly created empty folders.
+- Renaming uses a server-side **verified copy then delete**, not a browser multi-call copy. It refuses collisions, checks both ACLs and source changes, and requires temporary quota headroom. It is **not atomic**: failure may leave verified destination copies or partially removed sources; no automatic rollback is claimed.
+- Bulk deletion keeps the supplied confirmation dialog and checks every visible selected path. It is sequential, not an atomic transaction. Hidden descendants are not silently deleted.
+- HTML source remains inert; the original Render View uses an empty-sandbox iframe with scripts disabled. Filename attributes/text are escaped. Preview/download byte ranges and safe MIME handling use bounded reads. **16 MiB per file** remains the gateway limit.
+- Dependencies/fonts are local and licensed in `app/static/vendor/`; no runtime CDN/provider requests. Browser light/dark/mobile acceptance and real Linux operations, plus actual Aegis install/update/uninstall, are recorded in `docs/TEST-REPORT.md`.
 
 ## Retained corrections from 1.0.1
 
@@ -58,15 +60,15 @@ The user-supplied `freecandy5-drive (46).html` is the **visual reference for bot
 ### Retained from 0.1.1
 
 - Removed the manual enrollment base-URL setting. Burrow provisions and checks the agent route automatically; Connections displays its current readiness. Each generated command pins its verified callback URL, rather than depending on a later setting change.
-- Introduced Aegis’s actual shared stylesheet and host navigation. In 1.1.0, Robo addon panels and the public browser intentionally use the FreeCandy-inspired design requested by the user; the host shell and unmodified upstream stylesheet remain preserved. See `THIRD-PARTY.md`.
+- Introduced Aegis’s actual shared stylesheet and host navigation. In 1.2.0 the actual supplied application is retained at the file-browser entry points; existing configuration panels and the unmodified host stylesheet are preserved. See `THIRD-PARTY.md`.
 - Upgrades preserve groups, users and storage data. The obsolete manual setting is ignored. Regenerate unused 0.1.0 enrollment links. Already-enrolled workers retain their own callback configuration, so do not remove an old user-created route while workers still use it.
 
 ## Install
 
-**Updating an existing local-folder install:** extract this release over the source folder you originally added to Burrow, then choose **Update** for Robo Storage. Keep `ADDON_DATA`; do not uninstall or delete your groups/users to upgrade. If your source is an archive URL instead, update that source to the new archive using your host’s source controls.
+**Updating an existing local-folder install:** extract this release over the source folder you originally added to Burrow, then choose **Update** for Robo Cloud. Keep `ADDON_DATA`; do not uninstall or delete your groups/users to upgrade. If your source is an archive URL instead, update that source to the new archive using your host’s source controls.
 
 1. Copy/extract this folder onto the Aegis host. Open **Burrow → Addons**, paste the **absolute path on that host** to this folder, and add it. A path on this sandbox is not a path on your computer.
-2. Install. Default service port is `8798`. The Aegis home screen gets a **Robo Storage for Aegis** tile; its signed-in page is `/__gate/robo-storage/`.
+2. Install. Default service port is `8798`. The Aegis home screen gets a **Robo Cloud** tile; its signed-in page is `/__gate/robo-storage/`.
 3. Link your domain in Aegis first. Create a group and its first user, connect storage, then launch. DNS and TLS must be verified on the resulting public address before sharing it.
 4. For Linux, **no enrollment URL setting is needed**. The extension automatically creates an addon-owned HTTPS route using Burrow’s existing tunnel configuration. It exposes only `/enroll.sh` and `/agent/*`, not the dashboard. Wait for **Connections → Agent enrollment address** to become ready, then generate the curl command. Commands are withheld until an HTTPS request reaches this service and passes its identity/nonce check. If pending, check Burrow’s tunnel status, DNS and internet access; do not enter a guessed URL.
 5. Set direct dashboard credentials only if you need access outside the Aegis mount. Otherwise direct administration is denied. The mount injects an internal random secret after the host's sign-in.
@@ -89,7 +91,7 @@ Export a new, scoped access-key file from your own account. Expected labels are 
 
 Deploy your own copy of <https://github.com/alexd-aero/cloudgate-wasmer>. Its `/setup` helper generates a `CGSETUP1:` code containing an account email, refresh token and reauthentication secret. Follow its setup instructions with **your own account**, and put the generated values into deployment environment variables rather than committing secrets to `app.yaml`.
 
-Set `CLOUDGATE_EMAIL`, `CLOUDGATE_REFRESH_TOKEN`, `CREDENTIALS` and `REAUTH_ACCESS_TOKEN` on the deployment. `CREDENTIALS` uses the upstream format `"username","password"`. In Robo Storage, enter the deployment URL plus that username/password and a category. The addon calls the actual `/api/all-files`, `/api/upload`, `/api/download` and `/api/files` routes. It does not install a Wasmer deployment or pretend a reauthentication key is an API token. Data access is limited to the selected category. CloudGate capacity is not inferred from unrelated account-wide usage.
+Set `CLOUDGATE_EMAIL`, `CLOUDGATE_REFRESH_TOKEN`, `CREDENTIALS` and `REAUTH_ACCESS_TOKEN` on the deployment. `CREDENTIALS` uses the upstream format `"username","password"`. In Robo Cloud, enter the deployment URL plus that username/password and a category. The addon calls the actual `/api/all-files`, `/api/upload`, `/api/download` and `/api/files` routes. It does not install a Wasmer deployment or pretend a reauthentication key is an API token. Data access is limited to the selected category. CloudGate capacity is not inferred from unrelated account-wide usage.
 
 ### Linux agent
 
@@ -153,7 +155,7 @@ node tools/weft-run.mjs /path/to/robo-storage-aegis status --host burrow
 node tools/weft-run.mjs /path/to/robo-storage-aegis uninstall --host burrow
 ```
 
-Tests: `python3 -m unittest discover -s tests -p 'test_*.py' -v` and `node --test tests/test_extension.mjs`. Optional browser smoke checks use Playwright: `python3 tests/ui_smoke.py` against the running demo.
+Tests: `python3 -m unittest discover -s tests -p 'test_*.py' -v` and `node --test tests/test_extension.mjs`. Optional configuration-panel browser smoke checks use Playwright: `python3 tests/ui_smoke.py` against the running demo.
 
 Additional disposable-host, actual public-network and local CA-trusted HTTPS acceptance fixtures are described in `docs/TEST-REPORT.md`. Their test data, certificates and browser sessions must never be bundled.
 

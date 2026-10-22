@@ -1,0 +1,4 @@
+ACTUAL SUPPLIED UI + REAL LINUX WORKER: original grid/list, folder navigation, thumbnail/preview, Ace edit/save, HTML Render sandbox, rename, new folder, new file, upload, confirmed single/bulk delete, zero-byte folder marker, filename HTML escaping and read-only controls: PASS
+Basic/ACL/server isolation, admin separation, 1 GB allocation, quota 507 and media byte range 206: PASS
+Original light/dark/mobile layout, Aegis shell and same original admin browser; no external provider/CDN requests; JS errors: []
+Local CA HTTPS fixture, not a public/provider/custom-domain acceptance claim.

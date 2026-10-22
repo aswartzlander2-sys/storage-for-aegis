@@ -1,12 +1,12 @@
 """Synthetic 512 GB physical / 1 GB allocation browser regression. No provider or disk modification.
-Usage: python tests/ui_quota_regression.py [http://127.0.0.1:8080/]
+Usage: python tests/ui_quota_regression.py [http://127.0.0.1:8080/manage]
 """
 import json
 from pathlib import Path
 import sys
 from playwright.sync_api import sync_playwright, expect
 ROOT=Path(__file__).resolve().parents[1]
-URL=sys.argv[1] if len(sys.argv)>1 else 'http://127.0.0.1:8080/'
+URL=sys.argv[1] if len(sys.argv)>1 else 'http://127.0.0.1:8080/manage'
 with sync_playwright() as p:
     browser=p.chromium.launch();page=browser.new_page(viewport={'width':1440,'height':1100});errors=[]
     page.on('pageerror',lambda e:errors.append(str(e)))
@@ -25,7 +25,7 @@ with sync_playwright() as p:
     expect(page.locator('.server-detail-head')).to_contain_text('Allocation ceiling 1.0 GB')
     expect(page.locator('.server-detail-head')).to_contain_text('Physical capacity 512.0 GB')
     expect(page.locator('.big-bar').first).to_contain_text('1.0 GB')
-    page.screenshot(path=str(ROOT/'docs/quota-regression-1.1.0.png'),full_page=True)
+    page.screenshot(path=str(ROOT/'docs/quota-regression-1.2.0.png'),full_page=True)
     assert not errors,errors
     print('SYNTHETIC 512 GB / 1 GB UI: total allocation, group contribution, server bar = 1.0 GB; 250 MB = 25%; physical 512 GB labeled separately; JavaScript errors: []')
     browser.close()

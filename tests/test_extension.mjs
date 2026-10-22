@@ -15,7 +15,7 @@ async function fixture(run) {
  const control=createServer((req,res)=>{assert.equal(req.url,'/tunnels/naming');assert.match(req.headers['x-burrow-client'],/^robo-storage-aegis\//);res.setHeader('Content-Type','application/json');res.end(JSON.stringify({active:f.namingActive!==false,prefix:'apps'}));});
  const upstream=createServer((req,res)=>{res.setHeader('Content-Type','application/json');res.end(JSON.stringify({path:req.url,admin:req.headers['x-robo-admin']||null,authorization:req.headers.authorization||null,cookie:req.headers.cookie||null}));});
  await listen(control,sock);const addr=await listen(upstream,0,'127.0.0.1');
- writeFileSync(join(data,'config.json'),JSON.stringify({port:addr.port,bind:'127.0.0.1',version:'1.1.0',admin_key:'UNIT-TEST-NOT-A-DEPLOYMENT-SECRET',burrow_socket:sock}));
+ writeFileSync(join(data,'config.json'),JSON.stringify({port:addr.port,bind:'127.0.0.1',version:'1.2.0',admin_key:'UNIT-TEST-NOT-A-DEPLOYMENT-SECRET',burrow_socket:sock}));
  const tunnels=[{port:1234,app:'some-other-addon',url:'https://untouched.example.com'}],removed=[];
  const f={data,tunnels,removed,reachable:true,probes:0,createFailure:false};
  globalThis.fetch=async(url,options)=>{

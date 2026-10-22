@@ -1,0 +1,10 @@
+Automatic extension: actual local CA-trusted HTTPS + nonce + app identity verified (supported context fixture, not public DNS)
+Disposable source: HTTPS enrollment and local write/read/delete probe succeeded
+Disposable destination: HTTPS enrollment and local write/read/delete probe succeeded
+Both Linux agents Verified only after authenticated heartbeat: passed
+Test button backend: real inventory usage matched file size
+Real Linux writes: hidden/read-only ACLs denied; server/partition quotas enforced; allowed upload verified
+Copy -> read-back checksum -> source-change check -> source delete -> empty disconnect: passed
+Removed source no longer accepts uploads: passed
+Explicit erasure -> empty inventory -> disconnect; agent metadata retained: passed
+External E2, CloudGate and public DNS/TLS acceptance: NOT RUN

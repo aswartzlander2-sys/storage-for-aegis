@@ -1,0 +1,41 @@
+{
+  "sourceSha256": "1a645b823fb1af92c072ef8349751c4c34e5c15b905c88b6d6b81853555959bd",
+  "sourceStyleSha256": [
+    "f86a17b36348be7b3d7fb6ae93f4676a0355913cd09308729d7fe200f643ea93",
+    "02c8b5674d81f0bfcd46596c3da7e3d5cbc985e0c67ea07bfca25187ad43cc09",
+    "e4f1a26b66a5c9f99d6c3d69812479cab2cf6e744711cd9786b614d828c392b5",
+    "bfba42d557cc5acfd554a403ce5a121f1bee3c0ed96cbc6b66f2c5c3f80317e5",
+    "f89825ce7c5d4ac06d986af6a76f6b2cc0dbfe95281afcbf99eecf361f358c0f",
+    "25c3213c202ffcef02d3c2840bf17fa904194201db0ccd74c00f3e1ba9e52333",
+    "8ec7ca1dce5c8904bae69c6b8af2eda300b58d305764d9c853243bb394b7aed4",
+    "a63345046bc1c0a1b6c388173e6c58a2134e59bed4da2dc17796e5a21631d063",
+    "4eb5bf5a0a42120f1f8d04ab76241bd505ea352683e078c775cf9ea6f6c5e68a",
+    "f8e085cdf60ed82a4cac2bf81237aa9348a76605e2accc2a71a2e11dbdbabc18",
+    "14204a4449878e6332fcf2530a8c1601e05789780431bdac90d7681059320f10",
+    "218b0c0ef1195db56bf58f54a4ac360c6fbc706f1373116ff6f9fe8a78e5dbd0",
+    "50e9462052fb6b4dc82fe43477c0308ba1a001be10be90127fdf93be739cc1e8",
+    "d86550b5ef248ed862ab610b67a11129008ec9a43d93415a15228ab347da46b6",
+    "2b7cc5c934e8140b039c83cf5ab9d7b338929d3e2802bba0f27efb45a15118d5",
+    "194fae4ad2d84834ac3364e9650c3999c44d7a7a17babbcec748e7e991df54d6",
+    "d8b8af595702d46210f646d589aa70cadbfcd629e31c889e83ed562bf182a1df",
+    "966568628ca09b9349c910a6100604a290845f32f995499581b487c1b9bff643",
+    "ff88ee885d6277a4226a7a05d9a92c5f13d1a68b57437fd98069bf1a8f84c8b8"
+  ],
+  "styleBlocksPreservedByteForByte": true,
+  "allOriginalControlIdsPreserved": true,
+  "addedIds": [
+    "cloudManageLink",
+    "cloudSourceLabel",
+    "cloudStoragePicker"
+  ],
+  "synthSha256": "9f8723b99cf3b244437bf469b2b3fcf50dc5e5dcb502de56ddb4f8924fbf95ae",
+  "applicationOriginalBytes": 216984,
+  "applicationIntegratedBytes": 212773,
+  "changes": [
+    "Storage/auth/quota gateway binding",
+    "Robo Cloud display name",
+    "Local dependency packaging",
+    "HTML/PDF preview isolation and server-side rename safety",
+    "Remove exported Cloudflare challenge scripts"
+  ]
+}

@@ -51,7 +51,7 @@ with sync_playwright() as p:
         return route if route['state']=='ready' else None
     route=wait_for(ready_agent,'Public enrollment HTTPS')
     status,_,body=public(route['url']+'/agent/health?probe='+'c'*32)
-    assert status==200 and json.loads(body)['version']=='1.1.0'
+    assert status==200 and json.loads(body)['version']=='1.2.0'
     print('REAL PUBLIC HTTPS: Burrow-created Cloudflare enrollment route returned app identity + nonce, certificate verification enabled')
     before_ports={t['port'] for t in request.get('/__gate/api/tunnels').json()['tunnels'] if t.get('app')=='robo-storage-aegis'}
     group=admin('api/groups',{'name':'Live public acceptance','sub':'live-'+str(int(time.time())),'domain':'stale.invalid','tunnelSub':'wrong-nested','useDefaultTunnel':True})['group']

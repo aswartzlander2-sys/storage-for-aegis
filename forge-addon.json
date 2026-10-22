@@ -1,8 +1,8 @@
 {
   "spec": 1,
   "id": "robo-storage-aegis",
-  "name": "Robo Storage for Aegis",
-  "version": "1.1.0",
+  "name": "Robo Cloud",
+  "version": "1.2.0",
   "description": "Storage groups for IDrive E2, CloudGate and Linux. A dedicated Aegis dashboard with quotas, users, directory permissions and safe draining.",
   "author": "Robo Storage contributors",
   "license": "MIT",
@@ -10,12 +10,12 @@
   "update_card": {
     "theme": "gray",
     "icon": "wrench",
-    "badge": "UI",
-    "tagline": "Robo glass design for both management and permission-aware file browsing.",
+    "badge": "FIX",
+    "tagline": "The actual supplied FreeCandy interface, connected to your storage.",
     "highlights": [
-      "FreeCandy-inspired light/dark glass panels, preserved Aegis navigation",
-      "Folder browsing, categories, grid/list views and safe previews",
-      "Existing group routing, access controls and allocation ceilings retained"
+      "Original interface, dialogs, viewers and custom styles retained",
+      "Gateway authentication, storage selector and real allocation binding",
+      "Renamed Robo Cloud; existing addon id and data preserved"
     ]
   },
   "requires": {

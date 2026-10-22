@@ -1,0 +1,1 @@
+module.exports={content:['./app/static/cloud.html','./app/static/cloud-ui.js'],darkMode:'media',theme:{extend:{colors:{brand:{50:'#eef3ff',100:'#dce7ff',200:'#c9d9ff',300:'#7aa8ff',400:'#5b86e0',500:'#305CDE',600:'#2748c2',700:'#1f3aa0',900:'#16224d'}}}},plugins:[]};

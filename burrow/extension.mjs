@@ -1,4 +1,4 @@
-// Robo Storage's Burrow extension. Uses the real mount hook used by Bulwark.
+// Robo Cloud's Burrow extension. Uses the real mount hook used by Bulwark.
 import { readFileSync, writeFileSync, renameSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { realpathSync } from 'node:fs';
@@ -102,7 +102,7 @@ async function syncEnrollment() {
     if (!t) {
       lastProbe = null;
       writeEnrollment({ state: 'pending', url: '', detail: 'Burrow is creating a dedicated HTTPS enrollment route automatically.' });
-      t = await ctx.tunnels.create({ port: targetPort, targetPort, targetHost: '127.0.0.1', scheme: 'http', name: 'Robo Storage · Linux enrollment', sub, access: 'public' });
+      t = await ctx.tunnels.create({ port: targetPort, targetPort, targetHost: '127.0.0.1', scheme: 'http', name: 'Robo Cloud · Linux enrollment', sub, access: 'public' });
       lastDnsRetry = Date.now();
       const latest = load(); latest[AGENT] = { agent: true, port: t.port, sub }; save(latest);
     } else if (t.targetPort !== targetPort) {
@@ -168,7 +168,7 @@ export async function stop() {
 export function mount() {
   try {
     const c = config();
-    return c.admin_key ? { prefix: '/__gate/robo-storage', upstream: upstream(), headers: { 'x-robo-admin': c.admin_key }, name: 'Robo Storage for Aegis', tile: { text: 'Your storage, connected. Groups, servers and access.' } } : null;
+    return c.admin_key ? { prefix: '/__gate/robo-storage', upstream: upstream(), headers: { 'x-robo-admin': c.admin_key }, name: 'Robo Cloud', tile: { text: 'Your storage, connected. Groups, servers and access.' } } : null;
   } catch { return null; }
 }
 export async function handle({ method, path, json }) {

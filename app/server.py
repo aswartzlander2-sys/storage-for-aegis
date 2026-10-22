@@ -1,4 +1,4 @@
-"""Robo Storage web service. Based on Weft's hello-weft lifecycle skeleton."""
+"""Robo Cloud web service. Based on Weft's hello-weft lifecycle skeleton."""
 import base64
 import collections
 import hashlib
@@ -23,6 +23,7 @@ from core import Store, Problem, require, uid, digest, password_check, clean_pat
 from backends import backend, AgentBroker, host_call
 from enrollment import route_status
 from routing import routing_view
+from cloud import CLOUD_CSP, file_view, rename as rename_files
 
 cfg = mesh.load_config(sys.argv[1])
 DATA = Path(sys.argv[1]).resolve().parent
@@ -184,7 +185,7 @@ class App(mesh.Handler):
         creds = self.basic()
         if cfg.get('admin_password_hash') and creds and creds[0] == cfg.get('admin_user', 'admin') and password_check(creds[1], cfg['admin_password_hash']):
             return True
-        return self.challenge('Robo Storage administration')
+        return self.challenge('Robo Cloud administration')
 
     def group_user(self, id):
         creds = self.basic()
@@ -196,7 +197,7 @@ class App(mesh.Handler):
             return user
         if creds:
             failures[key].append(time.time())
-        self.challenge('Robo Storage group ' + id)
+        self.challenge('Robo Cloud group ' + id)
         return None
 
     def agent(self):
@@ -227,7 +228,9 @@ class App(mesh.Handler):
                 return self.group_route(method, path, q)
             if not self.admin():
                 return
-            if method == 'GET' and (path == '/' or path.startswith('/assets/')):
+            if path.startswith('/api/cloud/'):
+                return self.cloud_admin(method,path,q)
+            if method == 'GET' and (path in ('/','/cloud','/manage') or path.startswith('/assets/')):
                 return self.static(path)
             if method == 'GET' and path == '/api/state':
                 route = route_status(DATA)
@@ -250,16 +253,67 @@ class App(mesh.Handler):
             self.send(500, {'error': 'Operation failed. No success was assumed; inspect service logs and connection settings.'})
 
     def static(self, path):
-        if path == '/':
-            file = ROOT / 'static' / 'index.html'
+        if path == '/cloud':
+            return self.cloud_document(True)
+        if path in ('/', '/manage'):
+            file = ROOT / 'static' / ('cloud-shell.html' if path=='/' else 'index.html')
         elif path == '/assets/logo.png':
             file = ROOT.parent / 'logo.png'
         else:
             name = path.removeprefix('/assets/')
-            require(name in ('app.js', 'style.css', 'aegis.css', 'files.js', 'files.html', 'robo.css', 'robo-theme.js', 'e2.svg', 'cloudgate.svg', 'linux.svg'), 'Not found.', 404)
-            file = ROOT / 'static' / name
+            allowed={'app.js','style.css','aegis.css','files.js','files.html','robo.css','robo-theme.js','e2.svg','cloudgate.svg','linux.svg','cloud-logo.png','cloud-reference.css','cloud-mime.js','cloud-bridge.js','cloud-ui.js','cloud-synth.js','cloud-pdf-config.js','cloud-shell.js'}
+            vendor=name.startswith('vendor/') and name.count('/')==1 and not name.split('/')[-1].startswith('.') and (ROOT/'static'/name).is_file()
+            require(name in allowed or vendor, 'Not found.',404)
+            file=ROOT/'static'/name
         require(file.is_file(), 'Not found.', 404)
         return self.send(200, file.read_bytes(), mimetypes.guess_type(str(file))[0] or 'application/octet-stream')
+
+    def cloud_document(self, admin):
+        html=(ROOT/'static/cloud.html').read_text().replace('__CLOUD_ADMIN__','true' if admin else 'false')
+        return self.send(200,html,'text/html',{'Content-Security-Policy':CLOUD_CSP})
+
+    def cloud_download(self,s,path,q):
+        with locks[s['id']]:data=backend(s,broker).read(path)
+        inline=q.get('inline',[''])[0]=='1'
+        mime=(mimetypes.guess_type(path)[0] or 'application/octet-stream') if inline else 'application/octet-stream'
+        if mime in ('text/html','application/xhtml+xml'):mime='text/plain'
+        from urllib.parse import quote
+        headers={'Content-Disposition':('inline' if inline else 'attachment')+"; filename*=UTF-8''"+quote(path.split('/')[-1],safe=''),'Accept-Ranges':'bytes'}
+        if inline:headers['Content-Security-Policy']="default-src 'none'; img-src 'self' data: blob:; style-src 'unsafe-inline'; sandbox"
+        code=200;request_range=self.headers.get('Range')
+        if request_range:
+            match=re.fullmatch(r'bytes=(\d*)-(\d*)',request_range)
+            require(match and (match[1] or match[2]),'Invalid byte range.',416)
+            total=len(data)
+            start=int(match[1]) if match[1] else max(0,total-int(match[2]))
+            end=min(total-1,int(match[2])) if match[1] and match[2] else total-1
+            require(0<=start<=end<total,'Range outside file.',416)
+            data=data[start:end+1];code=206;headers['Content-Range']=f'bytes {start}-{end}/{total}'
+        return self.send(code,data,mime,headers)
+
+    def cloud_admin(self,method,path,q):
+        servers=[s for s in store.state['servers'] if s['status']!='removed']
+        body=self.body() if method=='POST' else {}
+        selected=body.get('server') or q.get('server',[servers[0]['id'] if servers else ''])[0]
+        user={'username':'Aegis administrator','rules':[{'path':'','access':'write'}]}
+        if method=='GET' and path=='/api/cloud/files':
+            return self.send(200,{**file_view(store,servers,selected,user,'Robo Cloud'),'demo':bool(cfg.get('demo'))})
+        s=next((s for s in servers if s['id']==selected),None);require(s,'Select a connected storage server.',404)
+        p=clean_path(body.get('path') or q.get('path',[''])[0],False)
+        if method=='GET' and path=='/api/cloud/download':return self.cloud_download(s,p,q)
+        require(method=='POST','Not found.',404)
+        require(not cfg.get('demo'),'Demo mode never writes remote files.',403)
+        require(s['status']!='draining' and not s.get('readOnly'),'Server is read-only or draining.',409)
+        if path=='/api/cloud/rename':return self.send(200,rename_files(store,broker,locks,scan,upload,s,user,body))
+        if path=='/api/cloud/upload':
+            try:data=base64.b64decode(body.get('data',''),validate=True)
+            except ValueError:raise Problem('Invalid file payload.')
+            upload(s,p,data);return self.send(200,{'ok':True})
+        if path=='/api/cloud/delete':
+            require(body.get('confirmPath')==p,'Confirm the exact file path.')
+            with locks[s['id']]:backend(s,broker).delete(p);scan(s)
+            store.event('File deleted',s['name']+': '+p);return self.send(200,{'ok':True})
+        raise Problem('Not found.',404)
 
     def admin_post(self, path, body):
         if path == '/api/groups':
@@ -423,7 +477,7 @@ class App(mesh.Handler):
             servers = [s for s in servers if s['id'] == sid]
         if method == 'GET' and (rest == '/' or rest.startswith('/assets/')):
             if rest == '/':
-                return self.send(200, (ROOT / 'static' / 'files.html').read_bytes(), 'text/html', {'Content-Security-Policy': "default-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; frame-src blob:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"})
+                return self.cloud_document(False)
             return self.static(rest)
         from core import visible
         if method == 'GET' and rest == '/api/files':
@@ -438,13 +492,13 @@ class App(mesh.Handler):
         require(s and (not sid or selected == sid), 'Server is not part of this storage link.', 403)
         p = clean_path(body.get('path') or q.get('path', [''])[0], False)
         if method == 'GET' and rest == '/api/download':
-            require(visible(user, p), 'This file is not visible to your user.', 403)
-            with locks[s['id']]:
-                data = backend(s, broker).read(p)
-            return self.send(200, data, 'application/octet-stream', {'Content-Disposition': "attachment; filename*=UTF-8''" + __import__('urllib.parse', fromlist=['quote']).quote(p.split('/')[-1], safe='')})
+            require(visible(user,p),'This file is not visible to your user.',403)
+            return self.cloud_download(s,p,q)
         require(method == 'POST', 'Not found.', 404)
         require(visible(user, p, 'write'), 'This file or directory is view-only or hidden.', 403)
         require(s['status'] != 'draining' and not s.get('readOnly'), 'Server is read-only or draining.', 409)
+        if rest == '/api/rename':
+            return self.send(200,rename_files(store,broker,locks,scan,upload,s,user,body))
         if rest == '/api/upload':
             try:
                 data = base64.b64decode(body.get('data', ''), validate=True)
@@ -462,5 +516,5 @@ class App(mesh.Handler):
         raise Problem('Not found.', 404)
 
 
-mesh.heartbeat(lambda: mesh.announce(cfg, 'Robo Storage for Aegis', ['storage', 'dashboard'], items=[{'name': g['id'], 'title': g['name'], 'running': True, 'url': g.get('url', '')} for g in store.state['groups']]))
+mesh.heartbeat(lambda: mesh.announce(cfg, 'Robo Cloud', ['storage', 'dashboard'], items=[{'name': g['id'], 'title': g['name'], 'running': True, 'url': g.get('url', '')} for g in store.state['groups']]))
 mesh.serve(cfg, App)

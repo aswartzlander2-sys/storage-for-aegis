@@ -44,7 +44,7 @@ export class GroupRoutes {
     if(this.closed)throw Error('Storage routing is stopping.');
     let t=previous&&this.own(previous.port);
     if(t)t=await this.ctx.tunnels.update(t.port,{sub:b.sub,targetPort,targetHost:'127.0.0.1'});
-    else t=await this.ctx.tunnels.create({port:targetPort,targetPort,targetHost:'127.0.0.1',scheme:'http',name:b.name||'Robo Storage group',sub:b.sub,access:'public'});
+    else t=await this.ctx.tunnels.create({port:targetPort,targetPort,targetHost:'127.0.0.1',scheme:'http',name:b.name||'Robo Cloud group',sub:b.sub,access:'public'});
     // Persist ownership before any further network work, including custom alias setup.
     let latest=this.load();latest[b.key]={...spec,port:t.port};this.save(latest);
     if(choice?.kind==='extra') t=await this.ctx.tunnels.update(t.port,{domains:[...new Set([...(t.domains||[]),choice.zone])]});

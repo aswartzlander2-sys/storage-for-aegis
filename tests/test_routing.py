@@ -84,7 +84,7 @@ class RoutingHTTPTests(test_enrollment.EnrollmentHTTPTests):
             def log_message(self,*args):pass
             def do_POST(self):
                 body=json.loads(self.rfile.read(int(self.headers.get('Content-Length',0))))
-                assert self.headers['X-Burrow-Client']=='robo-storage-aegis/1.1.0'
+                assert self.headers['X-Burrow-Client']=='robo-storage-aegis/1.2.0'
                 if self.path.endswith('/enrollment'):
                     self.send_response(200);self.end_headers();self.wfile.write(b'{"state":"pending"}');return
                 assert self.path.endswith('/publish'),self.path
@@ -151,9 +151,9 @@ class RoutingHTTPTests(test_enrollment.EnrollmentHTTPTests):
             return urllib.request.urlopen(urllib.request.Request(self.base+'/g/'+g['id']+'/'+path,headers={'Authorization':'Basic '+token}),timeout=4)
         with get('') as r:
             html=r.read().decode();policies=r.headers.get_all('Content-Security-Policy')
-            self.assertEqual(len(policies),1);self.assertIn("frame-src blob:",policies[0]);self.assertIn("script-src 'self'",policies[0]);self.assertIn("object-src 'none'",policies[0])
-            self.assertIn('assets/robo.css',html);self.assertNotIn('cdn.',html);self.assertNotIn('S3_AK',html)
-        for resource in ('assets/robo.css','assets/robo-theme.js','assets/files.js'):
+            self.assertEqual(len(policies),1);self.assertIn("frame-src 'self' blob:",policies[0]);self.assertIn("script-src 'self'",policies[0]);self.assertIn("object-src 'none'",policies[0])
+            self.assertIn('assets/cloud-reference.css',html);self.assertNotIn('cdn.',html);self.assertNotIn('S3_AK',html)
+        for resource in ('assets/cloud-reference.css','assets/cloud-bridge.js','assets/cloud-ui.js'):
             with get(resource) as r:self.assertEqual(r.status,200)
         with get('api/files') as r:
             server=json.load(r)['servers'][0];self.assertTrue(server['readOnly']);self.assertEqual(server['allocatedCapacity'],100);self.assertEqual(server['physicalCapacity'],1000)

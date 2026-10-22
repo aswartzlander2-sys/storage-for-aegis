@@ -12,4 +12,4 @@ if [ -f "$DATA/burrow-routes.json" ]; then
 fi
 service_remove
 mesh_withdraw
-echo "stopped and removed Robo Storage for Aegis; remote files and agents were left intact"
+echo "stopped and removed Robo Cloud; remote files and agents were left intact"

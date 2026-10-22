@@ -1,0 +1,15 @@
+Original source access/secret key literal scan: PASS; values never logged
+lib.sh upstream identical: 754d3b3287b3925093debde581805724b68f2680f40a7d625ad2b28a8283b463
+mesh.py upstream identical: 08a01f5e6d6d25fccaeda9694ff929eb7bff4d2073268228c68f6d5a7412d607
+Upstream Aegis CSS byte-identical: PASS
+Shell and JavaScript syntax: PASS
+Bundled dependency license texts: PASS; user-supplied sample rights unchanged, public redistribution not certified
+Required final README Credits block: PASS
+Actual reference document remote asset links: NONE
+19 original CSS blocks byte-identical, all original control IDs preserved: PASS
+Logo size limit: PASS
+Persistent ID/mount unchanged: robo-storage-aegis / robo-storage; display name Robo Cloud; version 1.2.0
+No runtime config, test data, certificates, browser sessions or raw source HTML inside project: verified by packaging exclusions and archive listing
+Current source files considered: 235
+Final archive policy: no raw reference, live config, keys/certificates, sessions, runtime data, symlinks or generated caches; 235 source/evidence files.
+Owned disposable workers/services stopped and private test runtimes removed; labeled demo retained on 8080.

@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en" data-cloud-admin="__CLOUD_ADMIN__" class="h-full bg-[#f0f2f5] dark:bg-slate-950 text-[#1a1a1a] dark:text-slate-100">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Robo Cloud</title>
+  <link rel="icon" type="image/png" sizes="500x500" href="assets/cloud-logo.png" />
+  <link rel="apple-touch-icon" href="assets/cloud-logo.png" />
+  
+  <!-- Tailwind CSS -->
+  <link rel="stylesheet" href="assets/cloud-reference.css"><link rel="stylesheet" href="assets/vendor/tailwind.css">
+  
+
+  <!-- FontAwesome 6 Pro/Free Icons -->
+  <link rel="stylesheet" href="assets/vendor/all.min.css" />
+  <!-- Google Material Icons (for Drive viewer) -->
+  <link rel="stylesheet" href="assets/vendor/fonts-0.css">
+  
+  <!-- Fonts: Helvetica Medium (system) + JetBrains Mono for code -->
+  
+  
+  <link rel="stylesheet" href="assets/vendor/fonts-1.css">
+
+  
+
+  <!-- Ace Editor Core + syntax modes + theme (bundled core does not include modes, so load them explicitly) -->
+  <script src="assets/vendor/ace.js"></script>
+  <script src="assets/vendor/mode-html.js"></script>
+  <script src="assets/vendor/mode-javascript.js"></script>
+  <script src="assets/vendor/mode-json.js"></script>
+  <script src="assets/vendor/mode-css.js"></script>
+  <script src="assets/vendor/mode-text.js"></script>
+  <script src="assets/vendor/mode-markdown.js"></script>
+  <script src="assets/vendor/mode-python.js"></script>
+  <script src="assets/vendor/mode-xml.js"></script>
+  <script src="assets/vendor/mode-typescript.js"></script>
+  <script src="assets/vendor/mode-c_cpp.js"></script>
+  <script src="assets/vendor/mode-java.js"></script>
+  <script src="assets/vendor/mode-yaml.js"></script>
+  <script src="assets/vendor/mode-sh.js"></script>
+  <script src="assets/vendor/mode-sql.js"></script>
+  <script src="assets/vendor/mode-php.js"></script>
+  <script src="assets/vendor/mode-ruby.js"></script>
+  <script src="assets/vendor/mode-golang.js"></script>
+  <script src="assets/vendor/mode-rust.js"></script>
+  <script src="assets/vendor/mode-ini.js"></script>
+  <script src="assets/vendor/mode-scss.js"></script>
+  <script src="assets/vendor/mode-sass.js"></script>
+  <script src="assets/vendor/mode-less.js"></script>
+  <script src="assets/vendor/mode-jsx.js"></script>
+  <script src="assets/vendor/mode-dockerfile.js"></script>
+  <script src="assets/vendor/mode-makefile.js"></script>
+  <script src="assets/vendor/theme-tomorrow_night.js"></script>
+
+  <!-- PDF.js (inline custom PDF viewer — renders to canvas instead of downloading) -->
+  <script src="assets/vendor/pdf.min.js"></script>
+  <script src="assets/cloud-pdf-config.js"></script>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="assets/cloud-synth.js"></script>
+
+
+
+
+</head>
+<body class="h-full bg-[#f0f2f5] dark:bg-slate-950 text-[#1a1a1a] dark:text-slate-100 flex flex-col overflow-hidden antialiased">
+  <!-- Robo UI 3.0 ambient aurora backdrop -->
+  <div class="aurora" aria-hidden="true">
+    <span class="aurora-blob aurora-blob-1"></span>
+    <span class="aurora-blob aurora-blob-2"></span>
+    <span class="aurora-blob aurora-blob-3"></span>
+  </div>
+
+  <!-- Top Navigation Header (Robo UI 3.0 floating glass bar) -->
+  <header class="glass mx-3 mt-3 h-14 px-4 md:px-6 flex items-center justify-between z-20 shrink-0 rounded-2xl">
+    <div class="flex items-center gap-3">
+      <button id="openSidebarBtn" class="md:hidden glass-chip icon-circle icon-circle-lg rounded-full text-slate-700 dark:text-slate-200 transition-all hover:bg-slate-900/[0.04] dark:hover:bg-white/10 active:scale-95" title="Open menu">
+        <i class="fa-solid fa-bars text-sm"></i>
+      </button>
+      <div class="h-9 w-9 rounded-xl overflow-hidden ring-1 ring-white/20 shadow-lg shadow-brand-500/40 shrink-0 bg-white/80 dark:bg-black/40">
+        <img src="assets/cloud-logo.png" alt="Robo Cloud"
+             class="h-full w-full object-cover" draggable="false" />
+      </div>
+      <h1 class="font-extrabold text-base leading-none tracking-wide text-slate-900 dark:text-white">Robo Cloud</h1>
+    </div>
+
+    <!-- Center Search Bar -->
+    <div class="flex-1 max-w-xl mx-8 hidden md:block">
+      <div class="relative">
+        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm"></i>
+        <input 
+          type="text" 
+          id="searchInput"
+          placeholder="Search files in current path..." 
+          class="w-full bg-white/80 dark:bg-white/[0.06] border border-slate-200 dark:border-white/10 rounded-full pl-10 pr-4 py-2 text-sm text-slate-700 dark:text-slate-200 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:border-brand-400 focus:ring-1 focus:ring-brand-400 transition-all"
+        />
+        <button id="clearSearchBtn" class="hidden absolute right-3 top-1/2 -translate-y-1/2 icon-circle icon-circle-sm rounded-full text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-900/5 dark:hover:bg-white/10 text-xs">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Header Actions -->
+    <div class="flex items-center gap-3">
+      <button id="refreshBtn" title="Refresh files (auto-refreshes every 8s)" class="glass-chip icon-circle icon-circle-lg rounded-full text-slate-700 dark:text-slate-200 transition-all hover:bg-slate-900/[0.04] dark:hover:bg-white/10 active:scale-95">
+        <i class="fa-solid fa-rotate-right text-sm"></i>
+      </button>
+
+      <button id="openNewFileModalBtn" class="glass-chip flex items-center gap-2 px-4 py-2 rounded-full text-slate-900 dark:text-slate-100 text-xs font-bold transition-all hover:bg-slate-900/[0.04] dark:hover:bg-white/10 active:scale-95">
+        <i class="fa-solid fa-file-circle-plus text-brand-300"></i>
+        <span class="hidden sm:inline">New File</span>
+      </button>
+      
+      <button id="openUploadModalBtn" class="rounded-full robo-btn-white flex items-center gap-2 px-5 py-2 text-xs">
+        <i class="fa-solid fa-cloud-arrow-up"></i>
+        <span>Upload</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Body Content Area -->
+  <div class="flex-1 flex overflow-hidden relative">
+
+    <!-- Mobile sidebar backdrop -->
+    <div id="sidebarBackdrop" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-40 md:hidden"></div>
+
+    <!-- Sidebar Navigation -->
+    <aside id="sidebarAside" class="glass w-64 m-3 mr-2 p-4 flex flex-col justify-between shrink-0 hidden md:flex rounded-2xl">
+      <div class="space-y-6 min-h-0 overflow-y-auto">
+        <!-- Drive actions -->
+        <div class="relative px-0.5">
+          <button id="sidebarNewBtn" class="sidebar-new-btn w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-bold text-white">
+            <i class="fa-solid fa-plus"></i><span>New</span>
+          </button>
+          <div id="sidebarNewMenu" class="hidden absolute left-0 right-0 top-[calc(100%+8px)] z-[45] p-1.5 rounded-2xl">
+            <button data-new-action="upload" class="sidebar-new-action"><i class="fa-solid fa-file-arrow-up"></i><span>Upload files</span></button>
+            <button data-new-action="upload-folder" class="sidebar-new-action"><i class="fa-solid fa-folder-arrow-up"></i><span>Upload folder</span></button>
+            <div class="sidebar-new-separator"></div>
+            <button data-new-action="folder" class="sidebar-new-action"><i class="fa-solid fa-folder-plus"></i><span>New folder</span></button>
+            <button data-new-action="file" class="sidebar-new-action"><i class="fa-solid fa-file-circle-plus"></i><span>New text file</span></button>
+          </div>
+        </div>
+        <nav class="space-y-1" id="drivePrimaryNav">
+          <button data-cat="all" class="cat-btn w-full flex items-center gap-3 px-3 py-2 rounded-full text-xs font-bold bg-brand-500/10 text-brand-300 border border-brand-400/20"><i class="fa-solid fa-folder-tree w-5"></i> My files</button>
+          <button data-cat="recent" class="cat-btn w-full flex items-center gap-3 px-3 py-2 rounded-full text-xs font-bold text-slate-500 dark:text-slate-400 hover:bg-slate-900/[0.04] dark:hover:bg-white/10 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"><i class="fa-regular fa-clock w-5"></i> Recent</button>
+        </nav>
+
+        <!-- Quick Filters -->
+        <div>
+          <h3 class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-3 mb-2">Categories</h3>
+          <nav class="space-y-1" id="categoryNav">
+            <button data-cat="image" class="cat-btn w-full flex items-center gap-3 px-3 py-2 rounded-full text-xs font-bold text-slate-500 dark:text-slate-400 hover:bg-slate-900/[0.04] dark:hover:bg-white/10 hover:text-slate-700 dark:hover:text-slate-200 transition-colors">
+              <i class="fa-solid fa-image w-5 text-emerald-400"></i> Images
+            </button>
+            <button data-cat="video" class="cat-btn w-full flex items-center gap-3 px-3 py-2 rounded-full text-xs font-bold text-slate-500 dark:text-slate-400 hover:bg-slate-900/[0.04] dark:hover:bg-white/10 hover:text-slate-700 dark:hover:text-slate-200 transition-colors">
+              <i class="fa-solid fa-film w-5 text-purple-400"></i> Videos
+            </button>
+            <button data-cat="audio" class="cat-btn w-full flex items-center gap-3 px-3 py-2 rounded-full text-xs font-bold text-slate-500 dark:text-slate-400 hover:bg-slate-900/[0.04] dark:hover:bg-white/10 hover:text-slate-700 dark:hover:text-slate-200 transition-colors">
+              <i class="fa-solid fa-music w-5 text-pink-400"></i> Audio
+            </button>
+            <button data-cat="code" class="cat-btn w-full flex items-center gap-3 px-3 py-2 rounded-full text-xs font-bold text-slate-500 dark:text-slate-400 hover:bg-slate-900/[0.04] dark:hover:bg-white/10 hover:text-slate-700 dark:hover:text-slate-200 transition-colors">
+              <i class="fa-solid fa-code w-5 text-amber-400"></i> Code & Docs
+            </button>
+          </nav>
+        </div>
+
+        <!-- Quick Action: Create New Folder -->
+        <button id="openNewFolderModalBtn" class="glass-chip w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-full text-slate-700 dark:text-slate-200 text-xs font-bold transition-all hover:bg-slate-900/[0.04] dark:hover:bg-white/10 active:scale-95">
+          <i class="fa-solid fa-folder-plus text-brand-300"></i>
+          <span>New Folder</span>
+        </button>
+      </div>
+
+      <!-- Storage tab (Google-Drive style) -->
+      <div id="storageWidget" class="pt-3 mt-2 border-t border-slate-200/70 dark:border-white/10 shrink-0"><select id="cloudStoragePicker" aria-label="Select storage server" class="w-full min-w-0 bg-white/80 dark:bg-white/[0.06] border border-slate-200 dark:border-white/10 rounded-full px-2 py-2 text-xs text-slate-700 dark:text-slate-200"></select><a id="cloudManageLink" href="manage" target="_top" title="Manage Robo Cloud" class="hidden glass-chip flex items-center justify-center gap-2 py-2 px-3 rounded-full text-xs text-slate-700 dark:text-slate-200"><i class="fa-solid fa-gear"></i>Manage Robo Cloud</a>
+        <button id="storageTabBtn" title="Open storage" class="storage-tab w-full flex items-center gap-3 px-3 py-2 rounded-full text-xs font-bold text-slate-500 dark:text-slate-400 hover:bg-slate-900/[0.04] dark:hover:bg-white/10 hover:text-slate-700 dark:hover:text-slate-200 transition-colors">
+          <i class="fa-solid fa-cloud w-5"></i> Storage
+        </button>
+
+        <!-- Usage bar -->
+        <div id="storageBarWrap" class="relative mt-3">
+          <div id="storageBar" class="flex items-stretch h-1.5 w-full rounded-full bg-slate-200 dark:bg-white/10 overflow-hidden"></div>
+        </div>
+
+        <p class="storage-usage-line mt-2 text-[11.5px] leading-tight text-slate-700 dark:text-slate-200">
+          <span id="statTotalSize">0 B</span> of <span id="storageQuotaText">10 GB</span> used
+        </p>
+
+        <p class="mt-2 text-center text-[10px] font-mono text-slate-400 dark:text-slate-500"><span id="cloudSourceLabel">Storage</span> &middot; <span id="statTotalFiles">0</span> files</p>
+      </div>
+    </aside>
+
+    <!-- Main Explorer Section -->
+    <main class="glass-panel flex-1 flex flex-col overflow-hidden m-3 ml-0 rounded-2xl">
+      
+      <!-- Path Breadcrumb & Toolbar -->
+      <div id="explorerToolbar" class="px-6 py-3 border-b border-slate-200/70 dark:border-white/5 bg-white/40 dark:bg-white/[0.02] flex items-center justify-between shrink-0 gap-4">
+        <!-- Breadcrumb navigation -->
+        <div class="flex items-center gap-2 overflow-x-auto text-sm text-slate-500 dark:text-slate-400 py-1" id="breadcrumbContainer">
+          <button class="rounded-full hover:text-brand-300 transition-colors flex items-center gap-1 font-medium text-slate-600 dark:text-slate-300">
+            <i class="fa-solid fa-house text-xs"></i> root
+          </button>
+        </div>
+
+        <!-- View Mode Switcher -->
+        <div class="flex items-center gap-1 glass-chip p-1 rounded-full shrink-0">
+          <button id="selectToggleBtn" class="px-3 py-1.5 rounded-full text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all" title="Select multiple files / folders">
+            <i class="fa-regular fa-square-check"></i>
+          </button>
+          <button id="viewGridBtn" class="px-3 py-1.5 rounded-full text-xs font-bold text-slate-900 dark:text-slate-100 bg-slate-900/5 dark:bg-white/15 shadow-sm transition-all" title="Grid View">
+            <i class="fa-solid fa-border-all"></i>
+          </button>
+          <button id="viewListBtn" class="px-3 py-1.5 rounded-full text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all" title="List View">
+            <i class="fa-solid fa-list"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Multi-Select Action Bar -->
+      <div id="selectionBar" class="hidden px-6 py-2 border-b border-brand-400/30 bg-brand-500/10 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
+          <i class="fa-solid fa-square-check text-brand-300"></i>
+          <span class="font-medium"><span id="selectionCount">0</span> selected</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="clearSelectionBtn" class="px-3 py-1.5 rounded-full text-xs font-medium border border-slate-200 dark:border-white/15 text-slate-600 dark:text-slate-300 hover:bg-slate-900/[0.04] dark:hover:bg-white/10 transition-colors">Clear</button>
+          <button id="deleteSelectedBtn" class="px-3 py-1.5 rounded-full text-xs font-semibold bg-rose-600 hover:bg-rose-500 text-white flex items-center gap-2 shadow-md transition-all active:scale-95">
+            <i class="fa-solid fa-trash-can"></i> Delete Selected
+          </button>
+        </div>
+      </div>
+
+      <!-- File Content Container (Grid / List Views) -->
+      <div id="fileDisplayArea" class="flex-1 overflow-y-auto p-6 relative">
+        <!-- Loading State Indicator -->
+        <div id="loadingSpinner" class="hidden absolute inset-0 bg-white/60 dark:bg-white/[0.04] backdrop-blur-sm z-10 flex flex-col items-center justify-center gap-3">
+          <i class="fa-solid fa-circle-notch fa-spin text-3xl text-brand-400"></i>
+          <span class="text-sm font-medium text-slate-600 dark:text-slate-300">Fetching bucket items...</span>
+        </div>
+
+        <!-- File / Folder Content Grid -->
+        <div id="fileGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+          <!-- Dynamically populated files and folders -->
+        </div>
+
+        <!-- File / Folder Content List -->
+        <div id="fileList" class="hidden space-y-1">
+          <!-- Dynamically populated list rows -->
+        </div>
+
+        <!-- Empty Folder State -->
+        <div id="emptyState" class="hidden flex flex-col items-center justify-center py-20 text-center">
+          <div class="w-16 h-16 rounded-full glass-chip flex items-center justify-center text-slate-500 dark:text-slate-400 text-2xl mb-4">
+            <i class="fa-regular fa-folder-open"></i>
+          </div>
+          <h3 class="text-base font-semibold text-slate-600 dark:text-slate-300 mb-1">No files or folders found</h3>
+          <p class="text-xs text-slate-600 dark:text-slate-500 max-w-sm mb-4">This directory is currently empty or no items match your active search/filter.</p>
+          <button data-cloud-upload class="px-5 py-2 rounded-full bg-brand-500/15 text-brand-300 border border-brand-400/30 text-xs font-extrabold hover:bg-brand-500 hover:text-slate-900 dark:hover:text-white transition-all">
+            Upload File
+          </button>
+        </div>
+      </div>
+
+      <!-- =============== STORAGE PAGE (Drive-style) =============== -->
+      <div id="storagePage" class="hidden flex-1 overflow-y-auto px-6 py-5">
+        <!-- Title row -->
+        <h2 class="text-2xl font-bold text-slate-800 dark:text-white leading-none">Storage</h2>
+
+        <!-- Usage headline -->
+        <div class="mt-6">
+          <p class="storage-usage-line flex items-baseline gap-1.5 flex-wrap">
+            <span id="storagePageUsed" class="text-[34px] leading-none text-slate-800 dark:text-white">0 B</span>
+            <span class="text-xs text-slate-600 dark:text-slate-300">of <span id="storagePageQuota">10 GB</span> used</span>
+          </p>
+
+          <div id="storagePageBarWrap" class="relative mt-3">
+            <div id="storagePageBar" class="flex items-stretch h-2 w-full rounded-full bg-slate-200 dark:bg-white/10 overflow-hidden"></div>
+          </div>
+
+          <div id="storagePageLegend" class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1"></div>
+        </div>
+
+        <!-- File table -->
+        <div class="mt-7">
+          <div class="flex items-center gap-4 px-3 pb-2 border-b border-slate-200 dark:border-white/10">
+            <button id="storageSortName" class="flex-1 min-w-0 text-left text-xs font-semibold text-slate-600 dark:text-slate-300 flex items-center gap-2 hover:text-slate-900 dark:hover:text-white transition-colors">
+              Name <span data-sort-arrow="name" class="hidden icon-circle icon-circle-sm bg-brand-500/15 text-brand-500 dark:text-brand-300"><i class="fa-solid fa-arrow-down text-[10px]"></i></span>
+            </button>
+            <button id="storageSortSize" class="w-40 text-right text-xs font-semibold text-slate-600 dark:text-slate-300 flex items-center justify-end gap-2 hover:text-slate-900 dark:hover:text-white transition-colors">
+              Storage used <span data-sort-arrow="size" class="icon-circle icon-circle-sm bg-brand-500/15 text-brand-500 dark:text-brand-300"><i class="fa-solid fa-arrow-down text-[10px]"></i></span>
+            </button>
+          </div>
+          <div id="storageFileRows"></div>
+          <p id="storageEmptyRow" class="hidden py-10 text-center text-xs text-slate-500 dark:text-slate-400">No files match these filters.</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- Slide-over Preview Panel -->
+    <aside id="previewDrawer" class="glass-strong w-full md:w-[480px] lg:w-[560px] rounded-l-2xl flex flex-col h-full absolute right-0 top-0 bottom-0 z-30 transition-transform duration-300 transform translate-x-full shadow-2xl">
+      <!-- Bottom-sheet drag handle (mobile only) -->
+      <div class="md:hidden flex justify-center pt-2 pb-0.5 shrink-0"><div class="w-10 h-1.5 rounded-full bg-slate-400/50 dark:bg-white/20"></div></div>
+      <!-- Drawer Header -->
+      <div class="p-4 border-b border-slate-200 dark:border-white/10 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-2 overflow-hidden">
+          <span id="previewFileIcon" class="text-lg text-brand-300 shrink-0"><i class="fa-solid fa-file"></i></span>
+          <h2 id="previewFileName" class="font-semibold text-sm text-slate-700 dark:text-slate-200 truncate">File Details</h2>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <button id="expandPreviewBtn" title="Expand preview (bigger, centered)" class="icon-circle icon-circle-md rounded-full hover:bg-slate-900/[0.04] dark:hover:bg-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors">
+            <i class="fa-solid fa-expand text-xs"></i>
+          </button>
+          <a id="previewExternalLink" href="#" target="_blank" title="Open directly in new tab" class="icon-circle icon-circle-md rounded-full hover:bg-slate-900/[0.04] dark:hover:bg-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors">
+            <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+          </a>
+          <button id="closePreviewBtn" class="icon-circle icon-circle-md rounded-full hover:bg-slate-900/[0.04] dark:hover:bg-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors">
+            <i class="fa-solid fa-xmark text-sm"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Drawer Main Content / Viewport -->
+      <div class="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
+        
+        <!-- Viewer Container -->
+        <div id="previewViewer" class="w-full min-h-[260px] rounded-2xl bg-white/70 dark:bg-black/30 border border-slate-200 dark:border-white/10 flex items-center justify-center overflow-hidden relative group">
+          <!-- Content dynamically rendered here: Video, Audio, Image, Code, PDF, Fallback -->
+        </div>
+
+        <!-- Custom Audio Player Controller UI (Rendered when previewing audio) -->
+        <!-- Custom Audio Player — Drive-style layout identical to the video player:
+             where the video frame would go there is a rounded square with an audio file icon -->
+        <div id="customAudioPlayerUI" class="hidden relative">
+          <div id="audioPlayerWrap" class="audio-wrap drive-video-wrap w-full aspect-video relative overflow-hidden">
+            <!-- Zoomed cover — sized in JS so it always covers (no black bars) -->
+            <img id="audioAlbumArtBg" alt="" class="audio-art-bg hidden" />
+            <!-- Full-frame glass — same material as drawer/modals, covers the entire player -->
+            <div id="audioGlassSheet" class="audio-glass-sheet absolute inset-0 glass-strong pointer-events-none rounded-[16px]"></div>
+            <!-- Rounded square stays: album art when we have it, audio icon otherwise -->
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-[1]">
+              <div id="audioIconSquare" class="w-28 h-28 sm:w-36 sm:h-36 rounded-3xl glass-strong overflow-hidden flex items-center justify-center">
+                <img id="audioAlbumArtTile" alt="" class="w-full h-full object-cover" />
+                <span id="audioFileIcon" class="material-icons text-pink-400" style="font-size:54px">audio_file</span>
+              </div>
+            </div>
+
+            <!-- Drive progress bar — same position as the video player -->
+            <div class="absolute left-3 right-3 bottom-[72px] drive-progress z-[2]" data-audio-progress>
+              <div class="drive-progress-fill"></div>
+              <div class="drive-progress-thumb"></div>
+            </div>
+
+            <!-- Bottom Drive pills — same positioning as the video player -->
+            <div class="absolute left-3 right-3 bottom-3 flex items-center justify-between gap-3 pointer-events-none z-[2]">
+              <div class="flex items-center gap-2 pointer-events-auto">
+                <button id="audioPlayPauseBtn" class="media-play-btn use-app-glass hover:scale-[1.02] active:scale-95">
+                  <span class="material-icons text-black" style="font-size:22px">play_arrow</span>
+                </button>
+                <div class="glass-strong flex items-center gap-1.5 px-3 py-2 rounded-[20px]">
+                  <button id="audioRewindBtn" class="w-9 h-9 rounded-full hover:bg-white/10 flex items-center justify-center text-slate-900 dark:text-white transition-colors" title="Replay 10s"><span class="material-icons" style="font-size:20px">replay_10</span></button>
+                  <button id="audioForwardBtn" class="w-9 h-9 rounded-full hover:bg-white/10 flex items-center justify-center text-slate-900 dark:text-white transition-colors" title="Forward 10s"><span class="material-icons" style="font-size:20px">forward_10</span></button>
+                  <span class="text-slate-900 dark:text-white text-sm font-mono tabular-nums px-3"><span id="audioCurrentTime">0:00</span> / <span id="audioDuration">0:00</span></span>
+                </div>
+              </div>
+              <div class="glass-strong flex items-center gap-1 px-2 py-2 rounded-[20px] pointer-events-auto">
+                <button id="audioMuteBtn" class="w-9 h-9 rounded-full hover:bg-white/10 flex items-center justify-center text-slate-900 dark:text-white transition-colors" title="Mute"><span class="material-icons" style="font-size:20px">volume_up</span></button>
+                <button id="audioSpeedBtn" class="px-3 h-9 rounded-full hover:bg-white/10 flex items-center justify-center text-slate-900 dark:text-white text-sm font-bold tabular-nums">1x</button>
+                <button data-audio-settings class="w-9 h-9 rounded-full hover:bg-white/10 flex items-center justify-center text-slate-900 dark:text-white transition-colors" title="Audio settings"><span class="material-icons" style="font-size:20px">settings</span></button>
+              </div>
+            </div>
+
+            <audio id="globalAudioElement" class="hidden"></audio>
+          </div>
+
+          <!-- Audio settings menu — glass, positioned like the video settings menu
+               (kept outside the overflow-hidden wrap so the speed submenu never clips) -->
+          <div data-audio-menu class="hidden absolute bottom-[72px] right-3 drive-menu pointer-events-auto p-1.5 w-[240px] flex flex-col gap-1 z-20">
+            <button data-audio-menu-speed class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl drive-menu-item text-white text-sm transition-colors">
+              <span class="flex items-center gap-2"><span class="material-icons text-[16px] text-pink-400">speed</span> Playback speed</span>
+              <span class="font-mono text-white/70 text-xs" data-audio-menu-speed-val>1x ▸</span>
+            </button>
+            <div data-audio-speed-submenu class="hidden ml-2 flex flex-col gap-0.5 border-l border-white/10 pl-2">
+              <button data-audio-speed-opt="0.25" class="text-left px-4 py-2 rounded-xl drive-menu-item text-white/80 text-sm">0.25x</button>
+              <button data-audio-speed-opt="0.5" class="text-left px-4 py-2 rounded-xl drive-menu-item text-white/80 text-sm">0.5x</button>
+              <button data-audio-speed-opt="0.75" class="text-left px-4 py-2 rounded-xl drive-menu-item text-white/80 text-sm">0.75x</button>
+              <button data-audio-speed-opt="1" class="text-left px-4 py-2 rounded-xl drive-menu-item active text-white text-sm font-bold">1x ✓</button>
+              <button data-audio-speed-opt="1.25" class="text-left px-4 py-2 rounded-xl drive-menu-item text-white/80 text-sm">1.25x</button>
+              <button data-audio-speed-opt="1.5" class="text-left px-4 py-2 rounded-xl drive-menu-item text-white/80 text-sm">1.5x</button>
+              <button data-audio-speed-opt="1.75" class="text-left px-4 py-2 rounded-xl drive-menu-item text-white/80 text-sm">1.75x</button>
+              <button data-audio-speed-opt="2" class="text-left px-4 py-2 rounded-xl drive-menu-item text-white/80 text-sm">2x</button>
+            </div>
+            <button data-audio-menu-loop class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl drive-menu-item text-white text-sm transition-colors">
+              <span class="flex items-center gap-2"><span class="material-icons text-[16px] text-pink-400">repeat</span> Loop</span>
+              <span class="material-icons text-[14px] text-white/70" data-audio-menu-loop-check style="visibility:hidden">check</span>
+            </button>
+            <button data-audio-menu-eq class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl drive-menu-item text-white text-sm transition-colors">
+              <span class="flex items-center gap-2"><span class="material-icons text-[16px] text-pink-400">equalizer</span> Equalizer</span>
+              <span class="font-mono text-white/70 text-xs" data-audio-menu-eq-val>Flat ▸</span>
+            </button>
+            <!-- Real 5-band equalizer (Web Audio API) -->
+            <div data-audio-eq-submenu class="hidden ml-2 flex flex-col gap-1.5 border-l border-white/10 pl-2 pr-1 py-1">
+              <div class="flex items-center gap-2"><span class="text-[10px] font-mono text-white/50 w-7 shrink-0">60</span><input type="range" data-eq-band="0" min="-12" max="12" step="1" value="0" class="flex-1 accent-pink-400"><span class="text-[10px] font-mono text-white/70 w-6 text-right shrink-0" data-eq-val="0">0</span></div>
+              <div class="flex items-center gap-2"><span class="text-[10px] font-mono text-white/50 w-7 shrink-0">250</span><input type="range" data-eq-band="1" min="-12" max="12" step="1" value="0" class="flex-1 accent-pink-400"><span class="text-[10px] font-mono text-white/70 w-6 text-right shrink-0" data-eq-val="1">0</span></div>
+              <div class="flex items-center gap-2"><span class="text-[10px] font-mono text-white/50 w-7 shrink-0">1k</span><input type="range" data-eq-band="2" min="-12" max="12" step="1" value="0" class="flex-1 accent-pink-400"><span class="text-[10px] font-mono text-white/70 w-6 text-right shrink-0" data-eq-val="2">0</span></div>
+              <div class="flex items-center gap-2"><span class="text-[10px] font-mono text-white/50 w-7 shrink-0">4k</span><input type="range" data-eq-band="3" min="-12" max="12" step="1" value="0" class="flex-1 accent-pink-400"><span class="text-[10px] font-mono text-white/70 w-6 text-right shrink-0" data-eq-val="3">0</span></div>
+              <div class="flex items-center gap-2"><span class="text-[10px] font-mono text-white/50 w-7 shrink-0">12k</span><input type="range" data-eq-band="4" min="-12" max="12" step="1" value="0" class="flex-1 accent-pink-400"><span class="text-[10px] font-mono text-white/70 w-6 text-right shrink-0" data-eq-val="4">0</span></div>
+              <div class="flex items-center gap-1 pt-1">
+                <button data-eq-preset="flat" class="flex-1 px-1 py-1 rounded-lg drive-menu-item text-white/80 text-[10px] font-bold">Flat</button>
+                <button data-eq-preset="bass" class="flex-1 px-1 py-1 rounded-lg drive-menu-item text-white/80 text-[10px] font-bold">Bass</button>
+                <button data-eq-preset="vocal" class="flex-1 px-1 py-1 rounded-lg drive-menu-item text-white/80 text-[10px] font-bold">Vocal</button>
+                <button data-eq-preset="treble" class="flex-1 px-1 py-1 rounded-lg drive-menu-item text-white/80 text-[10px] font-bold">Treble</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- File Detailed Metadata -->
+        <div class="glass-chip p-4 rounded-2xl space-y-3">
+          <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Information</h3>
+          
+          <div class="grid grid-cols-2 gap-3 text-xs">
+            <div>
+              <span class="text-slate-600 dark:text-slate-500 block">File Size</span>
+              <span id="metaFileSize" class="font-mono text-slate-700 dark:text-slate-200 font-medium">-</span>
+            </div>
+            <div>
+              <span class="text-slate-600 dark:text-slate-500 block">Extension</span>
+              <span id="metaFileExt" class="font-mono uppercase text-slate-700 dark:text-slate-200 font-medium">-</span>
+            </div>
+            <div class="col-span-2">
+              <span class="text-slate-600 dark:text-slate-500 block">Full S3 Path</span>
+              <span id="metaFilePath" class="font-mono text-slate-600 dark:text-slate-300 break-all select-all text-[11px] bg-white/70 dark:bg-black/30 p-2 rounded-xl border border-slate-200 dark:border-white/10 mt-1 block">-</span>
+            </div>
+            <div class="col-span-2">
+              <span class="text-slate-600 dark:text-slate-500 block">Direct URL <span class="normal-case text-slate-600">(opens in the browser — no download)</span></span>
+              <div class="flex items-center gap-2 mt-1">
+                <a id="metaFileUrl" href="#" target="_blank" rel="noopener" title="Open direct URL" class="flex-1 min-w-0 font-mono text-[11px] text-brand-300 hover:text-brand-200 bg-white/70 dark:bg-black/30 border border-slate-200 dark:border-white/10 rounded-full px-3 py-2 truncate select-all">-</a>
+                <button id="copyDirectUrlBtn" title="Copy direct URL" class="glass-chip icon-circle icon-circle-md rounded-full text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white shrink-0 transition-colors"><i class="fa-regular fa-copy"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center flex-wrap gap-3 pt-2">
+          <button id="renderMidiMp3Btn" class="hidden glass-chip w-full py-2.5 px-4 rounded-full text-slate-900 dark:text-slate-100 text-xs font-bold items-center justify-center gap-2 transition-all hover:bg-slate-900/[0.04] dark:hover:bg-white/10">
+            <i class="fa-solid fa-file-audio text-violet-400"></i> Render MIDI to MP3
+          </button>
+          <a id="midiMp3DownloadLink" class="hidden glass-chip w-full py-2.5 px-4 rounded-full text-slate-900 dark:text-slate-100 text-xs font-bold items-center justify-center gap-2" download>
+            <i class="fa-solid fa-download text-emerald-400"></i><span>Download rendered MP3</span>
+          </a>
+          <button id="copySignedUrlBtn" class="glass-chip flex-1 py-2.5 px-4 rounded-full text-slate-900 dark:text-slate-100 text-xs font-bold flex items-center justify-center gap-2 transition-all hover:bg-slate-900/[0.04] dark:hover:bg-white/10">
+            <i class="fa-regular fa-copy text-brand-300"></i> Copy
+          </button>
+          <button id="renameFileBtn" class="glass-chip px-4 py-2.5 rounded-full text-slate-900 dark:text-slate-100 text-xs font-bold flex items-center justify-center gap-2 transition-all hover:bg-slate-900/[0.04] dark:hover:bg-white/10 border border-slate-200 dark:border-white/10">
+            <i class="fa-solid fa-pen text-brand-300"></i> Rename
+          </button>
+          <button id="deleteFileBtn" class="icon-circle icon-circle-lg rounded-full border border-rose-500/30 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 text-xs font-bold flex items-center justify-center gap-2 transition-all w-10 h-10">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </div>
+
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- Glass file context menu -->
+  <div id="fileContextMenu" class="hidden fixed z-[160] w-[224px] p-1.5 rounded-2xl" role="menu" aria-label="File actions">
+    <button data-ctx="open" class="ctx-action" role="menuitem"><i class="fa-solid fa-arrow-up-right-from-square"></i><span>Open</span></button>
+    <button data-ctx="newtab" class="ctx-action" role="menuitem"><i class="fa-solid fa-up-right-from-square"></i><span>Open in new tab</span></button>
+    <button data-ctx="copy" class="ctx-action" role="menuitem"><i class="fa-solid fa-link"></i><span>Copy link</span></button>
+    <button data-ctx="midi-mp3" class="ctx-action hidden" role="menuitem"><i class="fa-solid fa-file-audio"></i><span>Render MIDI to MP3</span></button>
+    <div class="ctx-separator"></div>
+    <button data-ctx="rename" class="ctx-action" role="menuitem"><i class="fa-solid fa-pen"></i><span>Rename</span></button>
+    <button data-ctx="delete" class="ctx-action ctx-danger" role="menuitem"><i class="fa-solid fa-trash-can"></i><span>Delete</span></button>
+  </div>
+
+  <!-- Expanded Preview Modal (big, centered viewer) -->
+  <div id="expandedPreviewModal" class="hidden fixed inset-0 z-[70] bg-white/60 dark:bg-white/[0.04] backdrop-blur-xl flex items-center justify-center p-3 sm:p-8">
+    <div id="expandedModalCard" class="glass-strong rounded-3xl flex flex-col overflow-hidden max-w-[96vw] max-h-[94vh]">
+      <!-- Modal Header -->
+      <div class="p-4 border-b border-slate-200 dark:border-white/10 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-2 overflow-hidden">
+          <span id="expandedPreviewIcon" class="text-lg text-brand-300 shrink-0"><i class="fa-solid fa-file"></i></span>
+          <div class="min-w-0">
+            <h2 id="expandedPreviewFileName" class="font-semibold text-sm text-slate-700 dark:text-slate-200 truncate">File Preview</h2>
+            <p id="expandedPreviewMeta" class="text-[10px] text-white/50 truncate">—</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <button id="expandedCodeModeBtn" title="Edit code" aria-label="Toggle code edit mode" class="hidden icon-circle icon-circle-md rounded-full hover:bg-slate-900/[0.04] dark:hover:bg-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors">
+            <i class="fa-solid fa-code text-xs"></i>
+          </button>
+          <a id="expandedExternalLink" href="#" target="_blank" title="Open directly in new tab" class="icon-circle icon-circle-md rounded-full hover:bg-slate-900/[0.04] dark:hover:bg-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors">
+            <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+          </a>
+          <button id="expandedCopyUrlBtn" title="Copy direct URL" class="icon-circle icon-circle-md rounded-full hover:bg-slate-900/[0.04] dark:hover:bg-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors">
+            <i class="fa-solid fa-link text-xs"></i>
+          </button>
+          <button id="expandedInfoBtn" title="File information" aria-label="Open file information" class="icon-circle icon-circle-md rounded-full hover:bg-slate-900/[0.04] dark:hover:bg-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors">
+            <i class="fa-solid fa-ellipsis-vertical text-sm"></i>
+          </button>
+          <button id="closeExpandedPreviewBtn" title="Close preview" class="icon-circle icon-circle-md rounded-full hover:bg-slate-900/[0.04] dark:hover:bg-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors">
+            <i class="fa-solid fa-xmark text-sm"></i>
+          </button>
+        </div>
+      </div>
+      <!-- Modal Viewer -->
+      <div id="expandedPreviewViewer" class="min-h-0 overflow-hidden relative flex flex-col bg-white/70 dark:bg-black/30">
+        <div id="expandedPreviewContent" class="flex-1 min-h-0 flex flex-col items-center justify-center p-6 gap-4 overflow-y-auto">
+          <!-- Injected preview content -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- New File Modal (create + edit, or upload) -->
+  <div id="newFileModal" class="hidden fixed inset-0 bg-white/60 dark:bg-white/[0.04] backdrop-blur-xl z-50 flex items-center justify-center p-4">
+    <div class="glass-strong rounded-3xl w-full max-w-md p-6 space-y-5">
+      <div class="flex items-center justify-between">
+        <h3 class="font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+          <i class="fa-solid fa-file-circle-plus text-brand-300"></i> Create New File
+        </h3>
+        <button id="closeNewFileModalBtn" class="icon-circle icon-circle-md rounded-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-900/5 dark:hover:bg-white/10 transition-colors">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Name the file -->
+      <div>
+        <label class="text-xs text-slate-500 dark:text-slate-400 block mb-1">File Name <span class="text-slate-600">(include an extension, e.g. notes.txt)</span></label>
+        <input type="text" id="newFileNameInput" placeholder="e.g. todo.txt, README.md, app.js" class="w-full bg-white/70 dark:bg-black/30 border border-slate-200 dark:border-white/10 rounded-full px-4 py-2 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:border-brand-400" />
+        <p id="newFileError" class="hidden text-[11px] text-rose-400 mt-1.5"></p>
+        <p class="text-[11px] text-slate-600 dark:text-slate-500 mt-1.5 font-mono">Will be created in: <span id="newFileTargetFolder" class="text-brand-300">root</span></p>
+      </div>
+
+      <button id="createAndEditFileBtn" class="w-full py-2.5 rounded-full bg-brand-500 hover:bg-brand-400 text-white text-xs font-extrabold shadow-lg shadow-brand-500/30 flex items-center justify-center gap-2 transition-all active:scale-95">
+        <i class="fa-solid fa-pen-to-square"></i> Create & Edit
+      </button>
+
+      <div class="relative">
+        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-slate-200 dark:border-white/10"></div></div>
+        <div class="relative flex justify-center"><span class="bg-[#f0f2f5] dark:bg-[#131b30] px-3 rounded-full border border-slate-200 dark:border-transparent text-[11px] uppercase tracking-wider text-slate-600 dark:text-slate-500">or upload a file</span></div>
+      </div>
+
+      <!-- Or upload instead -->
+      <div id="newFileDropZone" class="border-2 border-dashed border-slate-200 dark:border-white/15 hover:border-brand-400 rounded-2xl p-6 flex flex-col items-center justify-center text-center gap-2 bg-white/50 dark:bg-white/[0.03] transition-all cursor-pointer">
+        <i class="fa-solid fa-file-arrow-up text-2xl text-slate-600 dark:text-slate-500"></i>
+        <p class="text-xs text-slate-500 dark:text-slate-400">Click to select a file to upload</p>
+        <input type="file" id="newFileInput" class="hidden" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Upload File Modal -->
+  <div id="uploadModal" class="hidden fixed inset-0 bg-white/60 dark:bg-white/[0.04] backdrop-blur-xl z-50 flex items-center justify-center p-4">
+    <div class="glass-strong rounded-3xl w-full max-w-md p-6 space-y-5">
+      <div class="flex items-center justify-between">
+        <h3 class="font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+          <i class="fa-solid fa-cloud-arrow-up text-brand-400"></i> Upload File to Robo Cloud
+        </h3>
+        <button id="closeUploadModalBtn" class="icon-circle icon-circle-md rounded-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-900/5 dark:hover:bg-white/10 transition-colors">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Drag and Drop Area -->
+      <div id="dropZone" class="border-2 border-dashed border-slate-200 dark:border-white/15 hover:border-brand-400 rounded-2xl p-8 flex flex-col items-center justify-center text-center gap-3 bg-white/50 dark:bg-white/[0.03] transition-all cursor-pointer">
+        <i class="fa-solid fa-file-arrow-up text-3xl text-slate-600 dark:text-slate-500"></i>
+        <div>
+          <p class="text-sm font-semibold text-slate-600 dark:text-slate-300">Click to select or drag file here</p>
+          <p class="text-xs text-slate-600 dark:text-slate-500 mt-1">Upload directly to: <span id="uploadTargetFolder" class="font-mono text-brand-300">root</span></p>
+        </div>
+        <input type="file" id="fileInput" class="hidden" />
+        <input type="file" id="folderInput" class="hidden" webkitdirectory directory multiple />
+      </div>
+
+      <!-- Progress status -->
+      <div id="uploadStatus" class="hidden space-y-2">
+        <div class="flex justify-between text-xs font-mono text-slate-500 dark:text-slate-400">
+          <span id="uploadStatusText">Uploading file...</span>
+          <span id="uploadStatusPercent">Processing</span>
+        </div>
+        <div class="w-full h-2 rounded-full bg-slate-900/5 dark:bg-white/15 overflow-hidden">
+          <div id="uploadProgressBar" class="h-full bg-brand-500 transition-all duration-300" style="width: 50%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- New Folder Modal -->
+  <div id="newFolderModal" class="hidden fixed inset-0 bg-white/60 dark:bg-white/[0.04] backdrop-blur-xl z-50 flex items-center justify-center p-4">
+    <div class="glass-strong rounded-3xl w-full max-w-sm p-6 space-y-4">
+      <h3 class="font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+        <i class="fa-solid fa-folder-plus text-brand-300"></i> Create New Folder
+      </h3>
+      <div>
+        <label class="text-xs text-slate-500 dark:text-slate-400 block mb-1">Folder Name</label>
+        <input type="text" id="newFolderNameInput" placeholder="e.g. Documents, Images" class="w-full bg-white/70 dark:bg-black/30 border border-slate-200 dark:border-white/10 rounded-full px-4 py-2 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:border-brand-400">
+      </div>
+      <div class="flex items-center justify-end gap-2 pt-2">
+        <button id="cancelNewFolderBtn" class="glass-chip px-5 py-2 rounded-full text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-900/[0.04] dark:hover:bg-white/10">Cancel</button>
+        <button id="confirmNewFolderBtn" class="px-5 py-2 rounded-full text-xs font-extrabold bg-brand-500 hover:bg-brand-400 text-white shadow-lg shadow-brand-500/30 transition-all active:scale-95">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div id="deleteModal" class="hidden fixed inset-0 bg-white/60 dark:bg-white/[0.04] backdrop-blur-xl z-50 flex items-center justify-center p-4">
+    <div class="glass-strong rounded-3xl w-full max-w-sm p-6 space-y-4">
+      <div class="w-12 h-12 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center text-lg mx-auto">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <div class="text-center">
+        <h3 id="deleteModalTitle" class="font-bold text-slate-900 dark:text-slate-100 text-base">Delete File?</h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" id="deleteModalMessage">Are you sure you want to permanently delete <span id="deleteFileName" class="text-slate-700 dark:text-slate-200 font-mono font-semibold">file</span> from IDrive e2 S3?</p>
+      </div>
+      <div class="flex items-center justify-center gap-3 pt-2">
+        <button id="cancelDeleteBtn" class="glass-chip flex-1 py-2 rounded-full text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-900/[0.04] dark:hover:bg-white/10">Cancel</button>
+        <button id="confirmDeleteBtn" class="flex-1 py-2 rounded-full text-xs font-extrabold bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-600/30 transition-all active:scale-95">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rename Modal -->
+  <div id="renameModal" class="hidden fixed inset-0 bg-white/60 dark:bg-white/[0.04] backdrop-blur-xl z-50 flex items-center justify-center p-4">
+    <div class="glass-strong rounded-3xl w-full max-w-sm p-6 space-y-4">
+      <h3 class="font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+        <i class="fa-solid fa-pen text-brand-300"></i> Rename
+      </h3>
+      <div>
+        <label class="text-xs text-slate-500 dark:text-slate-400 block mb-1">New name <span class="text-slate-600 dark:text-slate-500 font-normal">(no / allowed)</span></label>
+        <input type="text" id="renameInput" placeholder="e.g. report-final.pdf" class="w-full bg-white/70 dark:bg-black/30 border border-slate-200 dark:border-white/10 rounded-full px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-brand-400 focus:ring-1 focus:ring-brand-400 transition-all font-medium">
+        <p id="renameError" class="hidden text-[11px] text-rose-400 mt-1.5 font-medium"></p>
+        <p class="text-[11px] text-slate-600 dark:text-slate-500 mt-1.5 font-mono flex items-center gap-1"><i class="fa-solid fa-folder text-[10px]"></i> In: <span id="renameTargetFolder" class="text-brand-300"></span></p>
+        <p id="renameOldName" class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 truncate">Current: <span class="font-mono font-bold text-slate-700 dark:text-slate-200"></span></p>
+      </div>
+      <div class="flex items-center justify-end gap-2 pt-2">
+        <button id="cancelRenameBtn" class="glass-chip px-5 py-2 rounded-full text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-900/[0.04] dark:hover:bg-white/10 transition-colors">Cancel</button>
+        <button id="confirmRenameBtn" class="px-5 py-2 rounded-full text-xs font-extrabold bg-brand-500 hover:bg-brand-400 text-white shadow-lg shadow-brand-500/30 transition-all active:scale-95 flex items-center gap-2"><i class="fa-solid fa-check"></i> Rename</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Toast Box -->
+  <div id="toastNotification" class="glass-strong fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 rounded-2xl px-4 py-3 flex items-center gap-3 text-xs font-bold text-slate-900 dark:text-slate-100 max-w-[calc(100vw-3rem)]">
+    <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+    <span id="toastMessage">Action completed successfully</span>
+  </div>
+
+  <script src="assets/cloud-mime.js"></script><script src="assets/cloud-bridge.js"></script>
+
+  <script src="assets/cloud-ui.js"></script>
+</body>
+</html>
