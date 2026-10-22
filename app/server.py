@@ -5,11 +5,13 @@ import hashlib
 import hmac
 import json
 import mimetypes
+import ntpath
 import os
 from pathlib import Path
 import re
 import secrets
 import shlex
+import struct
 import sys
 sys.dont_write_bytecode = True
 import threading
@@ -52,9 +54,10 @@ def scan(s):
     return scrub_server(s)
 
 
-def upload(s, path, data):
+def upload(s, path, data, create_only=False):
     with locks[s['id']]:
         scan(s)  # refresh externally changed usage before accepting uploads
+        require(not create_only or not any(f['path']==path for f in s['inventory']), 'A file with this name already exists. Use Edit or choose a different name.', 409)
         with store.lock:
             store.check_write(s, path, len(data))
         b = backend(s, broker)
@@ -220,7 +223,7 @@ class App(mesh.Handler):
             path, q = u.path, parse_qs(u.query)
             if path == '/health' and method == 'GET':
                 return self.send(200, {'app': cfg['id'], 'ok': True, 'version': cfg['version']})
-            if path.startswith('/agent/') or path == '/enroll.sh':
+            if path.startswith('/agent/') or path in ('/enroll.sh', '/enroll.exe'):
                 return self.agent_route(method, path, q)
             if method != 'GET':
                 require(self.headers.get('X-Robo-Request') == '1', 'Same-origin application request required.', 403)
@@ -262,7 +265,7 @@ class App(mesh.Handler):
             file = ROOT.parent / 'logo.png'
         else:
             name = path.removeprefix('/assets/')
-            allowed={'app.js','style.css','aegis.css','files.js','files.html','robo.css','robo-theme.js','e2.svg','cloudgate.svg','linux.svg','cloud-logo.png','cloud-reference.css','cloud-mime.js','cloud-bridge.js','cloud-ui.js','cloud-synth.js','cloud-pdf-config.js','cloud-shell.js','cloud-fixes.css','partition-manager.js','partition-manager.css'}
+            allowed={'app.js','style.css','aegis.css','files.js','files.html','robo.css','robo-theme.js','e2.svg','cloudgate.svg','linux.svg','cloud-logo.png','cloud-reference.css','cloud-mime.js','cloud-bridge.js','cloud-ui.js','cloud-synth.js','cloud-pdf-config.js','cloud-shell.js','cloud-fixes.css','partition-manager.js','partition-manager.css','dashboard-controls.css','windows.svg'}
             vendor=name.startswith('vendor/') and name.count('/')==1 and not name.split('/')[-1].startswith('.') and (ROOT/'static'/name).is_file()
             require(name in allowed or vendor, 'Not found.',404)
             file=ROOT/'static'/name
@@ -309,7 +312,7 @@ class App(mesh.Handler):
         if path=='/api/cloud/upload':
             try:data=base64.b64decode(body.get('data',''),validate=True)
             except ValueError:raise Problem('Invalid file payload.')
-            upload(s,p,data);return self.send(200,{'ok':True})
+            upload(s,p,data,create_only=body.get('createOnly') is True);return self.send(200,{'ok':True})
         if path=='/api/cloud/delete':
             require(body.get('confirmPath')==p,'Confirm the exact file path.')
             with locks[s['id']]:backend(s,broker).delete(p);scan(s)
@@ -328,7 +331,7 @@ class App(mesh.Handler):
         if m:
             with store.lock:
                 return store.user(m[1], body)
-        m = re.fullmatch(r'/api/servers/([a-f0-9]+)/(test|settings|partition|partitions|enrollment|drain|pause)', path)
+        m = re.fullmatch(r'/api/servers/([a-f0-9]+)/(test|settings|partition|partitions|enrollment|cancel-enrollment|drain|pause)', path)
         if m:
             s = store.get('servers', m[1])
             action = m[2]
@@ -337,8 +340,16 @@ class App(mesh.Handler):
             if action == 'test':
                 require(not cfg.get('demo'), 'Demo usage is illustrative. Connect a real backend to test it.')
                 return {'server': scan(s)}
+            if action == 'cancel-enrollment':
+                with locks[s['id']], store.lock:
+                    require(s['kind'] in ('linux', 'windows') and not s.get('probeDone') and not s.get('agentToken') and not s.get('verified') and not s.get('inventory') and s['status']=='pending', 'Only a never-enrolled folder worker can be cancelled without a remote scan.', 409)
+                    require(body.get('confirmName') == s['name'], 'Confirm the exact server name.')
+                    store.state['enrollments'] = [e for e in store.state['enrollments'] if e['server'] != s['id']]
+                    s['status'] = 'removed'
+                    store.event('Unenrolled server cancelled', s['name'] + '; no remote files changed')
+                return {'ok': True}
             if action == 'enrollment':
-                require(s['kind'] == 'linux', 'Only Linux uses an agent.')
+                require(s['kind'] in ('linux', 'windows'), 'This provider does not use a folder worker.')
                 require(not cfg.get('demo'), 'Agent enrollment is unavailable in the demo.')
                 route = route_status(DATA)
                 if route['state'] != 'ready':
@@ -355,9 +366,10 @@ class App(mesh.Handler):
                     store.state['enrollments'] = [x for x in store.state['enrollments'] if x['expires'] > time.time() and x['server'] != s['id']]
                     store.state['enrollments'].append(e)
                     store.save()
+                if s['kind'] == 'windows':
+                    return {'download': base_url + '/enroll.exe?token=' + token, 'expires': e['expires']}
                 url = base_url + '/enroll.sh?token=' + token
-                # Download to a private temporary file, never pipe a failed response to bash.
-                command = 'f=$(mktemp) && curl --proto \'=https\' --tlsv1.2 -fsS ' + shlex.quote(url) + ' -o "$f" && bash "$f"; rc=$?; rm -f "$f"; (exit "$rc")'
+                command = 'curl -fsSL ' + shlex.quote(url) + ' | bash'
                 return {'command': command, 'expires': e['expires']}
             if action == 'drain':
                 return start_job(s, body)
@@ -420,33 +432,60 @@ class App(mesh.Handler):
             nonce = str(q.get('probe', [''])[0])
             require(bool(re.fullmatch(r'[a-f0-9]{32}', nonce)), 'Invalid health probe.', 400)
             return self.send(200, {'app': cfg['id'], 'ok': True, 'probe': nonce, 'version': cfg['version']})
-        if method == 'GET' and path == '/enroll.sh':
+        if method == 'GET' and path in ('/enroll.sh', '/enroll.exe'):
             token = q.get('token', [''])[0]
             with store.lock:
                 e = next((e for e in store.state['enrollments'] if e['id'] == digest(token)), None)
                 require(e and not e['used'] and e['expires'] > time.time(), 'Enrollment expired or already used.', 410)
                 s = store.get('servers', e['server'])
             require(e.get('baseUrl', '').startswith('https://'), 'Regenerate this enrollment command; it predates automatic HTTPS routing.', 410)
+            require((s['kind'] == 'windows') == (path == '/enroll.exe'), 'Installer platform does not match this server.', 400)
+            if path == '/enroll.exe':
+                binary = (ROOT / 'windows/Robo Cloud Enrollment.exe').read_bytes()
+                require(binary.startswith(b'MZ') and len(binary) < 32 * 1024 * 1024, 'Windows worker is not available.', 503)
+                payload = json.dumps({'url': e['baseUrl'], 'enrollment': token, 'id': e['id'][:24]}, separators=(',', ':')).encode()
+                return self.send(200, binary + payload + struct.pack('<I', len(payload)) + b'ROBOCLOUD-ENROLL-V1', 'application/vnd.microsoft.portable-executable', {'Content-Disposition': 'attachment; filename="Robo Cloud Enrollment.exe"'})
             payload = base64.urlsafe_b64encode(json.dumps({'url': e['baseUrl'], 'enrollment': token, 'root': s['path']}).encode()).decode()
             source = base64.b64encode((ROOT / 'agent.py').read_bytes()).decode()
             script = '#!/usr/bin/env bash\nset -euo pipefail\ncommand -v python3 >/dev/null || { echo "Install Python 3 first"; exit 1; }\nf=$(mktemp)\ntrap \'rm -f "$f"\' EXIT\nprintf %s ' + shlex.quote(source) + ' | base64 -d > "$f"\npython3 "$f" bootstrap ' + shlex.quote(payload) + '\n'
             return self.send(200, script, 'text/x-shellscript')
         require(method == 'POST', 'Not found.', 404)
         body = self.body()
-        if path == '/agent/enroll':
+        if path in ('/agent/enroll', '/agent/installer/check'):
             token = self.headers.get('Authorization', '').removeprefix('Bearer ')
             with store.lock:
-                e = next((e for e in store.state['enrollments'] if e['id'] == digest(token)), None)
-                require(e and not e['used'] and e['expires'] > time.time(), 'Enrollment expired or already used.', 410)
+                token_id = digest(token)
+                if token_id in store.state.get('usedInstallers', []):
+                    return self.send(409, {'error': 'This Installer was already used on another system.', 'code': 'installer_used'})
+                e = next((e for e in store.state['enrollments'] if e['id'] == token_id), None)
+                require(e and not e['used'] and e['expires'] > time.time(), 'Installer expired or enrollment was revoked. Generate a new one.', 410)
                 s = store.get('servers', e['server'])
                 require(s['status'] != 'removed', 'Server was removed.', 410)
-                store.update_inventory(s, body.get('files', []), body.get('capacity'))
-                s.update(verified=False, probeDone=True, hostname=str(body.get('hostname', ''))[:100], resolvedPath=str(body.get('root', ''))[:1000])
-                secret = secrets.token_urlsafe(48)
-                s['agentToken'] = digest(secret)
+                platform = body.get('platform', 'linux')
+                require(platform == s['kind'] and platform in ('linux', 'windows'), 'Installer platform does not match this server.', 400)
+                if path == '/agent/installer/check':
+                    return self.send(200, {'ok': True, 'platform': platform})
+                candidate = dict(s)
+                if platform == 'windows':
+                    root_path = body.get('root', '')
+                    require(isinstance(root_path, str) and len(root_path) > 3 and re.match(r'^[A-Za-z]:[\\/]', root_path) and ':' not in root_path[2:] and '\x00' not in root_path, 'Choose a local Windows folder.')
+                    if s.get('probeDone') and s.get('resolvedPath'):
+                        require(ntpath.normcase(ntpath.normpath(root_path)) == ntpath.normcase(ntpath.normpath(s['resolvedPath'])), 'Reconnect this server to its existing Windows folder. Add a separate server for a different folder.', 409)
+                capacity = body.get('capacity', 0)
+                require(isinstance(capacity, int) and not isinstance(capacity, bool) and capacity >= 0, 'Invalid disk capacity.')
+                store.update_inventory(candidate, body.get('files', []), capacity, persist=False)
+                agent_token = secrets.token_hex(32)
                 e['used'] = True
-                store.event('Linux probe completed', s['name'] + '; waiting for worker heartbeat')
-            return self.send(200, {'token': secret})
+                if platform == 'windows':
+                    store.state.setdefault('usedInstallers', []).append(token_id)
+                next_status = 'draining' if s['status']=='draining' else ('full' if candidate['limit'] and candidate['used']>=candidate['limit'] else 'pending')
+                candidate.update(agentToken=digest(agent_token), probeDone=True, hostname=str(body.get('hostname', ''))[:120], resolvedPath=str(body.get('root', ''))[:1000], lastSeen=0, verified=False, status=next_status)
+                if platform == 'windows':
+                    candidate['path'] = candidate['resolvedPath']
+                s.update(candidate)
+                store.save()
+                store.event(('Windows' if platform == 'windows' else 'Linux') + ' probe completed', s['name'] + '; waiting for worker heartbeat')
+                return self.send(200, {'token': agent_token})
         s = self.agent()
         with store.lock:
             s['lastSeen'] = int(time.time())
@@ -507,7 +546,7 @@ class App(mesh.Handler):
                 data = base64.b64decode(body.get('data', ''), validate=True)
             except ValueError:
                 raise Problem('Invalid file payload.')
-            upload(s, p, data)
+            upload(s, p, data,create_only=body.get('createOnly') is True)
             return self.send(200, {'ok': True})
         if rest == '/api/delete':
             require(body.get('confirmPath') == p, 'Confirm the exact file path.')

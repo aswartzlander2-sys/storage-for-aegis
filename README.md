@@ -1,10 +1,10 @@
 # Robo Cloud for Aegis
 
-**1.2.1 — original Aegis management restored; graphical logical partitions and explorer fixes.**
+**1.3.1 — Robo Cloud Enrollment Windows branding and embedded Robo server logo.**
 
-Management uses the original pre-Robo Aegis layout. Only the file explorers use the supplied Robo UI; the unnecessary management button is removed. Real Linux-worker and actual Aegis-host checks passed; real E2/CloudGate/custom-domain/systemd/reboot acceptance is not claimed. See the validation report.
+Management uses the original pre-Robo Aegis layout. Only the file explorers use the supplied Robo UI; the unnecessary management button is removed. Real Linux-worker and actual Aegis-host checks passed. The Windows x64 GUI EXE is cross-compiled and protocol/filesystem safeguards are tested, but native Windows execution/sign-in/SmartScreen acceptance is **not** claimed. Real E2/CloudGate/custom-domain/systemd/reboot acceptance is not claimed. See the validation report.
 
-A Weft addon with its own Aegis dashboard, home-screen tile and storage groups spanning **IDrive E2**, a deployed **CloudGate client**, and **Linux directories**. Uses the user-supplied Robo logo. The uploaded access-key example and the credentials/configuration in the supplied reference dashboards are **not included or used**.
+A Weft addon with its own Aegis dashboard, home-screen tile and storage groups spanning **IDrive E2**, a deployed **CloudGate client**, **Linux directories**, and **Windows folder workers**. Windows is a remote worker platform; the addon host still runs on Linux/Burrow. Uses the user-supplied Robo logo. The uploaded access-key example and the credentials/configuration in the supplied reference dashboards are **not included or used**.
 
 ## Compatibility and specification note
 
@@ -14,7 +14,7 @@ The supplied prompt suggests `requires.burrow: ">=2.0.0"`; the normative SPEC pe
 
 ## Features
 
-- Create named groups, then add servers through IDrive E2 / CloudGate / Linux provider tabs.
+- Create named groups, then add servers through IDrive E2 / CloudGate / Linux / Windows provider tabs, using native Aegis-style tab treatment.
 - E2 requires importing an access-key text export. No import, no launch. Select an existing bucket and optional dedicated prefix.
 - CloudGate connection guidance follows `alexd-aero/cloudgate-wasmer`; use the deployed client's HTTPS URL and its Basic username/password. The permanent reauthentication key is **not** a general API credential.
 - Linux directory accepts `~/…` and `/…`. Press the square enter button before any enrollment command is shown. The directory is created if missing. Verification requires a successful storage probe plus an authenticated worker heartbeat.
@@ -28,7 +28,23 @@ The supplied prompt suggests `requires.burrow: ">=2.0.0"`; the normative SPEC pe
 - Copy/read-back verification, source-change check, conflict refusal, explicit errors and persistent job history. Source entries remain draining on failure; interrupted jobs do not automatically resume deletion.
 - Group activity log, read-only mode, provider status and responsive layout.
 
-## What changed in 1.2.1
+## What changed in 1.3.1
+
+- The Windows executable is named **Robo Cloud Enrollment** in its source constant, native dialog titles and embedded ProductName/FileDescription/InternalName metadata. Downloaded and installed files are **`Robo Cloud Enrollment.exe`**. The main dashboard remains **Robo Cloud**.
+- The existing **Robo server logo** is embedded as a multiresolution APP icon (16/32/48/64/256px) for Windows Explorer, the confirmation dialog and native window icons. Standard error/OK content and Cancel/Continue buttons remain unchanged.
+- A non-elevating manifest enables standard Windows common-control theming. One-use enrollment, storage confinement and persisted identity are unchanged. Cross-compilation/resource inspection is not native Windows execution; the unsigned/SmartScreen caveat still applies.
+
+## Retained from 1.3.0
+
+- Fixed reproducible directory/preview response races, source-switch stale state and caches, save-in-flight edit loss/duplicate saves, and context-menu folder deletion falsely succeeding without deleting descendants. Folder-list failures now stop destructive confirmation. Recent-file history is scoped by source and login context.
+- New File/New Folder use a server-enforced create-only guard after a fresh inventory scan, rather than silently truncating existing files. Provider drafts survive tab switches; never-enrolled worker entries can be cancelled with confirmation, revoking only their links and touching no remote files.
+- Storage bars now measure allocated capacity, not padded/flex-growing labels. Group distribution is 150px high, server usage 75px. Unknown capacity has no fabricated fraction; unlisted/hidden usage remains part of total usage without revealing hidden paths. Inherited partition ceilings are reflected in detail bars.
+- Linux enrollment is exactly the requested short form **`curl -fsSL 'https://…/enroll.sh?token=…' | bash`**. The command block has a GitHub-style copy icon, accessible feedback and a manual-selection fallback. Native Aegis-style tabs have keyboard support.
+- Windows adds a personalized **one-use EXE** download with native Win32 Cancel / Continue confirmation, local folder picker and ordinary error/OK dialogs. It installs a per-user outbound worker with DPAPI-protected credentials and Windows-sign-in startup. Used installers show exactly **“This Installer was already used on another system.”** Their consumed-token hashes survive link regeneration and expiry.
+- **Windows is not native-runtime certified here.** The bundled Windows GUI PE was cross-compiled, not executed on Windows. It is unsigned; SmartScreen may warn. See the Windows section and `docs/WINDOWS-BUILD.json`.
+- The actual supplied explorer, its original 19 CSS blocks/control IDs, original Aegis management, stable addon ID, data, logical planner, ACLs and migration safeguards remain. This is a targeted audit, **not a claim that every possible UI bug has been eliminated**; unreported failures still need reproduction details.
+
+## Retained from 1.2.1
 
 - **Original Aegis management restored.** `/` and `/manage` use the original 1.0.1 management markup/layout and stylesheet (with the Robo Cloud display name and new partition tool). No Robo glass stylesheet, theme switch or explorer-shell landing is applied to the editor/settings. Aegis navigation is unchanged.
 - **Explorer only:** the actual supplied `freecandy5-drive (46).html` remains the file explorer. Its 19 original CSS blocks and all original controls are retained. The added Manage Robo Cloud button is removed. A small separate stylesheet fixes overlay tiers rather than redesigning the source.
@@ -37,7 +53,7 @@ The supplied prompt suggests `requires.burrow: ">=2.0.0"`; the normative SPEC pe
 - Plans enforce effective allocation, inherited ceilings, sibling totals (including legacy inherited/no-ceiling parents), existing usage and path/file collisions. A stale plan or changed server ceiling returns **409**, rather than overwriting another administrator's edits. Usage is a last-inventory snapshot; use Test before planning. New plans support up to 256 entries.
 - Registered partition folders cannot be renamed or bulk-deleted through the explorer; their contents can be managed normally. This prevents stale budget paths and accidental destructive partition removal.
 - **Preview three-dot information panel** is portaled above the glass preview at body level and restored on close. Dialogs remain above the information panel. Desktop light/dark and mobile click-through are tested; the planner footer is always visible while its body scrolls.
-- Gateway Basic/admin authentication, hidden/read-only ACLs, safe HTML sandbox, local assets, decimal quotas, original Ace/media controls and the **16 MiB/file** limit are retained. Rename remains verified copy/delete, needs temporary quota space, and is not atomic. Bulk file deletion remains sequential.
+- Gateway Basic/admin authentication, hidden/read-only ACLs, safe HTML sandbox, local assets, decimal quotas, original Ace/media controls and the **16 MiB/file** limit are retained. Rename remains verified copy/delete, needs temporary quota space, and is not atomic. Bulk file deletion remains sequential: earlier confirmed deletions can already have completed if a later file fails; refresh before retrying.
 - Prior root-domain routing, 1 GB-versus-physical allocation and save-after-Generate fixes are retained. Real E2/CloudGate/custom-domain/systemd/reboot acceptance is still not claimed.
 
 `docs/REFERENCE-FIDELITY.json` records original source/style/sample hashes. The raw reference's credentials are never used or bundled. Full current results: `docs/TEST-REPORT.md`; previous release reports remain historical.
@@ -98,11 +114,27 @@ Set `CLOUDGATE_EMAIL`, `CLOUDGATE_REFRESH_TOKEN`, `CREDENTIALS` and `REAUTH_ACCE
 
 A stable linked Burrow domain is recommended. Without one, Burrow can supply a temporary Quick Tunnel **if its tunnel engine is available and can reach the network**. The addon configures the route, not your Cloudflare account or host network. If that temporary public address changes, existing remote workers cannot discover the new address: generate a fresh command and re-enroll them. Never treat a pending/proposed address as verified public connectivity.
 
-Run the generated command as the user who should own the directory, without sudo. Requires Python 3.9+, curl, base64, bash and standard Linux utilities on the agent machine. The command downloads to a temporary file before executing; it does not blindly pipe a failed curl response into a shell. Links expire after 15 minutes, are single-use at registration, and contain a sensitive enrollment token: **do not share or log them**.
+Run the generated command as the user who should own the directory, without sudo. Requires Python 3.9+, curl, base64, bash and standard Linux utilities on the agent machine. The user-requested command pipes curl output to bash. Only paste the command generated by your trusted, verified HTTPS host; do not substitute an untrusted URL. The bootstrap script stages its embedded Python worker in a temporary file and uses `set -euo pipefail`. A shell pipeline can mask curl’s exit status; check the printed probe result and the authenticated Verified status in Aegis rather than treating a shell exit code alone as success. Links expire after 15 minutes, are single-use at registration, and contain a sensitive enrollment token: **do not share or log them**.
 
 The worker makes outbound HTTPS requests; it exposes no inbound port. It creates `<selected directory>/.robo-agent/{agent.py,config.json,agent.log,agent.pid}`. Normal files remain under the selected directory. Agent metadata is private and excluded from inventories. Symlink roots/parents and file-path escapes are refused; file operations use no-follow directory descriptors. Storage probe files are created and removed during setup.
 
 The agent is currently a detached user process, **not an automatically enabled reboot service**. Its config persists; after reboot start it with your Python executable and the absolute paths to `.robo-agent/agent.py run .robo-agent/config.json`, or explicitly supervise it yourself. Re-enrollment rotates its token. Stop its PID before manually removing `.robo-agent`; never remove the storage root to uninstall the agent. Disconnection revokes its token and the worker exits when it next polls.
+
+### Robo Cloud Enrollment — Windows folder worker (Windows 10/11 x64)
+
+1. Add a **Windows** server, name it and set its logical allocation. **Generate one-use Windows installer**, then **Download Windows EXE**. No Go/Python/compiler/admin installation is required on that PC. There is no separate tunnel or manual callback URL.
+2. Open the personalized EXE. After a read-only HTTPS token check it shows standard Windows **Cancel / Continue** buttons. Cancel or cancelling the folder picker does not register/install a worker or consume the token.
+3. Continue, then choose a **dedicated local storage folder**. Do not choose a folder containing unrelated applications, executable startup scripts, private credentials or files you do not intend to share. System/program folders, drive roots, network shares, reparse roots and the worker’s own installation tree/ancestors are refused.
+4. A write/read-back/remove probe and inventory must succeed. Registration consumes the installer atomically; downloading or preflighting it does not. A duplicate/consumed installer shows **`This Installer was already used on another system.`** with **OK**, including when opened again on the original PC. An unused expired/revoked installer instead asks for a fresh download. Links expire after 15 minutes; consumed hashes are retained in addon state.
+5. The worker runs in the background, makes certificate-verified outbound HTTPS requests and starts at this Windows user’s sign-in through `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`. It is not a service, needs no UAC elevation and does not run while the user is signed out. Aegis enables Launch only after an authenticated heartbeat; allocation/name edits are still saved before Launch.
+
+Installation files are under **`%LOCALAPPDATA%\RoboCloud\workers\<installer-id>\`** (`Robo Cloud Enrollment.exe`, `config.json`). The active token is encrypted for the Windows user using DPAPI, never stored in plaintext configuration. The downloaded installer contains a sensitive enrollment capability, not provider keys: keep it private and delete that download after successful registration. Use **Settings → Generate replacement installer/command** to reconnect an existing worker after a failed setup or address change; provider and server identity stay fixed. A Windows replacement must choose the same canonical folder; add a separate server for a different folder. New installers may be generated if setup fails; old active worker credentials rotate only on a successful new registration.
+
+The worker uses `os.Root`-confined file operations, bounded reads/writes, same-directory atomic replacement/read-back, and rejects Windows device/ADS/path aliases and reparse/symlink components. Gateway paths require exact entry spelling, despite Windows’ case-insensitive filesystem; alternate case/8.3 aliases cannot bypass path ACLs. Junctions, symlinks and cloud-only reparse placeholders are not served. Existing ordinary files remain in place. Limits match Linux: 16 MiB/file, 100,000 inventory files, server-side logical quotas. Direct local filesystem writers are outside the gateway’s quotas.
+
+**Removal:** for a connected worker, use the existing verified Move/Erase + confirmation workflow; its selected storage is not recursively removed by uninstalling the addon. After a server is disconnected, token revocation makes its worker exit on the next poll and remove its own startup value. Then the per-worker installation directory can be manually removed after the process exits; **never delete the chosen storage folder to uninstall the worker**. A never-enrolled pending entry has a confirmed **Cancel unenrolled server** option that only revokes links/removes metadata, without a remote scan or any file deletion. Addon uninstall itself leaves remote workers/data alone; disable startup/stop the process locally if retaining detached state.
+
+**Unsigned/native-runtime caveat:** Windows may show SmartScreen/unknown-publisher warnings. No code-signing certificate or native Windows runtime was available here. Native dialog layout, cancel behavior, folder picking, DPAPI, NTFS alias/reparse cases, executable replacement and sign-in startup must still be acceptance-tested on a disposable Windows PC before production use. Cross-compilation and portable tests are not a substitute for that acceptance.
 
 ## Settings
 
@@ -124,7 +156,7 @@ Changes take effect on reinstall/update. A blank password on a later reinstall k
 - Creates the helper's systemd user service when available; otherwise runs a detached background process with a PID file in `ADDON_DATA`.
 - Writes only this addon's mesh entry, refreshed every 30 seconds.
 - The extension automatically creates **one addon-owned, agent-only Burrow tunnel** and scoped loopback proxy. Group tunnels are created only when Launch is requested; servers inherit them and do not create separate tunnels. Ownership is persisted in `ADDON_DATA/burrow-routes.json`; fresh enrollment status is kept in the private `agent-enrollment.json`, and read-only group URL/readiness snapshots in `published-routes.json`. It retries provisioning/health checks and reconnects proxy targets after updates; it never changes global Burrow naming or takes over another addon’s tunnel.
-- Storage operations intentionally write to the configured remote bucket prefix/category/Linux directory. This is the addon's purpose, and the explicit exception to keeping all runtime writes in `ADDON_DATA`.
+- Storage operations intentionally write to the configured remote bucket prefix/category/Linux or Windows folder. The Windows installer also writes its explicitly consented per-user worker/startup state on the remote PC. This is the addon's purpose, and the explicit exception to keeping all runtime writes in `ADDON_DATA`.
 - Uninstall removes owned tunnels, service and mesh entry. If Burrow cannot remove recorded routes, uninstall fails visibly instead of pretending cleanup succeeded. Linked copies are left running. Any old manually created enrollment tunnels remain user-owned and are not removed. Remote agents/data are **never erased by addon uninstall**. The host handles deleting `ADDON_DATA` when asked.
 
 ## Safety boundaries and release limits
@@ -133,13 +165,13 @@ This is a substantial first implementation, not a claim that every requested wor
 
 - Files up to **16 MiB**; at most **100,000 inventory files** per backend. No large-file streaming/multipart/resumable migration yet. Oversized files stop removal without being deleted.
 - Quotas protect writes **through this gateway**. External writers can change usage; refresh before uploads and on Test. Use dedicated prefixes/directories, exclusive ownership during migration, and provider-side retention/backups. No software here can make an uncoordinated external writer transactional.
-- Removal handles managed files, not deletion of bucket resources, Linux directories, unrelated categories, backups, object versions or provider recycle bins. Empty Linux directories and agent metadata remain. Removed servers retain a history tombstone; credentials/tokens are revoked after an empty final inventory.
+- Removal handles managed files, not deletion of bucket resources, Linux directories, unrelated categories, backups, object versions or provider recycle bins. Empty Linux/Windows directories and agent metadata remain. Removed servers retain a history tombstone; credentials/tokens are revoked after an empty final inventory.
 - Redistribution never overwrites a destination conflict. A verified copy may remain at the destination if the subsequent source-change check fails; the source is retained. Investigate duplicates explicitly rather than silently deleting them.
 - Accounts/ACLs do not currently restrict users to individual servers within a group: path rules apply to every server in that group. Use separate groups for isolation.
 - Basic login uses browser credential caching. Logout behavior is browser-dependent; disabling users or rotating passwords revokes future authorization.
 - Endpoint validation rejects non-HTTPS, credentials-in-URLs, redirects and private-address destinations. This is not an independently audited SSRF boundary; do not offer administration to untrusted users.
 - No scheduled scan scheduler, alerts delivery, provider credential-rotation UI, large-file editor, full reference preview/media suite, automatic service setup on remote Linux, or automatic cross-provider failover in this release.
-- **Real E2/CloudGate accounts and custom-domain DNS/TLS were not tested here. Actual public Quick Tunnel HTTPS was tested.** Your sample credentials were deliberately not used. See `docs/TEST-REPORT.md` for actual results and remaining acceptance steps.
+- **Real E2/CloudGate accounts and custom-domain DNS/TLS were not tested here. Actual public Quick Tunnel HTTPS was tested in earlier releases; this release reran local CA-trusted HTTPS, not public DNS.** Your sample credentials were deliberately not used. See `docs/TEST-REPORT.md` for actual results and remaining acceptance steps.
 
 ## Development and validation
 
@@ -159,6 +191,8 @@ node tools/weft-run.mjs /path/to/robo-storage-aegis uninstall --host burrow
 Tests: `python3 -m unittest discover -s tests -p 'test_*.py' -v` and `node --test tests/test_extension.mjs`. Optional configuration-panel browser smoke checks use Playwright: `python3 tests/ui_smoke.py` against the running demo.
 
 Additional disposable-host, actual public-network and local CA-trusted HTTPS acceptance fixtures are described in `docs/TEST-REPORT.md`. Their test data, certificates and browser sessions must never be bundled.
+
+Optional Windows build: Go **1.25+** and pinned go-winres v0.3.3 (build-only; downloaded by the build script), `python3 tools/build_windows.py --go /path/to/go`; tests: `cd windows-worker && go test -v ./...`, plus cross-target `GOOS=windows GOARCH=amd64 go vet ./...`. No Go modules, resource tool or compiler are needed on the addon host. The worker still links only the Go standard library; go-winres is a development-time resource generator. Build info/source hashes are recorded in `docs/WINDOWS-BUILD.json`. A personalized installer is generated by appending a bounded JSON enrollment trailer to the bundled GUI executable; it is not code-signed.
 
 Optional isolated demo: `python3 tests/preview.py /absolute/path/to/demo-data` (binds port 8080). Its clearly marked sample data is **never created by installation**, and live provider tests, tunnel launch, migrations and erasure are disabled. Demo data must not be used as production state.
 

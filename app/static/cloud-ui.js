@@ -4,13 +4,13 @@
     let allS3Items = []; // Raw list of objects
     let activeCategory = 'all';
     const RECENT_VIEWS_KEY = 'robo-storage-recent-views-v1';
-    function getRecentViews() { try { return JSON.parse(localStorage.getItem(RECENT_VIEWS_KEY) || '{}'); } catch (_) { return {}; } }
+    function getRecentViews() { try { return JSON.parse(localStorage.getItem(cloudRecentKey()) || '{}'); } catch (_) { return {}; } }
     function markRecentView(item) {
       if (!item || item.isFolder) return;
       const views = getRecentViews();
       views[item.key] = Date.now();
       const trimmed = Object.fromEntries(Object.entries(views).sort((a,b) => b[1]-a[1]).slice(0,100));
-      try { localStorage.setItem(RECENT_VIEWS_KEY, JSON.stringify(trimmed)); } catch (_) {}
+      try { localStorage.setItem(cloudRecentKey(), JSON.stringify(trimmed)); } catch (_) {}
     }
     let searchQuery = '';
     let viewMode = 'grid'; // 'grid' | 'list'
@@ -49,11 +49,11 @@
 
     // Utility: Format bytes into human readable format
     function formatBytes(bytes, decimals = 2) {
-      if (!bytes || bytes === 0) return '0 B';
+      bytes=Number(bytes); if (!Number.isFinite(bytes) || bytes <= 0) return '0 B';
       const k = 1000;
       const dm = decimals < 0 ? 0 : decimals;
       const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
-      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      const i = Math.max(0,Math.min(sizes.length-1,Math.floor(Math.log(bytes) / Math.log(k))));
       return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
     }
 
@@ -67,7 +67,7 @@
       { key: 'video', label: 'Videos',      color: '#a78bfa', desc: 'Video files and clips' },
       { key: 'audio', label: 'Audio',       color: '#f472b6', desc: 'Music, voice and sound files' },
       { key: 'code',  label: 'Docs & Code', color: '#fbbf24', desc: 'Documents, PDFs and source files' },
-      { key: 'other', label: 'Other',       color: '#305CDE', desc: 'Archives and everything else' }
+      { key: 'other', label: 'Other',       color: '#305CDE', desc: 'Archives, other files and usage outside this listing' }
     ];
 
     // Every object in the whole bucket (root listing) — powers the storage stats
@@ -113,7 +113,11 @@
     function paintStorageBar(cfg, totals, used) {
       const bar = cfg.bar, legend = cfg.legend, wantTip = !!cfg.tooltip;
       if (!bar) return;
-      const free = Math.max(0, STORAGE_QUOTA_BYTES - used);
+      const known = STORAGE_QUOTA_BYTES > 0;
+      const denominator = known ? Math.max(STORAGE_QUOTA_BYTES,used,1) : Infinity;
+      const free = known ? Math.max(0, STORAGE_QUOTA_BYTES-used) : 0;
+      totals={...totals};
+      totals.other=(totals.other||0)+Math.max(0,used-Object.values(totals).reduce((a,b)=>a+b,0));
 
       function showTip(el, label, value, desc) {
         const tip = getStorageTipEl();
@@ -141,7 +145,7 @@
           const seg = document.createElement('div');
           seg.className = 'storage-seg rounded-full shrink-0 cursor-default';
           seg.style.background = '#305CDE';
-          seg.style.width = ((used / STORAGE_QUOTA_BYTES) * 100) + '%';
+          seg.style.width = ((used / denominator) * 100) + '%';
           if (wantTip) {
             seg.addEventListener('mouseenter', () => showTip(seg, 'Storage used', formatBytes(used), 'Total size of every object in this bucket'));
             seg.addEventListener('mouseleave', hideTip);
@@ -155,7 +159,7 @@
           const seg = document.createElement('div');
           seg.className = 'storage-seg rounded-full shrink-0 cursor-default';
           seg.style.background = c.color;
-          seg.style.width = ((bytes / STORAGE_QUOTA_BYTES) * 100) + '%'; // 1 GB -> 10%
+          seg.style.width = ((bytes / denominator) * 100) + '%'; // 1 GB -> 10%
           if (wantTip) {
             seg.addEventListener('mouseenter', () => showTip(seg, c.label, formatBytes(bytes), c.desc));
             seg.addEventListener('mouseleave', hideTip);
@@ -166,7 +170,7 @@
       const rest = document.createElement('div');
       rest.className = 'flex-1 min-w-0 cursor-default';
       if (wantTip) {
-        rest.addEventListener('mouseenter', () => showTip(rest, 'Available', formatBytes(free), 'Available storage remaining'));
+        rest.addEventListener('mouseenter', () => showTip(rest, 'Available', known?formatBytes(free):'Unknown', known?'Available storage remaining':'No capacity has been reported'));
         rest.addEventListener('mouseleave', hideTip);
       }
       bar.appendChild(rest);
@@ -188,7 +192,7 @@
     function updateStorageWidget(items) {
       const list = items || allBucketItems;
       const quotaText = document.getElementById('storageQuotaText');
-      if (quotaText) quotaText.textContent = formatBytes(STORAGE_QUOTA_BYTES, 0);
+      if (quotaText) quotaText.textContent = STORAGE_QUOTA_BYTES>0?formatBytes(STORAGE_QUOTA_BYTES,0):'unknown capacity';
       const { totals } = storageTotals(list);
       const used = cloudUsage();
       const files = (list || []).filter(o => o.key && !o.key.endsWith('/'));
@@ -204,14 +208,9 @@
     }
 
     // Pull a full root listing so the Storage tab/page covers every file in the bucket
-    let bucketStorageBusy = false;
-    async function refreshBucketStorage() {
-      if (currentPath === '') { allBucketItems = allS3Items; updateStorageWidget(); return; }
-      if (bucketStorageBusy) return;
-      bucketStorageBusy = true;
-      const { data, error } = await s3List('');
-      bucketStorageBusy = false;
-      if (!error) { allBucketItems = data; updateStorageWidget(); }
+    function refreshBucketStorage() {
+      allBucketItems=(cloudState?.files||[]).map(f=>({key:f.path,size:f.size,lastModified:''}));
+      updateStorageWidget();
     }
 
     // ---------------------------------------------------------------------
@@ -252,11 +251,12 @@
       const rowsBox = document.getElementById('storageFileRows');
       if (!rowsBox) return;
 
-      const { totals, used } = storageTotals(allBucketItems.length ? allBucketItems : allS3Items);
+      const { totals } = storageTotals(allBucketItems.length ? allBucketItems : allS3Items);
+      const used=cloudUsage();
       const usedEl = document.getElementById('storagePageUsed');
       const quotaEl = document.getElementById('storagePageQuota');
       if (usedEl) usedEl.textContent = formatBytes(used);
-      if (quotaEl) quotaEl.textContent = formatBytes(STORAGE_QUOTA_BYTES, 0);
+      if (quotaEl) quotaEl.textContent = STORAGE_QUOTA_BYTES>0?formatBytes(STORAGE_QUOTA_BYTES,0):'unknown capacity';
 
       paintStorageBar({
         bar: document.getElementById('storagePageBar'),
@@ -355,25 +355,18 @@
       }
     }
 
-    async function loadDirectory(retryCount = 0) {
+    let directoryGeneration=0;
+    async function loadDirectory(retryCount=0) {
+      const generation=++directoryGeneration,path=currentPath,epoch=cloudEpoch;
       loadingSpinner.classList.remove('hidden');
-      const { data, error } = await s3List(currentPath);
+      const {data,error}=await s3List(path);
+      if(generation!==directoryGeneration||path!==currentPath||epoch!==cloudEpoch)return;
       loadingSpinner.classList.add('hidden');
-
-      if (error) {
-        // Transient network/CORS hiccups are common on cold start — retry before giving up
-        if (retryCount < 3) {
-          setTimeout(() => loadDirectory(retryCount + 1), 1200);
-          return;
-        }
-        showToast('Unable to load storage', 'error');
-        return;
+      if(error){
+        if(retryCount<3){setTimeout(()=>{if(generation===directoryGeneration&&path===currentPath&&epoch===cloudEpoch)loadDirectory(retryCount+1)},1200);return}
+        allS3Items=[];renderExplorer();showToast('Unable to load storage: '+error.message,'error');return;
       }
-
-      allS3Items = data;
-      renderExplorer();
-      refreshBucketStorage(); // keep the Storage tab/page bucket-wide
-
+      allS3Items=data;renderExplorer();refreshBucketStorage();
     }
 
     // Parse current items into relative folders and files
@@ -613,7 +606,9 @@
       if (action === 'rename') return openRenameModal(item);
       if (action === 'delete') {
         selectedItem = item;
-        pendingBulkDeletePaths = null;
+        pendingBulkDeletePaths=null;
+        pendingDeleteCount=1;
+        if(item.isFolder){try{pendingBulkDeletePaths=await collectDeletePathsForItems([item])}catch(error){showToast('Unable to list folder: '+error.message,'error');return}}
         deleteModalTitle.textContent = item.isFolder ? 'Delete Folder?' : 'Delete File?';
         deleteModalMessage.innerHTML = `Are you sure you want to permanently delete <span class="text-slate-700 dark:text-slate-200 font-mono font-semibold">${escapeHtml(item.name)}</span>?`;
         deleteModal.classList.remove('hidden');
@@ -677,18 +672,21 @@
 
     async function openFilePreview(item, drawerOnly = false) {
       // Warn before discarding unsaved edits in the code editor
-      if ((codeEditor && codeEditorDirty) || (expandedCodeEditor && expandedCodeEditorDirty)) {
+      if (codeEditorDirty || expandedCodeEditorDirty) {
         if (!confirm('You have unsaved changes in the code editor. Discard them and open a different file?')) return;
       }
       destroyPdfViewer(pdfViewerDrawer); pdfViewerDrawer = null;
       if (!drawerOnly) closeExpandedPreview(); // keep fullscreen viewer visible while opening its info panel
       selectedItem = item;
+      const version=cloudPreviewGeneration,epoch=cloudEpoch;
+      const isCurrent=()=>selectedItem===item&&version===cloudPreviewGeneration&&epoch===cloudEpoch;
       if (!drawerOnly) {
         // The audio fullscreen player reuses the fully wired player from the details
         // drawer. Initialize it off-screen first; otherwise the fullscreen shell has
         // nothing to move and appears empty until the three-dot panel is opened.
         if ((item.category || getFileCategory(item.name)) === 'audio') {
           await openFilePreview(item, true);
+          if(!isCurrent())return;
           previewDrawer.classList.add('translate-x-full');
           previewDrawer.classList.remove('preview-info-over-modal');
           await openExpandedPreview();
@@ -731,6 +729,7 @@
 
       // Generate Presigned URL (inline disposition → opens in browser, no forced download)
       const presignedUrl = await s3PresignUrl(item.key);
+      if(!isCurrent())return;
       previewExternalLink.href = presignedUrl;
       const metaFileUrl = document.getElementById('metaFileUrl');
       metaFileUrl.href = presignedUrl;
@@ -833,7 +832,9 @@
         } else {
           try {
             const res = await fetch(presignedUrl);
+            if(!res.ok)throw Error('File could not be loaded');
             const textContent = await res.text();
+            if(!isCurrent())return;
             cachedCodeKey = item.key; cachedCodeText = textContent; cachedCodeExt = ext;
 
             // Dispose of any previous drawer editor
@@ -850,7 +851,7 @@
                     <button id="saveCodeBtn" disabled class="px-3 py-1.5 rounded-full bg-brand-500/15 text-brand-300 border border-brand-400/30 text-[10px] font-bold hover:bg-brand-500 hover:text-slate-900 dark:hover:text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
                       <i class="fa-solid fa-floppy-disk"></i> Save
                     </button>
-                    ${ext === 'html' ? `<button id="toggleHtmlRender" class="px-2.5 py-1 rounded-full bg-brand-500/15 text-brand-300 text-[10px] font-bold border border-brand-400/30 hover:bg-brand-500 hover:text-slate-900 dark:hover:text-white transition-colors">Render View</button>` : ''}
+                    ${['html','htm'].includes(ext) ? `<button id="toggleHtmlRender" class="px-2.5 py-1 rounded-full bg-brand-500/15 text-brand-300 text-[10px] font-bold border border-brand-400/30 hover:bg-brand-500 hover:text-slate-900 dark:hover:text-white transition-colors">Render View</button>` : ''}
                   </span>
                 </div>
                 <div id="codeEditorContainer" class="relative flex-1 min-h-0 w-full bg-[#101318]"></div>
@@ -864,7 +865,7 @@
             } else {
               const box = document.createElement('pre');
               box.className = 'flex-1 min-h-0 overflow-auto p-3 text-xs text-slate-200 font-mono leading-relaxed select-text whitespace-pre';
-              box.contentEditable = 'true'; box.spellcheck = false;
+              box.contentEditable = String(cloudCanWrite(item.key)); box.spellcheck = false;
               box.textContent = textContent;
               document.getElementById('codeEditorContainer').appendChild(box);
               codeFallbackBox = box;
@@ -874,7 +875,7 @@
             updateSaveButtonState('saveCodeBtn', false);
             document.getElementById('saveCodeBtn').onclick = () => saveCodeToS3(codeEditor, 'saveCodeBtn');
 
-            if (ext === 'html') {
+            if (['html','htm'].includes(ext)) {
               let isRendered = false;
               document.getElementById('toggleHtmlRender').addEventListener('click', () => {
                 isRendered = !isRendered;
@@ -1007,7 +1008,7 @@
     function updateSaveButtonState(btnId, dirty) {
       const btn = document.getElementById(btnId);
       if (!btn) return;
-      btn.disabled = !dirty || (selectedItem && !cloudCanWrite(selectedItem.key));
+      btn.disabled = btn.dataset.saving==='1' || !dirty || (selectedItem && !cloudCanWrite(selectedItem.key));
       btn.classList.toggle('opacity-40', !dirty);
       btn.classList.toggle('cursor-not-allowed', !dirty);
     }
@@ -1015,41 +1016,47 @@
     // Persist the editor contents back to S3 (overwrites the object in the bucket)
     async function saveCodeToS3(editor, btnId) {
       if (!selectedItem) return;
+      const item=selectedItem,version=cloudPreviewGeneration,epoch=cloudEpoch;
+      const isCurrent=()=>selectedItem===item&&version===cloudPreviewGeneration&&epoch===cloudEpoch;
       const isDrawer = btnId === 'saveCodeBtn';
       const box = isDrawer ? codeFallbackBox : expandedCodeFallbackBox;
       if (!editor && !box) return;
 
       const btn = document.getElementById(btnId);
-      if (!btn) return;
+      if (!btn||btn.dataset.saving==='1') return;
+      btn.dataset.saving='1';
       const originalLabel = btn.innerHTML;
       btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
       btn.disabled = true;
 
       try {
         const content = editor ? editor.getValue() : box.textContent;
-        const file = new File([content], selectedItem.name, { type: 'text/plain;charset=utf-8' });
-        const { error } = await s3Upload(selectedItem.key, file);
+        const file = new File([content], item.name, { type: 'text/plain;charset=utf-8' });
+        const { error } = await s3Upload(item.key, file);
+        if(!isCurrent())return;
+        const changed=(editor?editor.getValue():box.textContent)!==content;
+        if(!error&&changed){if(editor)editor._baseline=content;btn.dataset.saving='';updateSaveButtonState(btnId,true);btn.innerHTML=originalLabel;showToast('Saved. Your newer edits are still unsaved.');loadDirectory();return;}
 
         if (error) {
           showToast('Save failed: ' + error.message, 'error');
         } else {
           // Update the shared cache and this editor's baseline
-          cachedCodeKey = selectedItem.key;
+          cachedCodeKey = item.key;
           cachedCodeText = content;
-          cachedCodeExt = selectedItem.name.split('.').pop().toLowerCase();
+          cachedCodeExt = item.name.split('.').pop().toLowerCase();
           if (editor) editor._baseline = content;
           if (isDrawer) { codeEditorDirty = false; } else { expandedCodeEditorDirty = false; }
           updateSaveButtonState(btnId, false);
 
           // Keep the sibling editor in sync if it's showing the same file
-          if (isDrawer && expandedCodeEditor) {
+          if (isDrawer && expandedCodeEditor && !expandedCodeEditorDirty) {
             const pos = expandedCodeEditor.getCursorPosition();
             expandedCodeEditor._baseline = content;
             expandedCodeEditor.setValue(content, -1);
             expandedCodeEditor.moveCursorToPosition(pos);
             expandedCodeEditorDirty = false;
             updateSaveButtonState('expandedSaveCodeBtn', false);
-          } else if (!isDrawer && codeEditor) {
+          } else if (!isDrawer && codeEditor && !codeEditorDirty) {
             const pos = codeEditor.getCursorPosition();
             codeEditor._baseline = content;
             codeEditor.setValue(content, -1);
@@ -1060,13 +1067,14 @@
 
           const sizeElem = document.getElementById('metaFileSize');
           if (sizeElem) sizeElem.textContent = formatBytes(new Blob([content]).size);
-          showToast(`Saved ${escapeHtml(selectedItem.name)} to Robo Cloud`);
+          showToast(`Saved ${escapeHtml(item.name)} to Robo Cloud`);
           loadDirectory(); // refresh sizes/stats without closing the preview
         }
       } catch(e) {
         showToast('Save failed: ' + e.message, 'error');
       }
 
+      btn.dataset.saving='';
       btn.innerHTML = originalLabel;
       btn.disabled = isDrawer ? !codeEditorDirty : !expandedCodeEditorDirty;
       updateSaveButtonState(btnId, isDrawer ? codeEditorDirty : expandedCodeEditorDirty);
@@ -1609,6 +1617,8 @@
 
     async function openExpandedPreview() {
       if (!selectedItem) return;
+      const item=selectedItem,version=cloudPreviewGeneration,epoch=cloudEpoch;
+      const isCurrent=()=>selectedItem===item&&version===cloudPreviewGeneration&&epoch===cloudEpoch;
       syncPreviewSchemeClass();
 
       const iconInfo = getFileIcon(selectedItem.name);
@@ -1627,7 +1637,9 @@
       expandedPreviewMeta.textContent = formatBytes(selectedItem.size || 0) + (ageText ? ' · ' + ageText : '');
       expandedPreviewIcon.className = `text-lg ${iconInfo.color} shrink-0`;
       expandedPreviewIcon.innerHTML = `<i class="fa-solid ${iconInfo.icon}"></i>`;
-      expandedExternalLink.href = await s3PresignUrl(selectedItem.key);
+      const fileUrl=await s3PresignUrl(item.key);
+      if(!isCurrent())return;
+      expandedExternalLink.href=fileUrl;
 
       const ext = selectedItem.name.split('.').pop().toLowerCase();
       const category = selectedItem.category || getFileCategory(selectedItem.name);
@@ -1661,6 +1673,7 @@
       // Without this paint boundary, some browsers initialize the viewer at 0×0 and it
       // only becomes visible after opening the information panel changes the layout.
       await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      if(!isCurrent())return;
 
       if (category === 'code') {
         if (ext === 'pdf') {
@@ -1671,9 +1684,11 @@
           if (!text) {
             try {
               const r = await fetch(expandedExternalLink.href);
+              if(!r.ok)throw Error('File could not be loaded');
               text = await r.text();
+              if(!isCurrent())return;
               cachedCodeKey = selectedItem.key; cachedCodeText = text; cachedCodeExt = ext;
-            } catch(e) { text = '// Unable to load file content'; }
+            } catch(e) { if(!isCurrent())return; showToast('Unable to load file content','error');expandedPreviewContent.textContent='Unable to load file content. Close this preview and retry.';return; }
           }
           renderExpandedCode(text, ext);
         }
@@ -1803,7 +1818,7 @@
             <button id="expandedSaveCodeBtn" disabled class="px-3 py-1.5 rounded-full bg-brand-500/15 text-brand-300 border border-brand-400/30 text-[10px] font-bold hover:bg-brand-500 hover:text-slate-900 dark:hover:text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
               <i class="fa-solid fa-floppy-disk"></i> Save
             </button>
-            ${ext === 'html' ? `<button id="expandedToggleHtmlRender" class="px-2.5 py-1 rounded-full bg-brand-500/15 text-brand-300 text-[10px] font-bold border border-brand-400/30 hover:bg-brand-500 hover:text-slate-900 dark:hover:text-white transition-colors">Render View</button>` : ''}
+            ${['html','htm'].includes(ext) ? `<button id="expandedToggleHtmlRender" class="px-2.5 py-1 rounded-full bg-brand-500/15 text-brand-300 text-[10px] font-bold border border-brand-400/30 hover:bg-brand-500 hover:text-slate-900 dark:hover:text-white transition-colors">Render View</button>` : ''}
           </span>
         </div>
         <div class="relative flex-1 min-h-0">
@@ -1822,7 +1837,7 @@
       } else {
         const box = document.createElement('pre');
         box.className = 'absolute inset-0 overflow-auto p-3 text-xs text-slate-200 font-mono leading-relaxed select-text whitespace-pre';
-        box.contentEditable = 'true'; box.spellcheck = false;
+        box.contentEditable = 'false'; box.spellcheck = false;
         box.textContent = text;
         document.getElementById('expandedCodeEditorContainer').appendChild(box);
         expandedCodeFallbackBox = box;
@@ -1832,7 +1847,7 @@
       updateSaveButtonState('expandedSaveCodeBtn', false);
       document.getElementById('expandedSaveCodeBtn').onclick = () => saveCodeToS3(expandedCodeEditor, 'expandedSaveCodeBtn');
 
-      if (ext === 'html') {
+      if (['html','htm'].includes(ext)) {
         let isRendered = false;
         document.getElementById('expandedToggleHtmlRender').addEventListener('click', () => {
           isRendered = !isRendered;
@@ -1852,6 +1867,7 @@
     }
 
     function closeExpandedPreview() {
+      cloudPreviewGeneration++;
       if (expandedCodeEditor) { destroyAceEditor(expandedCodeEditor); expandedCodeEditor = null; }
       destroyPdfViewer(pdfViewerExpanded); pdfViewerExpanded = null;
       expandedCodeFallbackBox = null; expandedCodeEditorDirty = false;
@@ -1885,15 +1901,19 @@
     document.getElementById('expandPreviewBtn').onclick = () => openExpandedPreview();
     document.getElementById('expandedInfoBtn').onclick = async () => {
       if (!selectedItem) return;
+      const item=selectedItem,version=cloudPreviewGeneration,epoch=cloudEpoch;
+      const isCurrent=()=>selectedItem===item&&version===cloudPreviewGeneration&&epoch===cloudEpoch;
       // Rendering the details drawer must never restart the active media.
       const expVideo = document.getElementById('expandedDriveVideo');
       const audio = document.getElementById('globalAudioElement');
       const videoState = expVideo ? { time: expVideo.currentTime || 0, paused: expVideo.paused } : null;
       const audioState = audio ? { time: audio.currentTime || 0, paused: audio.paused } : null;
-      await openFilePreview(selectedItem, true);
+      await openFilePreview(item, true);
+      if(!isCurrent())return;
       previewDrawer.classList.add('preview-info-over-modal');
       previewDrawer.classList.remove('translate-x-full');
       requestAnimationFrame(() => {
+        if(!isCurrent())return;
         if (videoState && expVideo) {
           try { expVideo.currentTime = videoState.time; if (!videoState.paused) expVideo.play().catch(() => {}); } catch (_) {}
         }
@@ -1908,9 +1928,10 @@
     };
 
     expandedCodeModeBtn.onclick = () => {
-      if (!expandedCodeEditor || !cloudCanWrite(selectedItem.key)) return;
+      if ((!expandedCodeEditor&&!expandedCodeFallbackBox)||!selectedItem||!cloudCanWrite(selectedItem.key))return;
       const editing = expandedModalCard.classList.toggle('code-edit-mode');
-      expandedCodeEditor.setReadOnly(!editing);
+      if(expandedCodeEditor)expandedCodeEditor.setReadOnly(!editing);
+      if(expandedCodeFallbackBox)expandedCodeFallbackBox.contentEditable=String(editing);
       expandedCodeModeBtn.title = editing ? 'Preview code' : 'Edit code';
       expandedCodeModeBtn.innerHTML = editing
         ? '<i class="fa-solid fa-eye text-xs"></i>'
@@ -1919,7 +1940,7 @@
     };
 
     function requestCloseExpandedPreview() {
-      if (expandedCodeEditor && expandedCodeEditorDirty) {
+      if (expandedCodeEditorDirty) {
         if (!confirm('You have unsaved changes in the code editor. Discard them?')) return;
       }
       closeExpandedPreview();
@@ -2661,17 +2682,20 @@
     }
 
     async function loadAudioAlbumArt(audioUrl, audioKey) {
+      const version=cloudPreviewGeneration,epoch=cloudEpoch;
+      const isCurrent=()=>version===cloudPreviewGeneration&&epoch===cloudEpoch;
       resetAudioAlbumArt();
       try {
         const res = await fetch(audioUrl, { headers: { Range: 'bytes=0-1048575' } });
         if (res.ok) {
           const buf = await res.arrayBuffer();
+          if(!isCurrent())return;
           const art = extractEmbeddedAlbumArt(buf);
           if (art && showAudioAlbumArt(art)) return;
         }
       } catch (e) { /* fall through */ }
       const sib = await findSiblingCoverArt(audioKey);
-      if (sib) showAudioAlbumArt(sib);
+      if (sib&&isCurrent()) showAudioAlbumArt(sib);
     }
 
     let audioBarRaf = 0;
@@ -2802,6 +2826,8 @@
     }
 
     async function setupCustomAudioPlayer(audioUrl, fileName) {
+      const version=cloudPreviewGeneration,epoch=cloudEpoch;
+      const isCurrent=()=>version===cloudPreviewGeneration&&epoch===cloudEpoch;
       customAudioPlayerUI.classList.remove('hidden');
       const isMidi = /\.(mid|midi|kar|smf)$/i.test(fileName || '');
       let playableUrl = audioUrl;
@@ -2811,7 +2837,7 @@
         resetAudioAlbumArt();
         const icon = document.getElementById('audioFileIcon'); if (icon) { icon.textContent='music_note'; icon.classList.remove('text-pink-400'); icon.classList.add('text-violet-400'); }
         showToast('Reading MIDI notes and instruments…');
-        try { const midiKey=(selectedItem && selectedItem.key) || fileName; playableUrl = await renderMidiToAudioUrl(audioUrl,midiKey,0); const song=midiSongCache.get(midiKey); midiStream={sourceUrl:audioUrl,key:midiKey,duration:song.duration,offset:0,nextPromise:null}; midiStream.nextPromise=song.duration>MIDI_CHUNK_SECONDS?renderMidiToAudioUrl(audioUrl,midiKey,MIDI_CHUNK_SECONDS):null; showToast('MIDI ready — buffering ahead'); }
+        try { const midiKey=audioUrl; playableUrl = await renderMidiToAudioUrl(audioUrl,midiKey,0); if(!isCurrent())return; const song=midiSongCache.get(midiKey); midiStream={sourceUrl:audioUrl,key:midiKey,duration:song.duration,offset:0,nextPromise:null}; midiStream.nextPromise=song.duration>MIDI_CHUNK_SECONDS?renderMidiToAudioUrl(audioUrl,midiKey,MIDI_CHUNK_SECONDS):null; showToast('MIDI ready — buffering ahead'); }
         catch (err) { showToast('Could not render MIDI: '+err.message, 'error'); return; }
       } else {
         midiStream = null;
@@ -2828,16 +2854,18 @@
       try { await audioElement.play(); started = !audioElement.paused; }
       catch (e) { started = false; }
 
+      if(!isCurrent())return;
       updatePlayPauseState(started);
       startAudioBarLoop();
       if (isMidi && !started) showToast('MIDI ready — press play');
 
       audioElement.onended = async () => {
+        if(!isCurrent())return;
         if(midiStream && midiStream.offset+MIDI_CHUNK_SECONDS < midiStream.duration){
           try{
             const nextOffset=midiStream.offset+MIDI_CHUNK_SECONDS;
             const nextUrl=await (midiStream.nextPromise || renderMidiToAudioUrl(midiStream.sourceUrl,midiStream.key,nextOffset));
-            midiStream.offset=nextOffset;
+            if(!isCurrent())return; midiStream.offset=nextOffset;
             const following=nextOffset+MIDI_CHUNK_SECONDS;
             midiStream.nextPromise=following<midiStream.duration?renderMidiToAudioUrl(midiStream.sourceUrl,midiStream.key,following):null;
             audioElement.src=nextUrl; audioElement.load(); await audioElement.play(); updatePlayPauseState(true); syncAudioClock(); return;
@@ -3250,7 +3278,7 @@
       try {
         const key = currentPath + name;
         const file = new File([''], name, { type: 'text/plain;charset=utf-8' });
-        const { error } = await s3Upload(key, file);
+        const { error } = await s3Upload(key, file, {createOnly:true});
         if (error) {
           showToast('Failed to create file: ' + error.message, 'error');
         } else {
@@ -3312,12 +3340,12 @@
 
     confirmNewFolderBtn.onclick = async () => {
       const folderName = newFolderNameInput.value.trim();
-      if (!folderName) return;
+      if(!folderName||/[\\/\x00-\x1f]/.test(folderName)||folderName.length>180){showToast('Choose a simple folder name without slashes.','error');return;}
 
       const folderKey = currentPath + folderName + '/.keep';
       const dummyFile = new File([""], ".keep", { type: "text/plain" });
       
-      const { error } = await s3Upload(folderKey, dummyFile);
+      const { error } = await s3Upload(folderKey, dummyFile, {createOnly:true});
       newFolderModal.classList.add('hidden');
       newFolderNameInput.value = '';
 
@@ -3341,7 +3369,7 @@
     const deleteModalMessage = document.getElementById('deleteModalMessage');
     const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
     const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
-    let pendingBulkDeletePaths = null;
+    let pendingBulkDeletePaths = null,pendingDeleteCount=0;
 
     deleteFileBtn.onclick = () => {
       if (!selectedItem) return;
@@ -3351,7 +3379,7 @@
       deleteModal.classList.remove('hidden');
     };
 
-    cancelDeleteBtn.onclick = () => deleteModal.classList.add('hidden');
+    cancelDeleteBtn.onclick=()=>{pendingBulkDeletePaths=null;pendingDeleteCount=0;deleteModal.classList.add('hidden')};
 
     // ==================== RENAME LOGIC ====================
     let pendingRenameItem = null;
@@ -3412,10 +3440,9 @@
       const paths = [];
       for (const it of items) {
         if (it.isFolder) {
-          try {
-            const { data } = await s3List(it.key);
-            data.forEach(d => paths.push(d.key));
-          } catch(e) { /* still delete the folder marker below */ }
+          const {data,error}=await s3List(it.key);
+          if(error)throw error;
+          data.forEach(d=>paths.push(d.key));
           paths.push(it.key); // folder marker / trailing-slash key
         } else {
           paths.push(it.key);
@@ -3427,8 +3454,8 @@
     async function openBulkDeleteConfirm() {
       if (selectedItems.size === 0) return;
       const count = selectedItems.size;
-      const paths = await collectDeletePathsForItems([...selectedItems.values()]);
-      pendingBulkDeletePaths = paths;
+      let paths;try{paths=await collectDeletePathsForItems([...selectedItems.values()])}catch(error){showToast('Unable to list selected folders: '+error.message,'error');return}
+      pendingBulkDeletePaths = paths;pendingDeleteCount=count;
       deleteModalTitle.textContent = count > 1 ? `Delete ${count} Items?` : 'Delete Item?';
       deleteModalMessage.innerHTML = `Are you sure you want to permanently delete <span class="text-slate-700 dark:text-slate-200 font-semibold">${count} item${count === 1 ? '' : 's'}</span> from Robo Cloud?<br><span class="text-slate-600 dark:text-slate-500 text-[11px]">Folders will delete everything inside them.</span>`;
       deleteModal.classList.remove('hidden');
@@ -3443,7 +3470,7 @@
       if (pendingBulkDeletePaths) {
         const paths = pendingBulkDeletePaths;
         pendingBulkDeletePaths = null;
-        const count = selectedItems.size;
+        const count = pendingDeleteCount || selectedItems.size;
         const { error } = await s3Remove(paths);
         if (!error) {
           selectionMode = false; // done selecting — exit selection mode after deleting
@@ -3656,7 +3683,7 @@
         previewDrawer.classList.remove('preview-info-over-modal');
         return;
       }
-      if (codeEditor && codeEditorDirty) {
+      if (codeEditorDirty) {
         if (!confirm('You have unsaved changes in the code editor. Close without saving?')) return;
       }
       closeExpandedPreview();
@@ -3708,8 +3735,9 @@
         if (!expandedPreviewModal.classList.contains('hidden')) return;
         if (!uploadModal.classList.contains('hidden') || !newFolderModal.classList.contains('hidden') || !deleteModal.classList.contains('hidden') || !renameModal.classList.contains('hidden')) return;
         try {
-          const { data, error } = await s3List(currentPath);
-          if (error) return;
+          const path=currentPath,source=cloudSelected,epoch=cloudEpoch;
+          const { data, error } = await s3List(path);
+          if (error || path!==currentPath || source!==cloudSelected || epoch!==cloudEpoch) return;
           const current = JSON.stringify(allS3Items.map(i => i.key + ':' + i.size + ':' + i.lastModified));
           const fresh = JSON.stringify(data.map(i => i.key + ':' + i.size + ':' + i.lastModified));
           if (current !== fresh) {

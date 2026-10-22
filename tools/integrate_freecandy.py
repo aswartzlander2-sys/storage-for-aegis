@@ -4,6 +4,7 @@ Then rebuild vendor/tailwind.css using tools/tailwind.config.cjs.
 """
 from pathlib import Path
 import hashlib,json,re,sys,base64
+from cloud_runtime_fixes import patch as runtime_fixes
 ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/'app/static'
 source=Path(sys.argv[1]).read_text();s=source
 styles=re.findall(r'<style\b[^>]*>(.*?)</style>',source,re.S|re.I)
@@ -83,6 +84,7 @@ def scripts(m):
 ''' + js[end:]
   js=js.replace('Failed to connect to S3 bucket','Unable to load storage').replace('from IDrive e2 S3','from Robo Cloud')
   js=js.replace("item.isFolder ? 'Folder' : formatBytes(item.size)", "item.isFolder ? (item.isPartition ? 'Partition · '+(item.partitionLimit ? formatBytes(item.partitionLimit) : 'inherited') : 'Folder') : formatBytes(item.size)")
+  js=runtime_fixes(js)
   app_generated=js;(OUT/'cloud-ui.js').write_text(js);return '<script src="assets/cloud-ui.js"></script>'
  if len(js)>1_000_000:
   synth_hash=hashlib.sha256(js.encode()).hexdigest();(OUT/'cloud-synth.js').write_text(js);return '<script src="assets/cloud-synth.js"></script>'
@@ -98,5 +100,6 @@ ids=lambda x:set(re.findall(r'\bid="([^\"]+)"',x))
 source_controls=re.sub(r'<style\b[^>]*>.*?</style>','',source,flags=re.S|re.I)
 assert ids(source_controls)<=ids(s+app_generated), 'An original HTML control was lost'
 audit={'sourceSha256':hashlib.sha256(source.encode()).hexdigest(),'sourceStyleSha256':[hashlib.sha256(x.encode()).hexdigest() for x in styles],'styleBlocksPreservedByteForByte':True,'allOriginalControlIdsPreserved':True,'addedIds':sorted(ids(s+app_generated)-ids(source_controls)),'synthSha256':synth_hash,'applicationOriginalBytes':len(app_original.encode()),'applicationIntegratedBytes':len(app_generated.encode()),'changes':['Storage/auth/quota gateway binding','Robo Cloud display name','Local dependency packaging','HTML/PDF preview isolation and server-side rename safety','Remove exported Cloudflare challenge scripts','Partition metadata folders; management button removed; additive overlay fix CSS with body-level info portal']}
+audit['changes'] += ['Reproducible directory/preview/save/source race fixes', 'Create-only guards and confirmed ordinary-folder deletion', 'Accurate/unknown-capacity storage bars, source-scoped recents and fallback permissions']
 (ROOT/'docs/REFERENCE-FIDELITY.json').write_text(json.dumps(audit,indent=2)+'\n')
 print(json.dumps(audit,indent=2))

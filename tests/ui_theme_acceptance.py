@@ -9,11 +9,11 @@ with sync_playwright() as p:
  assert page.locator('body').evaluate('(e)=>getComputedStyle(e).backgroundColor')=='rgb(3, 3, 4)'
  nav=page.locator('.top').evaluate('(e)=>[getComputedStyle(e).backgroundColor,getComputedStyle(e).color]')
  page.emulate_media(color_scheme='dark');assert nav==page.locator('.top').evaluate('(e)=>[getComputedStyle(e).backgroundColor,getComputedStyle(e).color]')
- page.screenshot(path=str(ROOT/'docs/aegis-original-dashboard-1.2.1.png'),full_page=True)
+ page.screenshot(path=str(ROOT/'docs/aegis-original-dashboard-1.3.0.png'),full_page=True)
  page.locator('[data-act=open-group]').first.click();page.locator('[data-act=server-settings]').nth(1).click();page.locator('[data-tab=partitions]').click();expect(page.locator('.partition-disk')).to_be_visible()
  page.set_viewport_size({'width':390,'height':844});assert page.evaluate('document.documentElement.scrollWidth<=innerWidth')
  box=page.locator('#modal .modal-foot').bounding_box();assert box and box['y']+box['height']<=844
- page.screenshot(path=str(ROOT/'docs/aegis-partition-mobile-1.2.1.png'))
+ page.screenshot(path=str(ROOT/'docs/aegis-partition-mobile-1.3.0.png'))
  assert not errors,errors
  print('Original Aegis dashboard/root/layout, no Robo glass/theme buttons or explorer shell; unchanged Aegis navigation, professional planner with visible mobile footer/no page overflow: PASS; JS errors []')
  b.close()

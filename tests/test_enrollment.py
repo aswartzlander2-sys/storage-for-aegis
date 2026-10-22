@@ -97,7 +97,8 @@ class EnrollmentHTTPTests(unittest.TestCase):
         self.assertEqual(status,200,body); command=json.loads(body)['command']
         url=next(arg for arg in shlex.split(command) if arg.startswith('https://'))
         self.assertEqual(urlsplit(url).hostname,'checked.example.com')
-        self.assertIn("--proto '=https'",command)
+        self.assertEqual(shlex.split(command)[:2],['curl','-fsSL'])
+        self.assertEqual(shlex.split(command)[-2:],['|','bash'])
         self.route(url='https://changed.example.com')
         status,script=self.call('/enroll.sh?'+urlsplit(url).query,auth=False)
         self.assertEqual(status,200,script)

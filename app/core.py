@@ -186,11 +186,12 @@ class Store:
         with self.lock:
             state = copy.deepcopy(self.state)
             state.pop('enrollments')
+            state.pop('usedInstallers', None)
             for s in state['servers']:
                 s['hasCredentials'] = bool(s.pop('credentials', None))
                 s.pop('agentToken', None)
                 s.update(capacity_view(s))
-                s['online'] = s.get('kind') != 'linux' or time.time() - s.get('lastSeen', 0) < 45
+                s['online'] = s.get('kind') not in ('linux', 'windows') or time.time() - s.get('lastSeen', 0) < 45
             for u in state['users']:
                 u.pop('passwordHash', None)
             return state
@@ -214,7 +215,7 @@ class Store:
     def server(self, group_id, body):
         self.get('groups', group_id)
         kind = body.get('kind')
-        require(kind in ('e2', 'cloudgate', 'linux'), 'Choose IDrive E2, CloudGate or Linux.')
+        require(kind in ('e2', 'cloudgate', 'linux', 'windows'), 'Choose IDrive E2, CloudGate, Linux or Windows.')
         s = {'id': uid(), 'group': group_id, 'name': label(body.get('name')), 'kind': kind, 'limit': quota(body.get('limit', 0)), 'used': 0, 'capacity': None, 'verified': False, 'status': 'pending', 'url': '', 'partitions': [], 'inventory': [], 'types': {}, 'lastTest': None, 'error': '', 'readOnly': False}
         if kind == 'e2':
             credentials = parse_e2(body.get('keysFile', ''))
@@ -226,13 +227,15 @@ class Store:
             s['credentials'] = {'endpoint': public_https(body.get('endpoint', '')), 'username': label(body.get('username')), 'password': body.get('password', ''), 'category': body.get('category', 'general')}
             require(len(s['credentials']['password']) >= 1, 'Enter your deployed CloudGate client password, not the reauthentication key.')
             require(re.fullmatch(r'[a-z0-9_-]+', s['credentials']['category']), 'Invalid CloudGate category.')
-        else:
+        elif kind == 'linux':
             s['path'] = linux_path(body.get('path', ''))
+        else:
+            s['path'] = ''  # A local Windows folder is chosen by the native installer.
         self.state['servers'].append(s)
         self.event('Server added', s['name'])
         return s
 
-    def update_inventory(self, s, files, capacity=None):
+    def update_inventory(self, s, files, capacity=None, persist=True):
         require(isinstance(files, list) and len(files) <= 100000, 'Inventory is too large.')
         inv, types = [], {k: 0 for k in COLORS}
         for f in files:
@@ -244,7 +247,8 @@ class Store:
         s.update(inventory=inv, types=types, used=sum(f['size'] for f in inv), capacity=capacity, verified=True, lastTest=int(time.time()), error='')
         if s['status'] not in ('draining', 'removed'):
             s['status'] = 'full' if s['limit'] and s['used'] >= s['limit'] else 'online'
-        self.save()
+        if persist:
+            self.save()
 
     def check_write(self, s, path, size):
         require(s['status'] not in ('draining', 'removed') and not s.get('readOnly'), 'This server is read-only or draining.', 409)

@@ -47,7 +47,7 @@ with sync_playwright() as p:
     expect(page.locator('h1')).to_have_text('Robo Cloud');expect(page.locator('#storageQuotaText')).to_have_text('1 GB')
     assert not page.locator('#openSidebarBtn').is_visible()
     assert 'private' not in page.locator('#fileGrid').inner_text()
-    page.screenshot(path=str(ROOT/'docs/cloud-original-light-1.2.1.png'),full_page=True)
+    page.screenshot(path=str(ROOT/'docs/cloud-original-light-1.3.0.png'),full_page=True)
     def card(name):return page.locator('#fileGrid > div').filter(has=page.locator('h4',has_text=name))
     card('notes.txt').click();expect(page.locator('#expandedCodeEditorContainer.ace_editor')).to_be_visible()
     page.locator('#expandedCodeModeBtn').click();page.evaluate("() => expandedCodeEditor.setValue('Edited through original Ace editor', -1)")
@@ -91,15 +91,15 @@ with sync_playwright() as p:
     used=api('api/servers/'+s['id']+'/test',{})['server']['used'];api('api/servers/'+s['id']+'/settings',{'name':s['name'],'limit':used})
     response=context.request.post(url+'api/upload',data={'server':s['id'],'path':'over.txt','data':'eA=='},headers={'X-Robo-Request':'1'});assert response.status==507
     api('api/servers/'+s['id']+'/settings',{'name':s['name'],'limit':1_000_000_000})
-    page.emulate_media(color_scheme='dark');page.screenshot(path=str(ROOT/'docs/cloud-original-dark-1.2.1.png'),full_page=True)
+    page.emulate_media(color_scheme='dark');page.screenshot(path=str(ROOT/'docs/cloud-original-dark-1.3.0.png'),full_page=True)
     page.set_viewport_size({'width':390,'height':844});assert page.evaluate('document.documentElement.scrollWidth<=innerWidth')
     page.locator('#openSidebarBtn').click();expect(page.locator('#sidebarAside')).to_be_visible();page.locator('[data-cat=image]').click()
-    page.screenshot(path=str(ROOT/'docs/cloud-original-mobile-1.2.1.png'),full_page=True)
+    page.screenshot(path=str(ROOT/'docs/cloud-original-mobile-1.3.0.png'),full_page=True)
     # Restore the actual pre-Robo management layout, not an explorer shell.
     admin_context=browser.new_context(extra_http_headers={'X-Robo-Admin':config['admin_key']},viewport={'width':1440,'height':950});a=admin_context.new_page();a.on('pageerror',lambda e:errors.append(str(e)));a.goto(BASE+'/')
     expect(a.get_by_role('heading',name='Server groups',exact=True)).to_be_visible()
     assert a.locator('#cloud-browser,link[href="assets/robo.css"],script[src="assets/robo-theme.js"]').count()==0
-    a.screenshot(path=str(ROOT/'docs/aegis-management-1.2.1.png'),full_page=True)
+    a.screenshot(path=str(ROOT/'docs/aegis-management-1.3.0.png'),full_page=True)
     a.locator('[data-act=open-group][data-id="'+g['id']+'"]').click();a.locator('[data-act=server-settings][data-id="'+s['id']+'"]').click();a.locator('[data-act=settings-tab][data-tab=partitions]').click()
     def queue(label,path,size):
         a.locator('#partition-label').fill(label);a.locator('#partition-path').fill(path);a.locator('#partition-size').fill(str(size));a.locator('[data-plan=queue]').click()
@@ -111,7 +111,7 @@ with sync_playwright() as p:
     assert next(x for x in api('api/state')['servers'] if x['id']==s['id'])['partitions']==[]
     a.locator('[data-plan=new]').last.click();queue('Small nested budget','empty/nested',0.000000008)
     a.locator('[data-plan=new]').last.click();queue('Hidden partition','private/empty',0.1)
-    a.locator('#modal .modal-body').evaluate('(e)=>e.scrollTop=0');a.screenshot(path=str(ROOT/'docs/partition-planner-1.2.1.png'))
+    a.locator('#modal .modal-body').evaluate('(e)=>e.scrollTop=0');a.screenshot(path=str(ROOT/'docs/partition-planner-1.3.0.png'))
     before=next(x for x in api('api/state')['servers'] if x['id']==s['id'])['inventory'];apply()
     after=next(x for x in api('api/state')['servers'] if x['id']==s['id'])
     assert after['inventory']==before and len(after['partitions'])==3 and not (folder/'empty').exists()
@@ -130,7 +130,7 @@ with sync_playwright() as p:
         card('renamed.txt').click();expect(page.locator('#expandedCodeEditorContainer')).to_be_visible();page.locator('#expandedInfoBtn').click()
         drawer=page.locator('body > #previewDrawer.preview-info-over-modal');expect(drawer).to_be_visible()
         assert page.locator('#closePreviewBtn').evaluate('(e)=>{const r=e.getBoundingClientRect();return document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)?.closest("#previewDrawer")!==null}')
-        page.screenshot(path=str(ROOT/('docs/preview-info-'+theme+'-'+str(width)+'-1.2.1.png')),full_page=True)
+        page.screenshot(path=str(ROOT/('docs/preview-info-'+theme+'-'+str(width)+'-1.3.0.png')),full_page=True)
         page.locator('#renameFileBtn').click();expect(page.locator('#renameModal')).to_be_visible();page.locator('#cancelRenameBtn').click()
         page.locator('#closePreviewBtn').click();expect(page.locator('#expandedPreviewModal')).to_be_visible();page.locator('#closeExpandedPreviewBtn').click()
     print('PATCH: original Aegis management/root restored; staged graphical partition planner, review/confirm and atomic apply; empty/nested partition folders, hidden metadata ACL, real nested writes and quota denial: PASS')

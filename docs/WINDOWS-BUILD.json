@@ -1,0 +1,23 @@
+{
+  "toolchain": "go version go1.27.3 linux/amd64",
+  "target": "windows/amd64",
+  "subsystem": "Windows GUI",
+  "signed": false,
+  "binaryPath": "app/windows/Robo Cloud Enrollment.exe",
+  "binarySha256": "bc8b284c0f9fb826367479adeabd26095d956c4dd3f914194bd610045e040043",
+  "bytes": 7455232,
+  "sources": {
+    "windows-worker/go.mod": "51418c7c6e988620cfcff964f6436ace621f7fd0eed65e0bbe96c9288a8fa0d6",
+    "windows-worker/main_windows.go": "c046e953f66ca5a9c2986845a7fae4bd0c61ad27f2a10606a3d7e09ad16dd448",
+    "windows-worker/platform_other.go": "83fad1b95cbe7959ceb49bcddd256453ff1488d6afe502ea048737ee8cc17172",
+    "windows-worker/rsrc_windows_amd64.syso": "53fdbbf8b6198024b8452532ab2a9f96b1ded5b11f2941c245a159335e3ab726",
+    "windows-worker/winres.json": "e4e2991eea7f5786b70b50d7b7d7a6235d7836b4f284679c08b9348649732a0a",
+    "windows-worker/worker.go": "70d8399d2881b068fda6ecaff47fb6fa3209f7cceaf31358c42561552a5bda7c"
+  },
+  "nativeWindowsExecutionTested": false,
+  "applicationName": "Robo Cloud Enrollment",
+  "downloadFilename": "Robo Cloud Enrollment.exe",
+  "iconSource": "logo.png",
+  "iconSourceSha256": "c4c4ee92add7238cd01da1c8d57d86875bace987ee3f1948ffed5a3040938722",
+  "resourceCompiler": "github.com/tc-hib/go-winres@v0.3.3"
+}

@@ -37,7 +37,7 @@ async function proxy(key, spec) {
     const rawPath = path.split('?')[0];
     if (rawPath.includes('\\') || /%2f|%5c/i.test(rawPath) || rawPath.split('/').some(p => /^(?:\.|%2e){1,2}$/i.test(p))) { res.writeHead(400); res.end(); return; }
     if (spec.agent) {
-      if (!(parsed.pathname.startsWith('/agent/') || parsed.pathname === '/enroll.sh')) { res.writeHead(404); res.end(); return; }
+      if (!(parsed.pathname.startsWith('/agent/') || ['/enroll.sh', '/enroll.exe'].includes(parsed.pathname))) { res.writeHead(404); res.end(); return; }
       target = path;
     } else {
       target = `/g/${spec.group}${spec.server ? '/s/' + spec.server : ''}` + path;
@@ -102,7 +102,7 @@ async function syncEnrollment() {
     if (!t) {
       lastProbe = null;
       writeEnrollment({ state: 'pending', url: '', detail: 'Burrow is creating a dedicated HTTPS enrollment route automatically.' });
-      t = await ctx.tunnels.create({ port: targetPort, targetPort, targetHost: '127.0.0.1', scheme: 'http', name: 'Robo Cloud · Linux enrollment', sub, access: 'public' });
+      t = await ctx.tunnels.create({ port: targetPort, targetPort, targetHost: '127.0.0.1', scheme: 'http', name: 'Robo Cloud · Folder-worker enrollment', sub, access: 'public' });
       lastDnsRetry = Date.now();
       const latest = load(); latest[AGENT] = { agent: true, port: t.port, sub }; save(latest);
     } else if (t.targetPort !== targetPort) {

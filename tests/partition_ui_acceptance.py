@@ -32,8 +32,8 @@ with sync_playwright() as p:
  page.locator('[data-act=close-modal]').first.click();page.evaluate('()=>refresh()');page.evaluate('(id)=>openPartitionManager(id)',sid)
  page.set_viewport_size({'width':390,'height':844});assert page.evaluate('document.documentElement.scrollWidth<=innerWidth')
  foot=page.locator('[data-plan=review]').bounding_box();assert foot and foot['y']+foot['height']<=844
- page.screenshot(path=str(ROOT/'docs/partition-mobile-1.2.1.png'))
- files=b.new_context(http_credentials={'username':'design-tester','password':'DISPOSABLE-UI-test-password'},viewport={'width':1440,'height':950});explorer=files.new_page();explorer.goto(BASE+'/g/'+g['id']+'/');folder_card=explorer.locator('#fileGrid > div').filter(has=explorer.locator('h4',has_text='empty'));expect(folder_card).to_contain_text('Partition');explorer.screenshot(path=str(ROOT/'docs/partition-folders-1.2.1.png'));files.close()
+ page.screenshot(path=str(ROOT/'docs/partition-mobile-1.3.0.png'))
+ files=b.new_context(http_credentials={'username':'design-tester','password':'DISPOSABLE-UI-test-password'},viewport={'width':1440,'height':950});explorer=files.new_page();explorer.goto(BASE+'/g/'+g['id']+'/');folder_card=explorer.locator('#fileGrid > div').filter(has=explorer.locator('h4',has_text='empty'));expect(folder_card).to_contain_text('Partition');explorer.screenshot(path=str(ROOT/'docs/partition-folders-1.3.0.png'));files.close()
  assert not errors,errors
  print('Planner: keyboard size slider, below-usage rejection, queue without mutation, undo, resize, metadata-only removal preserving files, concurrent-plan HTTP 409 and 390px visible footer/no page overflow and order-independent partition-folder labels: PASS; JS errors []')
  b.close()

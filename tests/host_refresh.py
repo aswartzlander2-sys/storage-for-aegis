@@ -1,4 +1,4 @@
-"""1.2.1 real Aegis-host acceptance on a NEW DISPOSABLE host, never production.
+"""1.3.0 real Aegis-host acceptance on a NEW DISPOSABLE host, never production.
 Usage: python tests/host_refresh.py http://127.0.0.1:4310 /absolute/test-aegis-home
 Runs install/update/uninstall and keeps the disposable addon data for inspection.
 """
@@ -39,13 +39,13 @@ with sync_playwright() as p:
         raise AssertionError('Host job timeout')
     rec=next((a for a in host('/__gate/api/addons')['addons'] if a['id']=='robo-storage-aegis'),None)
     if rec is None: rec=host('/__gate/api/addons/add',{'source':str(ROOT)})['addon']
-    assert rec['version']=='1.2.1'
+    assert rec['version']=='1.3.0'
     assert 'PUBLIC_URL' not in [s['key'] for s in rec['settings']]
-    print('Actual Aegis add: accepted 1.2.1; no enrollment URL setting')
+    print('Actual Aegis add: accepted 1.3.0; no enrollment URL setting')
     job('install',{'settings':{'PORT':8799,'ADMIN_USER':'admin','ADMIN_PASSWORD':''}})
     page.goto(BASE+'/__gate/robo-storage/')
     expect(page.get_by_role('heading',name='Server groups',exact=True)).to_be_visible();assert page.locator('#cloud-browser,link[href="assets/robo.css"]').count()==0
-    page.screenshot(path=str(ROOT/'docs/actual-host-cloud-1.2.1.png'),full_page=True)
+    page.screenshot(path=str(ROOT/'docs/actual-host-cloud-1.3.0.png'),full_page=True)
     page.goto(BASE+'/__gate/robo-storage/manage')
     expect(page.get_by_role('heading',name='Server groups',exact=True)).to_be_visible()
     assert page.locator('.sidebar').count()==0
@@ -84,7 +84,7 @@ with sync_playwright() as p:
     expect(filepage.locator('#cloudStoragePicker option').first).to_be_attached()
     assert filepage.locator('header.glass').is_visible()
     assert filepage.locator('#sidebarAside').is_visible()
-    filepage.screenshot(path=str(ROOT/'docs/actual-host-files-1.2.1.png'),full_page=True)
+    filepage.screenshot(path=str(ROOT/'docs/actual-host-files-1.3.0.png'),full_page=True)
     filepage.set_viewport_size({'width':390,'height':844})
     assert filepage.evaluate('document.documentElement.scrollWidth <= window.innerWidth')
     files.close();print('File browser: native Basic login, Robo glass header/sidebar, server selector and mobile width checked')
@@ -98,14 +98,14 @@ with sync_playwright() as p:
         assert r.ok;print('Public HTTPS route passed its health check; command generation available')
     page.locator('[data-nav=connections]').click()
     expect(page.get_by_role('heading',name='Agent enrollment address')).to_be_visible()
-    page.screenshot(path=str(ROOT/'docs/actual-host-connections-1.2.1.png'),full_page=True)
+    page.screenshot(path=str(ROOT/'docs/actual-host-connections-1.3.0.png'),full_page=True)
     before_port=t['port'];job('update',{})
     page.goto(BASE+'/__gate/robo-storage/manage');expect(page.get_by_role('heading',name='Server groups',exact=True)).to_be_visible()
     owned=[t for t in host('/__gate/api/tunnels')['tunnels'] if t.get('app')=='robo-storage-aegis' and t.get('sub','').startswith('robo-agent-')]
     assert len(owned)==1 and owned[0]['port']==before_port,owned
     assert any(g['id']==group['id'] for g in admin('api/state')['groups'])
     print('Actual host update: group data retained; same agent tunnel identity, no duplicate')
-    page.screenshot(path=str(ROOT/'docs/actual-host-dashboard-1.2.1.png'),full_page=True)
+    page.screenshot(path=str(ROOT/'docs/actual-host-dashboard-1.3.0.png'),full_page=True)
     print('Browser page errors:',errors);assert not errors
     print('Real E2/CloudGate/live public DNS acceptance: NOT RUN')
     if os.environ.get('ROBO_KEEP_HOST_INSTALLED')!='1':

@@ -1,0 +1,25 @@
+/* Native Aegis tab treatment, command copy control, and accurate bar geometry.
+   Additive: the original management stylesheet is intentionally retained. */
+.subtabs,.local-tabs,.provider-tabs{display:flex;gap:4px;padding:4px;width:max-content;max-width:100%;border-radius:12px;background:var(--field);border:1px solid var(--line-2);overflow-x:auto;scrollbar-width:thin}
+.subtabs{margin:0 0 24px}.local-tabs,.provider-tabs{margin:0 0 22px}
+.subtabs button,.local-tabs button,.provider-tabs .provider-tab{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:34px;padding:0 14px;flex:none;border:0;border-radius:9px;background:transparent;color:var(--muted);cursor:pointer;font-size:13.5px;font-weight:500;white-space:nowrap;box-shadow:none;transition:color .15s,background .15s}
+.subtabs button.active,.local-tabs button.active,.provider-tabs .provider-tab.active{color:var(--text);background:#1d1f23;box-shadow:0 1px 0 rgba(255,255,255,.07) inset,0 6px 18px -10px rgba(0,0,0,.9)}
+.subtabs button:hover,.local-tabs button:hover,.provider-tabs .provider-tab:hover{color:var(--text)}
+.provider-tab img{width:18px;height:18px}
+.command-block{position:relative;margin:12px 0}.command-block .command{margin:0;padding:16px 54px 16px 16px;min-height:58px;max-height:200px;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
+.copy-command{position:absolute;top:8px;right:8px;display:grid;place-items:center;width:32px;height:32px;padding:0;border:1px solid var(--line-2);border-radius:6px;background:var(--raise);color:var(--muted);cursor:pointer}
+.copy-command:hover{color:var(--text);border-color:var(--line-hi)}.copy-command:focus-visible,[role=tab]:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+.copy-feedback{position:absolute;right:4px;top:-22px;color:var(--ok);font-size:11px;pointer-events:none}
+.big-bar:not(.small-bar){height:150px}.big-bar:not(.small-bar)>.bar-section{padding:0;min-width:0;box-sizing:border-box}
+.bar-caption{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:15px;overflow:hidden}.bar-caption strong,.bar-caption small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.usage-bar{position:relative;display:flex;align-items:stretch;gap:0}.usage-segment{display:block;flex:none;min-width:0;height:100%;opacity:.28}.meter>.usage-segment{opacity:1}
+.usage-caption{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:15px;font-size:12px;pointer-events:none;overflow:hidden;text-overflow:ellipsis}
+.range-part{padding:0;min-width:0;flex-shrink:0;box-sizing:border-box}.range-part>strong,.range-part>span:not(.resize-handle){white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 10px}
+@media(max-width:600px){.subtabs button,.local-tabs button,.provider-tabs .provider-tab{font-size:12px;padding:0 11px}.bar-caption,.usage-caption{padding:9px}.provider-tabs{width:100%}.provider-tabs .provider-tab{flex:1;gap:5px;padding:0 8px}}
+/* Keep actions visible in every standard dialog, not just the planner. */
+#modal:not(.partition-dialog)[open]{overflow:hidden}
+#modal:not(.partition-dialog) #modal-content{display:flex;flex-direction:column;max-height:calc(90vh - 2px);min-height:0;overflow:hidden}
+#modal:not(.partition-dialog) .modal-head,#modal:not(.partition-dialog) .modal-foot{flex:0 0 auto}
+#modal:not(.partition-dialog) .modal-body{flex:1 1 auto;min-height:0;overflow-y:auto}
+.usage-caption small{font-size:10px;font-weight:400;margin-top:4px;color:var(--muted)}
+@media(max-width:600px){.server-detail-head{flex-wrap:wrap;gap:9px}.server-detail-head>.grow{flex:1 1 calc(100% - 45px);min-width:0}.server-detail-head>.server-status{margin-right:auto}.server-detail-head .form-hint{overflow-wrap:anywhere}}

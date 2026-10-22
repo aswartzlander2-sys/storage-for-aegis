@@ -44,6 +44,9 @@ test('automatic HTTPS route is ready only after identity + nonce; public proxy c
  for(const path of ['/agent/../api/state','/agent/%2e%2e/api/state','/agent/%2f../api/state','//api/state','http://example.com/agent/health','/\\example.com/agent/health']) {
   const status=await new Promise((resolve,reject)=>{request({host:'127.0.0.1',port:t.targetPort,path},r=>{r.resume();resolve(r.statusCode)}).on('error',reject).end();});assert.equal(status,400,path);
  }
+ for(const path of ['/enroll.sh?token=TEST-ONLY','/enroll.exe?token=TEST-ONLY']) {
+  const r=await realFetch(`http://127.0.0.1:${t.targetPort}${path}`);assert.equal(r.status,200);assert.equal((await r.json()).path,path);
+ }
  const before=f.read().checkedAt;await f.route();assert.equal(f.read().checkedAt,before,'cached readiness must not renew health-check time');
  const now=Date.now;const probes=f.probes;
  try {Date.now=()=>now()+21000;f.reachable=false;assert.equal((await f.route()).state,'pending');assert.ok(f.probes>probes,'periodic checks must not use a sliding cache forever');}finally{Date.now=now;}

@@ -161,9 +161,9 @@ class AgentBroker:
         with self.lock:
             self.pending[task['id']] = entry
         try:
-            require(entry['done'].wait(65), 'Linux agent did not finish in time. Check the host and test again.', 504)
+            require(entry['done'].wait(65), 'Folder worker did not finish in time. Check the host and test again.', 504)
             result = entry['result']
-            require(not result.get('error'), result.get('error', 'Linux operation failed.'), 502)
+            require(not result.get('error'), result.get('error', 'Storage operation failed.'), 502)
             return result
         finally:
             with self.lock:
@@ -196,4 +196,4 @@ class Linux:
         self.broker.call(self.s, 'delete', path=path)
 
 def backend(server, broker):
-    return {'e2': lambda: E2(server), 'cloudgate': lambda: CloudGate(server), 'linux': lambda: Linux(server, broker)}[server['kind']]()
+    return {'e2': lambda: E2(server), 'cloudgate': lambda: CloudGate(server), 'linux': lambda: Linux(server, broker), 'windows': lambda: Linux(server, broker)}[server['kind']]()

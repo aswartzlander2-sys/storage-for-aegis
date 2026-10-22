@@ -48,3 +48,11 @@ Local copies preserve the reference versions. Complete upstream license texts ar
 | JetBrains Mono | OFL-1.1 | `app/static/vendor/JETBRAINS-MONO-LICENSE.txt` |
 
 Asset source origins: cdnjs.com, fonts.googleapis.com and fonts.gstatic.com; upstream repositories ajaxorg/ace, mozilla/pdf.js, FortAwesome/Font-Awesome, tailwindlabs/tailwindcss, google/material-design-icons, rsms/inter, JetBrains/JetBrainsMono. No CDN is contacted at runtime. Build-only Tailwind command is in `docs/TEST-REPORT.md`.
+
+## Windows worker and copy glyph
+
+The compiled Windows worker includes the Go runtime and standard library (Go 1.27.3, BSD-3-Clause; Copyright The Go Authors). Complete notice: `docs/licenses/GO-LICENSE.txt`; source https://go.dev/LICENSE. The worker source is in `windows-worker/`; no third-party Go modules are linked. The compiler is build-only and is not bundled. Native Windows APIs are dynamically loaded from the system directory, not distributed DLLs.
+
+The copy/check glyph follows GitHub Octicons, MIT; Copyright (c) 2026 GitHub Inc. Complete upstream notice: `docs/licenses/OCTICONS-LICENSE.txt`; source https://github.com/primer/octicons. The Windows provider mark is an original simple four-pane SVG, not a bundled Microsoft logo asset.
+
+Windows resource generation uses build-only `github.com/tc-hib/go-winres@v0.3.3` (ISC, Thomas Combeléran; notice in `docs/licenses/GO-WINRES-LICENSE.txt`). Neither this tool nor its Go modules are linked into the worker. The embedded multiresolution APP icon derives only from the existing user-supplied `logo.png`; its pixels are not redesigned. Resource JSON and generated Windows COFF are bundled for reproducibility.
