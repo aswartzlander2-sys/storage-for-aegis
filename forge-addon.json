@@ -2,7 +2,7 @@
   "spec": 1,
   "id": "robo-storage-aegis",
   "name": "Robo Storage for Aegis",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Storage groups for IDrive E2, CloudGate and Linux. A dedicated Aegis dashboard with quotas, users, directory permissions and safe draining.",
   "author": "Robo Storage contributors",
   "license": "MIT",
@@ -10,12 +10,12 @@
   "update_card": {
     "theme": "gray",
     "icon": "wrench",
-    "badge": "FIX",
-    "tagline": "Honor root-domain routing and save the storage ceiling before launch.",
+    "badge": "UI",
+    "tagline": "Robo glass design for both management and permission-aware file browsing.",
     "highlights": [
-      "Unchecked tunnel option means root domain, never an automatic prefix",
-      "Quota edits after enrollment command generation are saved before Launch",
-      "Allocated storage and physical disk capacity are reported separately"
+      "FreeCandy-inspired light/dark glass panels, preserved Aegis navigation",
+      "Folder browsing, categories, grid/list views and safe previews",
+      "Existing group routing, access controls and allocation ceilings retained"
     ]
   },
   "requires": {

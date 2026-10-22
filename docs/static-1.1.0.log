@@ -1,0 +1,7 @@
+Vendored Weft helpers: byte-identical
+Aegis stylesheet: byte-identical
+Python / JavaScript / shell syntax: PASS
+Runtime release labels: 1.1.0
+Exact ending README Credits: PASS
+Logo / path / no private keys or symlinks: PASS
+Robo asset set: self-hosted; no direct-S3 client, reference credentials, CDN scripts

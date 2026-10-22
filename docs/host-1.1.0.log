@@ -1,0 +1,13 @@
+Actual Aegis add: accepted 1.1.0; no enrollment URL setting
+Actual Aegis install: DONE
+Actual host mount: 200; unchanged upstream Aegis navigation/CSS plus scoped Robo glass panels and white controls
+Actual Burrow automatically created one addon-owned agent route; no manual tunnel or URL supplied
+Actual agent-only proxy: health reaches service; dashboard/admin paths 404; direct admin 401
+File browser: native Basic login, Robo glass header/sidebar, server selector and mobile width checked
+No verified public HTTPS route in this sandbox: command safely blocked with automatic-provisioning status (503)
+Actual Aegis update: DONE
+Actual host update: group data retained; same agent tunnel identity, no duplicate
+Browser page errors: []
+Real E2/CloudGate/live public DNS acceptance: NOT RUN
+Actual Aegis uninstall: DONE
+Actual host uninstall: owned automatic route removed; no route recreated

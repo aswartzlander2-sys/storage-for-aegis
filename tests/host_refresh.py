@@ -1,4 +1,4 @@
-"""1.0.1 real Aegis-host acceptance on a NEW DISPOSABLE host, never production.
+"""1.1.0 real Aegis-host acceptance on a NEW DISPOSABLE host, never production.
 Usage: python tests/host_refresh.py http://127.0.0.1:4310 /absolute/test-aegis-home
 Runs install/update/uninstall and keeps the disposable addon data for inspection.
 """
@@ -39,19 +39,19 @@ with sync_playwright() as p:
         raise AssertionError('Host job timeout')
     rec=next((a for a in host('/__gate/api/addons')['addons'] if a['id']=='robo-storage-aegis'),None)
     if rec is None: rec=host('/__gate/api/addons/add',{'source':str(ROOT)})['addon']
-    assert rec['version']=='1.0.1'
+    assert rec['version']=='1.1.0'
     assert 'PUBLIC_URL' not in [s['key'] for s in rec['settings']]
-    print('Actual Aegis add: accepted 1.0.1; no enrollment URL setting')
+    print('Actual Aegis add: accepted 1.1.0; no enrollment URL setting')
     job('install',{'settings':{'PORT':8799,'ADMIN_USER':'admin','ADMIN_PASSWORD':''}})
     page.goto(BASE+'/__gate/robo-storage/')
     expect(page.get_by_role('heading',name='Server groups',exact=True)).to_be_visible()
     assert page.locator('.sidebar').count()==0
     assert page.locator('.top .tabs a.on').inner_text()=='Robo Storage'
     assert page.locator('body').evaluate('(el)=>getComputedStyle(el).backgroundColor')=='rgb(3, 3, 4)'
-    assert page.locator('.btn.primary').first.evaluate('(el)=>getComputedStyle(el).backgroundColor')=='rgb(241, 242, 243)'
+    assert page.locator('.btn.primary').first.evaluate('(el)=>getComputedStyle(el).backgroundColor')=='rgb(255, 255, 255)'
     css=request.get(BASE+'/__gate/robo-storage/assets/aegis.css');assert css.ok
     assert css.body()==(ROOT/'app/static/aegis.css').read_bytes()
-    print('Actual host mount: 200; exact upstream Aegis CSS, black background, white controls, top navigation')
+    print('Actual host mount: 200; unchanged upstream Aegis navigation/CSS plus scoped Robo glass panels and white controls')
     assert request.get('http://127.0.0.1:8799/api/state').status==401
     deadline=time.time()+8
     while time.time()<deadline:
@@ -79,11 +79,12 @@ with sync_playwright() as p:
     filepage.goto('http://127.0.0.1:8799/g/'+group['id']+'/')
     expect(filepage.locator('#group-name')).to_have_text(group['name'])
     assert filepage.locator('#storage-picker option').count()>=1
-    assert filepage.locator('body').evaluate('(el)=>getComputedStyle(el).backgroundColor')=='rgb(3, 3, 4)'
+    assert filepage.locator('.drive-header').is_visible()
+    assert filepage.locator('.drive-sidebar').is_visible()
     filepage.screenshot(path=str(ROOT/'docs/files-browser.png'),full_page=True)
     filepage.set_viewport_size({'width':390,'height':844})
     assert filepage.evaluate('document.documentElement.scrollWidth <= window.innerWidth')
-    files.close();print('File browser: native Basic login, Aegis styles, server selector and mobile width checked')
+    files.close();print('File browser: native Basic login, Robo glass header/sidebar, server selector and mobile width checked')
     state=admin('api/state');assert state['agentRoute']['state'] in ('pending','error','ready')
     r=request.post(BASE+'/__gate/robo-storage/api/servers/'+server['id']+'/enrollment',data={},headers={'X-Robo-Request':'1'})
     if not r.ok:

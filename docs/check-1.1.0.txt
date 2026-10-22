@@ -1,0 +1,3 @@
+✔ /home/user/robo-storage-aegis
+    robo-storage-aegis 1.1.0: Robo Storage for Aegis · platforms burrow
+    update card: gray, glow, 3 highlights (preview: node tools/weft-card.mjs /home/user/robo-storage-aegis)

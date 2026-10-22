@@ -1,0 +1,5 @@
+REAL LOCAL HTTPS WORKER + BROWSER: grid/list persistence, folders, search, categories, recent previews, 1 GB allocation, image/audio/text previews: PASS
+HTML preview rendered as inert text; no external CDN/provider requests; JavaScript errors: []
+Actual UI text creation, upload, exact-path deletion confirmation, native Basic and server-side hidden/read-only ACLs + quota 507: PASS
+Light/dark theme persistence, 390px mobile navigation/no overflow, read-only storage switch, server-scoped isolation: PASS
+LOCAL CA fixture only; not a public/custom-domain/provider acceptance claim.

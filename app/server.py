@@ -141,9 +141,10 @@ class App(mesh.Handler):
         self.send_header('Cache-Control', 'no-store')
         self.send_header('X-Content-Type-Options', 'nosniff')
         self.send_header('Referrer-Policy', 'no-referrer')
-        self.send_header('Content-Security-Policy', "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'")
+        self.send_header('Content-Security-Policy', (headers or {}).get('Content-Security-Policy', "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"))
         for k, v in (headers or {}).items():
-            self.send_header(k, v)
+            if k.lower() != 'content-security-policy':
+                self.send_header(k, v)
         self.end_headers()
         self.wfile.write(data)
 
@@ -255,7 +256,7 @@ class App(mesh.Handler):
             file = ROOT.parent / 'logo.png'
         else:
             name = path.removeprefix('/assets/')
-            require(name in ('app.js', 'style.css', 'aegis.css', 'files.js', 'files.html', 'e2.svg', 'cloudgate.svg', 'linux.svg'), 'Not found.', 404)
+            require(name in ('app.js', 'style.css', 'aegis.css', 'files.js', 'files.html', 'robo.css', 'robo-theme.js', 'e2.svg', 'cloudgate.svg', 'linux.svg'), 'Not found.', 404)
             file = ROOT / 'static' / name
         require(file.is_file(), 'Not found.', 404)
         return self.send(200, file.read_bytes(), mimetypes.guess_type(str(file))[0] or 'application/octet-stream')
@@ -422,7 +423,7 @@ class App(mesh.Handler):
             servers = [s for s in servers if s['id'] == sid]
         if method == 'GET' and (rest == '/' or rest.startswith('/assets/')):
             if rest == '/':
-                return self.send(200, (ROOT / 'static' / 'files.html').read_bytes(), 'text/html')
+                return self.send(200, (ROOT / 'static' / 'files.html').read_bytes(), 'text/html', {'Content-Security-Policy': "default-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; frame-src blob:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"})
             return self.static(rest)
         from core import visible
         if method == 'GET' and rest == '/api/files':
@@ -430,7 +431,7 @@ class App(mesh.Handler):
             s = next((s for s in servers if s['id'] == selected), None)
             require(not sid or selected == sid, 'This link is scoped to one server.', 403)
             files = [f for f in s['inventory'] if visible(user, f['path'])] if s else []
-            return self.send(200, {'group': group['name'], 'username': user['username'], 'servers': [{'id': s['id'], 'name': s['name'], 'status': s['status'], 'used': s['used'], 'limit': s['limit'], **capacity_view(s)} for s in servers], 'selected': selected, 'files': files, 'rules': user['rules']})
+            return self.send(200, {'group': group['name'], 'username': user['username'], 'servers': [{'id': s['id'], 'name': s['name'], 'status': s['status'], 'used': s['used'], 'limit': s['limit'], 'readOnly': s.get('readOnly', False), **capacity_view(s)} for s in servers], 'selected': selected, 'files': files, 'rules': user['rules']})
         body = self.body() if method == 'POST' else {}
         selected = body.get('server') or q.get('server', [sid or ''])[0]
         s = next((s for s in servers if s['id'] == selected), None)

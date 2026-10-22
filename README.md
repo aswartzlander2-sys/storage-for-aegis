@@ -1,8 +1,8 @@
 # Robo Storage for Aegis
 
-**1.0.1 — root-only unchecked routing and saved, accurately displayed allocation ceilings.**
+**1.1.0 — FreeCandy-inspired Robo glass UI for both management and file browsing.**
 
-Linux enrollment, file access, permissions, quotas, migration and erasure were exercised over actual Burrow/Cloudflare public tunnels. Real IDrive E2 and CloudGate accounts remain untested; see the validation report and limits below.
+The 1.1.0 interfaces were exercised with real Linux workers through a local CA-trusted HTTPS fixture and an actual Aegis host. Earlier public Burrow/Cloudflare results are preserved separately; no new public-network or real E2/CloudGate/custom-domain acceptance is claimed for this UI release. See the validation report.
 
 A Weft addon with its own Aegis dashboard, home-screen tile and storage groups spanning **IDrive E2**, a deployed **CloudGate client**, and **Linux directories**. Uses the supplied Robo Storage logo. The uploaded access-key example and the credentials/configuration in the supplied reference dashboards are **not included or used**.
 
@@ -20,14 +20,26 @@ The supplied prompt suggests `requires.burrow: ">=2.0.0"`; the normative SPEC pe
 - Linux directory accepts `~/…` and `/…`. Press the square enter button before any enrollment command is shown. The directory is created if missing. Verification requires a successful storage probe plus an authenticated worker heartbeat.
 - Server cards, real inventory tests, capacity contributions, 150 px group distribution bars, 75 px server usage bars, and file-type color legends.
 - Server and nested-directory quota budgets; child partitions display with a 15% indent. **Logical quotas only**: no loopback images, disks, placeholder files or fake reservations.
-- Separate storage website with a storage-server selector next to the group name; upload, download, search and confirmed file deletion.
+- FreeCandy-inspired standalone file explorer: floating glass header, category sidebar, folder breadcrumbs, grid/list views, name/size sorting, search, recent previews, allocation breakdown and a storage-server selector. Upload/download, create text files and exact-path-confirmed deletion use the authenticated gateway.
+- Safe text/code, image and browser-native audio/video/PDF preview paths. HTML is displayed as inert source text, never executed. Media codec and native PDF support depend on the browser; unsupported formats remain download-only. No Office viewer, Ace editor, PDF.js suite, bulk operations or rename/move/new-empty-folder controls are claimed.
+- Matching Robo light/dark management surfaces and dialogs, with a saved theme preference; Aegis top navigation remains unchanged. All assets are self-hosted; no reference credentials, direct S3 browser client or external CDNs are copied.
 - Multiple users per group; enable/disable accounts, change usernames and rotate passwords. File/directory rules support read/write, view-only and hidden. The most-specific rule wins; unmatched paths are denied.
 - Browser-native HTTP Basic login on storage links; scrypt password hashes; passwords never appear in links. Use HTTPS.
 - Server removal: drain first, choose redistribution or strongly confirmed erasure. Shares are adjustable with draggable boundaries and percentage inputs. Whole-file placement approximates requested byte shares.
 - Copy/read-back verification, source-change check, conflict refusal, explicit errors and persistent job history. Source entries remain draining on failure; interrupted jobs do not automatically resume deletion.
 - Group activity log, read-only mode, provider status and responsive layout.
 
-## What changed in 1.0.1
+## What changed in 1.1.0
+
+The user-supplied `freecandy5-drive (46).html` is the **visual reference for both Robo interfaces**, superseding the earlier Aegis-only look inside addon panels. The surrounding host navigation is still Aegis. This is an adapted interface over the existing gateway, not deployment of the uploaded direct-S3 page.
+
+- Frosted glass surfaces, blue/purple ambient color, white pill actions, rounded icon controls and light/dark themes.
+- The public file explorer now groups visible file paths into folders. Folders reflect managed files, not independent empty-directory resources. Category totals include only visible paths; overall server usage can include hidden files. Hidden names are never used to build folders or previews.
+- **Recent** means files previewed in this tab, not invented modification dates. The inventory does not promise modification timestamps. View and color-theme preferences are saved locally; preview paths are kept only in memory.
+- Preview reads use the same Basic-authenticated, group/server-scoped download endpoint. Preview payloads are bounded to 16 MiB. Only the file-browser document allows blob media/frames in its CSP; dashboard policy stays unchanged. Text/HTML is rendered with `textContent`.
+- Real browser tests cover actual Linux reads/writes, negative ACL/quota requests, dangerous HTML as inert text, storage isolation, exact deletion confirmation, mobile navigation and theme persistence. See `docs/TEST-REPORT.md` for exact results and limitations.
+
+## Retained corrections from 1.0.1
 
 - **Unchecked means the root domain directly:** checked `studio.apps.example.com`, unchecked `studio.example.com`. Only root zones are offered in unchecked mode; a wildcard/prefix base is not treated as the root. A saved legacy unchecked/prefixed route is blocked in the UI rather than advertised as a verified root address.
 - **Host limitation, not a hidden fallback:** Aegis 2.24.2 does not expose a per-tunnel primary-root override when its global primary naming prefix is active. In that configuration, root publication is explicitly unavailable. The addon never changes global naming or substitutes the prefixed/Quick address. Root publication works only when Burrow actually offers the root-level base or a matching configured root alias; HTTPS identity verification still applies. Custom-domain account acceptance has not been run.
@@ -46,7 +58,7 @@ The supplied prompt suggests `requires.burrow: ">=2.0.0"`; the normative SPEC pe
 ### Retained from 0.1.1
 
 - Removed the manual enrollment base-URL setting. Burrow provisions and checks the agent route automatically; Connections displays its current readiness. Each generated command pins its verified callback URL, rather than depending on a later setting change.
-- Replaced the custom sidebar/teal theme with Aegis’s actual shared stylesheet: black grid backdrop, raised neutral cards, white primary buttons, the host-style top bar and horizontal storage navigation. The file browser and dialogs use the same visual language. The unmodified upstream stylesheet and MIT license are included; see `THIRD-PARTY.md`.
+- Introduced Aegis’s actual shared stylesheet and host navigation. In 1.1.0, Robo addon panels and the public browser intentionally use the FreeCandy-inspired design requested by the user; the host shell and unmodified upstream stylesheet remain preserved. See `THIRD-PARTY.md`.
 - Upgrades preserve groups, users and storage data. The obsolete manual setting is ignored. Regenerate unused 0.1.0 enrollment links. Already-enrolled workers retain their own callback configuration, so do not remove an old user-created route while workers still use it.
 
 ## Install
@@ -123,7 +135,7 @@ This is a substantial first implementation, not a claim that every requested wor
 - Accounts/ACLs do not currently restrict users to individual servers within a group: path rules apply to every server in that group. Use separate groups for isolation.
 - Basic login uses browser credential caching. Logout behavior is browser-dependent; disabling users or rotating passwords revokes future authorization.
 - Endpoint validation rejects non-HTTPS, credentials-in-URLs, redirects and private-address destinations. This is not an independently audited SSRF boundary; do not offer administration to untrusted users.
-- No scheduled scan scheduler, alerts delivery, provider credential-rotation UI, large-file editor, full preview/media suite, automatic service setup on remote Linux, or automatic cross-provider failover in this release.
+- No scheduled scan scheduler, alerts delivery, provider credential-rotation UI, large-file editor, full reference preview/media suite, automatic service setup on remote Linux, or automatic cross-provider failover in this release.
 - **Real E2/CloudGate accounts and custom-domain DNS/TLS were not tested here. Actual public Quick Tunnel HTTPS was tested.** Your sample credentials were deliberately not used. See `docs/TEST-REPORT.md` for actual results and remaining acceptance steps.
 
 ## Development and validation
@@ -147,7 +159,7 @@ Additional disposable-host, actual public-network and local CA-trusted HTTPS acc
 
 Optional isolated demo: `python3 tests/preview.py /absolute/path/to/demo-data` (binds port 8080). Its clearly marked sample data is **never created by installation**, and live provider tests, tunnel launch, migrations and erasure are disabled. Demo data must not be used as production state.
 
-Before a public published change, bump the manifest version, re-run all checks and lifecycle tests, keep the credit block, and finish real-provider/custom-domain acceptance using disposable storage. Screenshots in `docs/` show the labeled demo, not evidence of provider connectivity.
+Before a public published change, bump the manifest version, re-run all checks and lifecycle tests, keep the credit block, and finish real-provider/custom-domain acceptance using disposable storage. Screenshots in `docs/` identify either the labeled management demo or disposable local Linux-worker acceptance; they are not evidence of real E2/CloudGate account connectivity.
 
 ## Credits
 

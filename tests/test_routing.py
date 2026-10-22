@@ -84,7 +84,7 @@ class RoutingHTTPTests(test_enrollment.EnrollmentHTTPTests):
             def log_message(self,*args):pass
             def do_POST(self):
                 body=json.loads(self.rfile.read(int(self.headers.get('Content-Length',0))))
-                assert self.headers['X-Burrow-Client']=='robo-storage-aegis/1.0.1'
+                assert self.headers['X-Burrow-Client']=='robo-storage-aegis/1.1.0'
                 if self.path.endswith('/enrollment'):
                     self.send_response(200);self.end_headers();self.wfile.write(b'{"state":"pending"}');return
                 assert self.path.endswith('/publish'),self.path
@@ -142,6 +142,23 @@ class RoutingHTTPTests(test_enrollment.EnrollmentHTTPTests):
         status,body=self.call('/g/'+g['id']+'/route-health?probe='+nonce,auth=False)
         self.assertEqual(status,200);self.assertEqual(json.loads(body)['group'],g['id']);self.assertEqual(json.loads(body)['probe'],nonce)
         self.assertEqual(self.call('/g/'+g['id']+'/',auth=False)[0],401)
+    def test_robo_assets_and_preview_csp_are_group_authenticated(self):
+        g=self.group();s=self.worker(g);self.verify(s)
+        self.call('/api/groups/'+g['id']+'/users',{'username':'ui-check','password':'SYNTHETIC-ui-check-password','enabled':True,'rules':[{'path':'','access':'write'}]})
+        self.call('/api/servers/'+s['id']+'/settings',{'name':s['name'],'limit':100,'readOnly':True})
+        token=base64.b64encode(b'ui-check:SYNTHETIC-ui-check-password').decode()
+        def get(path):
+            return urllib.request.urlopen(urllib.request.Request(self.base+'/g/'+g['id']+'/'+path,headers={'Authorization':'Basic '+token}),timeout=4)
+        with get('') as r:
+            html=r.read().decode();policies=r.headers.get_all('Content-Security-Policy')
+            self.assertEqual(len(policies),1);self.assertIn("frame-src blob:",policies[0]);self.assertIn("script-src 'self'",policies[0]);self.assertIn("object-src 'none'",policies[0])
+            self.assertIn('assets/robo.css',html);self.assertNotIn('cdn.',html);self.assertNotIn('S3_AK',html)
+        for resource in ('assets/robo.css','assets/robo-theme.js','assets/files.js'):
+            with get(resource) as r:self.assertEqual(r.status,200)
+        with get('api/files') as r:
+            server=json.load(r)['servers'][0];self.assertTrue(server['readOnly']);self.assertEqual(server['allocatedCapacity'],100);self.assertEqual(server['physicalCapacity'],1000)
+        with urllib.request.urlopen(urllib.request.Request(self.base+'/',headers={'X-Robo-Admin':'TEST-ONLY-HTTP-KEY'})) as r:
+            policy=r.headers['Content-Security-Policy'];self.assertNotIn('blob:',policy)
     def test_custom_checkbox_is_respected_without_changing_global_naming(self):
         g=self.group(useDefaultTunnel=False,base='example.com')
         self.call('/api/groups/'+g['id']+'/users',{'username':'test-user','password':'SYNTHETIC-test-password','enabled':True,'rules':[{'path':'','access':'write'}]})

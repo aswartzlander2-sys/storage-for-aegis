@@ -25,7 +25,7 @@ with sync_playwright() as p:
     expect(page.locator('.server-detail-head')).to_contain_text('Allocation ceiling 1.0 GB')
     expect(page.locator('.server-detail-head')).to_contain_text('Physical capacity 512.0 GB')
     expect(page.locator('.big-bar').first).to_contain_text('1.0 GB')
-    page.screenshot(path=str(ROOT/'docs/quota-regression-1.0.1.png'),full_page=True)
+    page.screenshot(path=str(ROOT/'docs/quota-regression-1.1.0.png'),full_page=True)
     assert not errors,errors
     print('SYNTHETIC 512 GB / 1 GB UI: total allocation, group contribution, server bar = 1.0 GB; 250 MB = 25%; physical 512 GB labeled separately; JavaScript errors: []')
     browser.close()
