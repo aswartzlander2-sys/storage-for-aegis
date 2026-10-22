@@ -1,0 +1,17 @@
+Tux — the Linux mascot
+Copyright Larry Ewing (1996), lewing@isc.tamu.edu; created with The GIMP.
+
+Permission to use and/or modify this image is granted provided you acknowledge
+me lewing@isc.tamu.edu and The GIMP if someone asks.
+
+Source file: https://upload.wikimedia.org/wikipedia/commons/a/af/Tux.png
+Source/permission record: https://commons.wikimedia.org/wiki/File:Tux.png
+Original creator page (archived source listed by Commons):
+https://web.archive.org/web/20240630095423/http://www.isc.tamu.edu/~lewing/linux/
+Imported 2026-10-22. Original PNG: 265 x 314, transparent background.
+PNG SHA-256: e4f4c8010312078a37ca1797a8c9eaa5156d0fec407d7875522ca31a3d78c586
+
+app/static/linux.svg is a self-contained SVG wrapper embedding the unchanged
+original PNG bytes. No redrawing, recoloring, stretching or runtime remote
+fetch. This artwork is not relicensed under the addon's MIT license. Linux is
+a trademark of Linus Torvalds; use here identifies the provider, not endorsement.

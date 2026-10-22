@@ -23,7 +23,7 @@ Aegis × Burrow, Bulwark and Burrow Pages were inspected to use actual extension
 
 ## Images and marks
 
-The Robo Storage logo was supplied by the user and included at their request. Its ownership is unchanged. Provider badges are simplified identification artwork, not a claim of endorsement or official artwork. Provider names and trademarks belong to their respective owners.
+The Robo Storage logo was supplied by the user and included at their request. Its ownership is unchanged. The E2, CloudGate and Windows badges are simplified identification artwork, not a claim of endorsement or official artwork. The Linux badge is the original Tux artwork described below. Provider names and trademarks belong to their respective owners.
 
 No access keys, passwords, or embedded deployment configuration from the uploaded reference files are included. The synthetic credential strings in tests are not usable credentials.
 
@@ -47,7 +47,7 @@ Local copies preserve the reference versions. Complete upstream license texts ar
 | Inter | OFL-1.1 | `app/static/vendor/INTER-LICENSE.txt` |
 | JetBrains Mono | OFL-1.1 | `app/static/vendor/JETBRAINS-MONO-LICENSE.txt` |
 
-Asset source origins: cdnjs.com, fonts.googleapis.com and fonts.gstatic.com; upstream repositories ajaxorg/ace, mozilla/pdf.js, FortAwesome/Font-Awesome, tailwindlabs/tailwindcss, google/material-design-icons, rsms/inter, JetBrains/JetBrainsMono. No CDN is contacted at runtime. Build-only Tailwind command is in `docs/TEST-REPORT.md`.
+Asset source origins: cdnjs.com, fonts.googleapis.com and fonts.gstatic.com; upstream repositories ajaxorg/ace, mozilla/pdf.js, FortAwesome/Font-Awesome, tailwindlabs/tailwindcss, google/material-design-icons, rsms/inter, JetBrains/JetBrainsMono. No CDN is contacted at runtime. Build-only Tailwind inputs and configuration are retained in `tools/`; historical build evidence is in the versioned reports.
 
 ## Windows worker and copy glyph
 
@@ -56,3 +56,7 @@ The compiled Windows worker includes the Go runtime and standard library (Go 1.2
 The copy/check glyph follows GitHub Octicons, MIT; Copyright (c) 2026 GitHub Inc. Complete upstream notice: `docs/licenses/OCTICONS-LICENSE.txt`; source https://github.com/primer/octicons. The Windows provider mark is an original simple four-pane SVG, not a bundled Microsoft logo asset.
 
 Windows resource generation uses build-only `github.com/tc-hib/go-winres@v0.3.3` (ISC, Thomas Combeléran; notice in `docs/licenses/GO-WINRES-LICENSE.txt`). Neither this tool nor its Go modules are linked into the worker. The embedded multiresolution APP icon derives only from the existing user-supplied `logo.png`; its pixels are not redesigned. Resource JSON and generated Windows COFF are bundled for reproducibility.
+
+## Linux Tux artwork
+
+`app/static/linux.svg` embeds the unchanged original 265×314 Tux PNG by **Larry Ewing (1996, lewing@isc.tamu.edu)**, created with **The GIMP**. Original file and permission record: https://commons.wikimedia.org/wiki/File:Tux.png; imported file https://upload.wikimedia.org/wikipedia/commons/a/af/Tux.png. The SVG wrapper preserves all original PNG bytes and transparency; no redraw, recoloring or runtime remote download. Complete attribution, original permission quote and SHA-256 are in `docs/licenses/TUX-NOTICE.txt`. This artwork is not relicensed under the addon's MIT code license. Linux is a trademark of Linus Torvalds; identifying the provider is not endorsement.

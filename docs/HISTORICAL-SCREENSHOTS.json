@@ -1,0 +1,340 @@
+{
+  "note": "Historical generated screenshot copies are preserved byte-for-byte in the original immutable 1.3.1 ZIP. They are not duplicated in the 1.3.2 source tree/package. No user-uploaded artwork or runtime assets were removed. Current 1.3.2 screenshots are bundled separately.",
+  "archive": "Robo-Cloud-for-Aegis-1.3.1.zip",
+  "archiveSha256": "5a7997bc9ac11946eafd7c12d21416615c05805aecae1c64c2036f7aa1b06d31",
+  "zipPrefix": "robo-storage-aegis/",
+  "images": {
+    "docs/actual-host-cloud-1.2.0.png": {
+      "sha256": "eb62e2409034ba87d6e2f015a8c3ce753344c444b59aa11f681ba1fec4acafee",
+      "bytes": 104226
+    },
+    "docs/actual-host-cloud-1.2.1.png": {
+      "sha256": "e5e8b5ff68e7e672f14346d41d1cdc119f64f083dc4e3e74a7329a942a945e7f",
+      "bytes": 124490
+    },
+    "docs/actual-host-cloud-1.3.0.png": {
+      "sha256": "024992cb534291eb18a99fcae852f1325193a27f788e21dfa879fabd593ba402",
+      "bytes": 160306
+    },
+    "docs/actual-host-connections-1.2.0.png": {
+      "sha256": "8c574e6552c5121e53aded171ec51fca37e13dc829f87f8d60f3ce6cd7addd8f",
+      "bytes": 263144
+    },
+    "docs/actual-host-connections-1.2.1.png": {
+      "sha256": "72b16eb43016acf1797c244b48709642c90c322d57674c8352991d434435c1fc",
+      "bytes": 160172
+    },
+    "docs/actual-host-connections-1.3.0.png": {
+      "sha256": "ba1b00c0d150469194f570c2798d96552b2686f85a6621d3d3a551258c867ee6",
+      "bytes": 175820
+    },
+    "docs/actual-host-connections.png": {
+      "sha256": "3ff58ebf52e307b00fa6cf2ab52c969c622258982bc57a519aba11acb7c60a6d",
+      "bytes": 264313
+    },
+    "docs/actual-host-dashboard-1.2.0.png": {
+      "sha256": "f2b5903a301e3022ce17c5455ab3aaca1dfebc7998426817a90b22d06cde1fc2",
+      "bytes": 400561
+    },
+    "docs/actual-host-dashboard-1.2.1.png": {
+      "sha256": "1c0e52e88264cda2b26b07e4ad2d3c21454ba96bb04947ef9836e5a05957cca8",
+      "bytes": 151176
+    },
+    "docs/actual-host-dashboard-1.3.0.png": {
+      "sha256": "52111ce50062f40950213c058d4e7b1a38ea2ae618a461bfd83e956b51b899cb",
+      "bytes": 169038
+    },
+    "docs/actual-host-dashboard.png": {
+      "sha256": "a8b006706855ee8765b26f2fce7abdeb2f22acc95228574cd5851fb7d63ff0b3",
+      "bytes": 376789
+    },
+    "docs/actual-host-files-1.2.0.png": {
+      "sha256": "a93e6a066bd48989515778ebc3684e5efea185868975b602134cf022e9f8318d",
+      "bytes": 59919
+    },
+    "docs/actual-host-files-1.2.1.png": {
+      "sha256": "47f4458dbd8ec9a8de034f8023da8ba458928794174b490952320628386b2619",
+      "bytes": 59947
+    },
+    "docs/actual-host-files-1.3.0.png": {
+      "sha256": "081d05a3d3ee0b3e9b4e9642afa44fb91e4a007ba981169ea2e9240caab781c8",
+      "bytes": 61228
+    },
+    "docs/aegis-home.png": {
+      "sha256": "62e8daba9abcb997c0e167fd9bf16cec8bb0e6ee75dec034435fc4017cb5ba96",
+      "bytes": 91163
+    },
+    "docs/aegis-management-1.2.1.png": {
+      "sha256": "faa1105e672df5976d7e30a62d550ab11465f5db12a37df6e5be83e7a50693fc",
+      "bytes": 268758
+    },
+    "docs/aegis-management-1.3.0.png": {
+      "sha256": "406f45732185d749b301ceb9478f275388a5e2597e6364eb14b100a8f5e25063",
+      "bytes": 224839
+    },
+    "docs/aegis-mounted.png": {
+      "sha256": "97d4ea4d925eda3d82d6b276c398a258d5ddfaa537fbc794d26e15ad92007f9a",
+      "bytes": 170240
+    },
+    "docs/aegis-original-dashboard-1.2.1.png": {
+      "sha256": "78e0571c0af0e9ff1030b0d2cf7f355f78d3ccbefb025a7a5822af3ce4330111",
+      "bytes": 199287
+    },
+    "docs/aegis-original-dashboard-1.3.0.png": {
+      "sha256": "502262f64059a69c4280b5c2f353276b8669e1508c446e1c716f7cbbac88e68c",
+      "bytes": 200175
+    },
+    "docs/aegis-partition-mobile-1.2.1.png": {
+      "sha256": "3433ca3a03af0ec228e466e4a93db70b609591426d1fa1ab71c57e0e27ca7de8",
+      "bytes": 46580
+    },
+    "docs/aegis-partition-mobile-1.3.0.png": {
+      "sha256": "9f84a471461467d7893be44885f3cf3afd98207f935f9e7bdaafa3e3a7c8ccc7",
+      "bytes": 55105
+    },
+    "docs/cloud-aegis-shell-1.2.0.png": {
+      "sha256": "75917c9f9b8b8c5911d65402b8606a5beb490b86f223db37894370fceb091e60",
+      "bytes": 93036
+    },
+    "docs/cloud-original-dark-1.2.0.png": {
+      "sha256": "d4d96622ab9e18b5087465f808905ab34d4d04622f2d4e98545be511dbf70830",
+      "bytes": 80564
+    },
+    "docs/cloud-original-dark-1.2.1.png": {
+      "sha256": "d4d96622ab9e18b5087465f808905ab34d4d04622f2d4e98545be511dbf70830",
+      "bytes": 80564
+    },
+    "docs/cloud-original-dark-1.3.0.png": {
+      "sha256": "d4d96622ab9e18b5087465f808905ab34d4d04622f2d4e98545be511dbf70830",
+      "bytes": 80564
+    },
+    "docs/cloud-original-light-1.2.0.png": {
+      "sha256": "15e232f31cb4da29411514df42b660a511a3a7a7d4773d4642a5d09077516814",
+      "bytes": 72918
+    },
+    "docs/cloud-original-light-1.2.1.png": {
+      "sha256": "1b3f3a46c7afaf581689ad789b82ff4fc2e546c15543231b991356d01745e6a2",
+      "bytes": 88958
+    },
+    "docs/cloud-original-light-1.3.0.png": {
+      "sha256": "f7d00719bf6f95f89853180ecba28c932bd13c19789359cae9458b2b5d211a73",
+      "bytes": 64725
+    },
+    "docs/cloud-original-mobile-1.2.0.png": {
+      "sha256": "4b1252e703cfbec75009c9a3d0b8ae85b7d762520cd8668adffa4e5f9def32c3",
+      "bytes": 33332
+    },
+    "docs/cloud-original-mobile-1.2.1.png": {
+      "sha256": "2820c93f2899f4902c5aa66d01f626fd5e55a6962e7f1bf13b28300353edc9ff",
+      "bytes": 43322
+    },
+    "docs/cloud-original-mobile-1.3.0.png": {
+      "sha256": "538b2ef8f84fb709e76b119114c8554a65368e618d4d41c8f0dd76ccbe48ebc3",
+      "bytes": 36773
+    },
+    "docs/command-copy-1.3.0.png": {
+      "sha256": "3aa4af1e90a5b2ea00ecc121189fea5182e5433f9fcb86a26ef9b97d46259767",
+      "bytes": 156845
+    },
+    "docs/configuration-1.2.0.png": {
+      "sha256": "6e075d7ea3cd65d8e180c55f10083416bc5f45d481b89800384652686d1c4b8b",
+      "bytes": 199666
+    },
+    "docs/configuration-1.2.1.png": {
+      "sha256": "6e075d7ea3cd65d8e180c55f10083416bc5f45d481b89800384652686d1c4b8b",
+      "bytes": 199666
+    },
+    "docs/configuration-1.3.0.png": {
+      "sha256": "a9218ff7adf2d40e2478cb864b7ca8e2896e3735db6ccee0ab26e8c3bccbf513",
+      "bytes": 200495
+    },
+    "docs/configuration-mobile-1.2.0.png": {
+      "sha256": "a8c990ca91ef8e4630e1b02f847389e74777c46a6bf486659098215857d9be7d",
+      "bytes": 275903
+    },
+    "docs/configuration-mobile-1.2.1.png": {
+      "sha256": "4b9ccee26801db5aaacb5f7077d1c6055ad800d459d0e6e9403c4959dae09f56",
+      "bytes": 163470
+    },
+    "docs/configuration-mobile-1.3.0.png": {
+      "sha256": "0f286409fa6d8439c9a536c9cfe7b043ecef601701eec0d9766c5b66ff38a185",
+      "bytes": 164038
+    },
+    "docs/dashboard.png": {
+      "sha256": "887a552347fcecef94c401ddd7a39d96e5509b755550ab809ec71ca193c10343",
+      "bytes": 411734
+    },
+    "docs/default-group-1.0.0.png": {
+      "sha256": "29254fd0fcd7d7cdd7d0eb8be20d6f2aa12039fb3b67bea93590df9e6bea471e",
+      "bytes": 141044
+    },
+    "docs/default-group-1.0.1.png": {
+      "sha256": "81f230c003c1525a49be1f3413d5c71ef75846ee24b2ac7d4a82219a0b7f4163",
+      "bytes": 140383
+    },
+    "docs/default-group-1.1.0.png": {
+      "sha256": "5c418922a4d10c2575cb223f80c817e52b44276ae41150a92d807fe7613edee6",
+      "bytes": 163248
+    },
+    "docs/default-group-1.2.0.png": {
+      "sha256": "7b3097916d0cad00727eb9750154c8ef6a355cbe23b6bd4ac1ad19fff991da4b",
+      "bytes": 140048
+    },
+    "docs/default-group-1.2.1.png": {
+      "sha256": "bdc9264deaa1d8f8b67c2bae53ad8617d91c4681d9ddedee21e2b7f55f7f6e99",
+      "bytes": 140036
+    },
+    "docs/default-group-1.3.0.png": {
+      "sha256": "a6d4ee0e353671ec401e79a39eddc986512859de2c3faf207f916089818c8ed9",
+      "bytes": 140481
+    },
+    "docs/enrollment-mobile-1.3.0.png": {
+      "sha256": "6d99fce91fc737715ed0c9e85fcd5ce507788656de40869df8c3060ba9cf4381",
+      "bytes": 63736
+    },
+    "docs/explorer-audit-1.3.0.png": {
+      "sha256": "a6ac2e13fc1427156794c71eff7a8acbfbece4df0df2f6d8681235ccd27c6e9c",
+      "bytes": 55542
+    },
+    "docs/files-browser.png": {
+      "sha256": "9342195e7e803b46daead572c9278ffaabd6981b4332ddb700f39f0ef42a7115",
+      "bytes": 124370
+    },
+    "docs/group-settings-1.3.0.png": {
+      "sha256": "e6f7478f7197ffa8bf7176ef1132f62da088e36592869af0ff205b601fca0f4d",
+      "bytes": 205887
+    },
+    "docs/group-settings.png": {
+      "sha256": "308b7060417b2e88d41584ad8a6483b32d4802b811cffef02e4043431d24ba18",
+      "bytes": 205662
+    },
+    "docs/linux-setup-1.3.0.png": {
+      "sha256": "5edc929dd5c6ed1c72afa25745a30f839e4d7f0c85cbf88c40a76750647656c0",
+      "bytes": 166083
+    },
+    "docs/linux-setup.png": {
+      "sha256": "6eacce521cc3a4df31b1b5dbeb037384c2dda63798640548d010d29a39750a28",
+      "bytes": 164659
+    },
+    "docs/live-public-browser.png": {
+      "sha256": "72067623667c73480766538edeb0ee0288cf4e12e0f59441bf72a33a225fe741",
+      "bytes": 71445
+    },
+    "docs/live-ui-server-1.0.0.png": {
+      "sha256": "85f4fb6d302ec52c5d6c6c51e484309d152972aa7d2a5d5f0e4ab9fd80dd0bf6",
+      "bytes": 249759
+    },
+    "docs/live-ui-server-1.0.1.png": {
+      "sha256": "8bd6edcbecd99ef3ac996fb7fdfdfecd8efb0ec96d627115db071a423f211b38",
+      "bytes": 230722
+    },
+    "docs/mobile.png": {
+      "sha256": "bd7dfa39b8dfd50814e6784c4bb53a003f0cfae708e2a27c564ada937b20e265",
+      "bytes": 277240
+    },
+    "docs/partition-folders-1.2.1.png": {
+      "sha256": "42c034de02521cf30865ac07d6018049ddc9b7c7849beda105fa890eab8fb019",
+      "bytes": 65600
+    },
+    "docs/partition-folders-1.3.0.png": {
+      "sha256": "74368536a04b38ae4575465b57a3b4722ac07f3d55558359f76e55e26301885b",
+      "bytes": 65600
+    },
+    "docs/partition-mobile-1.2.1.png": {
+      "sha256": "9220969356bd77cde0e78c677ca8580dd4426515b577c2da0599c99dc03d07f4",
+      "bytes": 49329
+    },
+    "docs/partition-mobile-1.3.0.png": {
+      "sha256": "b44eecd62862144aabdd67a92a898f5bcecf16a4e67ba329a246ffc715bc2315",
+      "bytes": 49142
+    },
+    "docs/partition-planner-1.2.1.png": {
+      "sha256": "734272b07ede6d049344ac9371b52e2618f75d85d5b0404501fb46514bec95cd",
+      "bytes": 107626
+    },
+    "docs/partition-planner-1.3.0.png": {
+      "sha256": "1b791e1e0f64d03733fc26237eb52609f0b72fbb91ce9b65144a59ddb2d3ad6e",
+      "bytes": 106529
+    },
+    "docs/preview-info-dark-1440-1.2.1.png": {
+      "sha256": "ea27cd0e832a997faa8a502f027e05a3cd412a8b42b79eedc73cf37fcc4b5c89",
+      "bytes": 188937
+    },
+    "docs/preview-info-dark-1440-1.3.0.png": {
+      "sha256": "40c105164e035fa0ec88d0106673fb0b09e5dd2e17f050bcf86e1ce8eb2bf45e",
+      "bytes": 189389
+    },
+    "docs/preview-info-dark-390-1.2.1.png": {
+      "sha256": "f28887e8d81df4a74885eb0e01935cde6c8edea827d511604b196fa61317360a",
+      "bytes": 72883
+    },
+    "docs/preview-info-dark-390-1.3.0.png": {
+      "sha256": "c33859dfac4d03108cbd8c944b390aaa0eaefda1aa110b62035dd0a847ca58cc",
+      "bytes": 72750
+    },
+    "docs/preview-info-light-1440-1.2.1.png": {
+      "sha256": "e7c70830dd1cceda71c0348e0487fe006aa616e63f245a72aaf37ea7a57d2c48",
+      "bytes": 230396
+    },
+    "docs/preview-info-light-1440-1.3.0.png": {
+      "sha256": "a9f3f7c2e9a2b8c5b82b75136bbedd2af39bb8aa2a42a956565cabb15f725137",
+      "bytes": 230449
+    },
+    "docs/quota-regression-1.0.1.png": {
+      "sha256": "601ddb095a8f6aad69e34c0b0cf7d9a89d0c4c76b894d237fecb8c9efafd47a0",
+      "bytes": 150226
+    },
+    "docs/quota-regression-1.1.0.png": {
+      "sha256": "17e9eca1119db897eb60dee2ce8993946f2192012971f0f903e924020d4b0965",
+      "bytes": 325116
+    },
+    "docs/quota-regression-1.2.0.png": {
+      "sha256": "393f0fae8d2edd3debeaa255f2df9b08b8bc2d62a850b860d023b290e93c7cc3",
+      "bytes": 149185
+    },
+    "docs/quota-regression-1.3.0.png": {
+      "sha256": "16da0f7871ba96d1fb81205e7ec3a9d516c48c1f2fbf95e65dd9131a19605a9e",
+      "bytes": 146171
+    },
+    "docs/robo-files-dark-1.1.0.png": {
+      "sha256": "8c005cf4b86871f95dd2027e4f0ff4d6dd3ffe0067ab6b7ea596ddbf51dfa361",
+      "bytes": 158327
+    },
+    "docs/robo-files-light-1.1.0.png": {
+      "sha256": "c889048469abb0940811b1e0c310fbc98bbc1d8c3b5ea64f64a06904377545aa",
+      "bytes": 148613
+    },
+    "docs/robo-files-mobile-1.1.0.png": {
+      "sha256": "3eb0ccd659819213db2ba0bbe58efbacd4c36d054d747d49332c5cdfcf869d61",
+      "bytes": 62714
+    },
+    "docs/robo-management-dark-1.1.0.png": {
+      "sha256": "5343db4be79462a820a9100c6d4746ab2602e09e91f5b46be4919041dba96708",
+      "bytes": 406388
+    },
+    "docs/robo-management-dark-1.2.0.png": {
+      "sha256": "719fc6735a4add1ddb8af8b38d451d1f60410914942d5baa7379f53eb005d2b0",
+      "bytes": 405676
+    },
+    "docs/robo-management-light-1.1.0.png": {
+      "sha256": "887a552347fcecef94c401ddd7a39d96e5509b755550ab809ec71ca193c10343",
+      "bytes": 411734
+    },
+    "docs/robo-management-light-1.2.0.png": {
+      "sha256": "1cf2a8c4ae7ed5ae027949802986651d12d3ee9aa7a6097dcb00a87da7496053",
+      "bytes": 410270
+    },
+    "docs/robo-management-mobile-1.1.0.png": {
+      "sha256": "b5d1a49b6ddb7e8959f1b97ebd6dfb345c1b8aa6a2858e72dad1e62c34869ed2",
+      "bytes": 241734
+    },
+    "docs/robo-management-mobile-1.2.0.png": {
+      "sha256": "9be19ad877ed48e65b1efb3161ce3db0286f08b1054e913a40025f9df770e9e8",
+      "bytes": 240445
+    },
+    "docs/windows-folder-option-1.3.0.png": {
+      "sha256": "61760b9cd74fc7fded6693155caa368885ea3c81e7a24dc15a6b7dfaa6843141",
+      "bytes": 168488
+    }
+  }
+}

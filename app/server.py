@@ -42,6 +42,7 @@ def scrub_server(s):
 
 def scan(s):
     with locks[s['id']]:
+        require(s['status'] != 'removed', 'Server is disconnected.', 409)
         try:
             files, capacity = backend(s, broker).scan()
             with store.lock:
@@ -68,8 +69,41 @@ def upload(s, path, data, create_only=False):
         store.event('File uploaded', s['name'] + ': ' + path)
 
 
+def disconnect_unverified(s, body, unused_only=False):
+    """Forget a setup entry, not its storage. Never scan, write, erase or migrate."""
+    # Do not let an unreachable provider/worker turn this HTTP request into a wait.
+    lock = locks[s['id']]
+    require(lock.acquire(blocking=False), 'A storage operation is still running. Wait for it to finish, then retry removal.', 409)
+    try:
+        with store.lock:
+            require(s['status'] != 'removed', 'Server is disconnected.', 409)
+            require(not s.get('verified'), 'Verified servers must use safe Move or Erase removal.', 409)
+            require(body.get('confirmName') == s['name'], 'Confirm the exact server name.')
+            require(not any(j['server'] == s['id'] and j['state'] == 'running' for j in store.state['jobs']), 'A removal job is still running. Wait for it to finish, then retry.', 409)
+            if unused_only:
+                require(s['kind'] in ('linux', 'windows') and not s.get('probeDone') and not s.get('agentToken') and not s.get('inventory') and s['status'] in ('pending', 'draining'), 'Only a never-enrolled folder worker can be cancelled without a remote scan.', 409)
+            else:
+                require(body.get('keepRemoteFiles') is True, 'Acknowledge that remote files are kept and must be managed separately.')
+            # Group publication is shared: do not unpublish a group/foreign route.
+            # Very old per-server routes must be explicitly cleaned up first.
+            require(not s.get('routePort'), 'This server has a legacy published route. Unpublish that route before disconnecting.', 409)
+            store.state['enrollments'] = [e for e in store.state['enrollments'] if e['server'] != s['id']]
+            s.update(status='removed', verified=False, agentToken='', url='', error='')
+            s.pop('credentials', None)
+            # Retain the inventory and failed-job history as a tombstone, not an
+            # assertion that unknown or known remote files have disappeared.
+            for job in store.state['jobs']:
+                if job['server'] == s['id'] and job['state'] in ('error', 'interrupted'):
+                    job.update(stoppedState=job['state'], stoppedDetail=job.get('detail', ''), state='cancelled', detail='Unverified server disconnected; remote files were not changed.')
+            store.event('Unverified server disconnected', s['name'] + '; remote files were not contacted, moved or deleted')
+        return {'ok': True, 'remoteFilesChanged': False}
+    finally:
+        lock.release()
+
+
 def start_job(s, body):
     require(not cfg.get('demo'), 'Demo mode never moves or erases remote files.')
+    require(s.get('verified'), 'This server is not verified. Remove it without changing remote files instead.', 409)
     require(body.get('confirmName') == s['name'], 'Type the exact server name to confirm.')
     mode = body.get('mode')
     require(mode in ('move', 'erase'), 'Choose Move files or Permanently erase.')
@@ -83,6 +117,7 @@ def start_job(s, body):
             require(type(t['percent']) is int and t['percent'] > 0, 'Shares must be positive whole percentages.')
             require(dest['id'] != s['id'] and dest['group'] == s['group'] and dest['verified'] and dest['status'] not in ('draining', 'removed'), 'Choose verified destinations in this group.')
     with locks[s['id']], store.lock:
+        require(s.get('verified') and s['status'] != 'removed', 'This server is not verified or is disconnected. No removal job was started.', 409)
         require(not any(store.get('servers', j['server'])['group'] == s['group'] and j['state'] == 'running' for j in store.state['jobs']), 'A removal job is already running.', 409)
         s['status'] = 'draining'
         j = {'id': uid(), 'server': s['id'], 'mode': mode, 'state': 'running', 'done': 0, 'total': 0, 'detail': 'Scanning source', 'created': int(time.time())}
@@ -331,23 +366,19 @@ class App(mesh.Handler):
         if m:
             with store.lock:
                 return store.user(m[1], body)
-        m = re.fullmatch(r'/api/servers/([a-f0-9]+)/(test|settings|partition|partitions|enrollment|cancel-enrollment|drain|pause)', path)
+        m = re.fullmatch(r'/api/servers/([a-f0-9]+)/(test|settings|partition|partitions|enrollment|cancel-enrollment|disconnect-unverified|drain|pause)', path)
         if m:
             s = store.get('servers', m[1])
             action = m[2]
             require(s['status'] != 'removed', 'Server is disconnected.', 409)
-            require(s['status'] != 'draining' or action in ('test', 'drain'), 'Management is blocked while draining.', 409)
+            require(s['status'] != 'draining' or action in ('test', 'drain', 'cancel-enrollment', 'disconnect-unverified'), 'Management is blocked while draining.', 409)
             if action == 'test':
                 require(not cfg.get('demo'), 'Demo usage is illustrative. Connect a real backend to test it.')
                 return {'server': scan(s)}
             if action == 'cancel-enrollment':
-                with locks[s['id']], store.lock:
-                    require(s['kind'] in ('linux', 'windows') and not s.get('probeDone') and not s.get('agentToken') and not s.get('verified') and not s.get('inventory') and s['status']=='pending', 'Only a never-enrolled folder worker can be cancelled without a remote scan.', 409)
-                    require(body.get('confirmName') == s['name'], 'Confirm the exact server name.')
-                    store.state['enrollments'] = [e for e in store.state['enrollments'] if e['server'] != s['id']]
-                    s['status'] = 'removed'
-                    store.event('Unenrolled server cancelled', s['name'] + '; no remote files changed')
-                return {'ok': True}
+                return disconnect_unverified(s, body, unused_only=True)
+            if action == 'disconnect-unverified':
+                return disconnect_unverified(s, body)
             if action == 'enrollment':
                 require(s['kind'] in ('linux', 'windows'), 'This provider does not use a folder worker.')
                 require(not cfg.get('demo'), 'Agent enrollment is unavailable in the demo.')
@@ -363,6 +394,7 @@ class App(mesh.Handler):
                 token = secrets.token_urlsafe(32)
                 e = {'id': digest(token), 'server': s['id'], 'expires': int(time.time()) + 900, 'used': False, 'baseUrl': base_url}
                 with store.lock:
+                    require(s['status'] not in ('removed', 'draining'), 'Server is disconnected or draining.', 409)
                     store.state['enrollments'] = [x for x in store.state['enrollments'] if x['expires'] > time.time() and x['server'] != s['id']]
                     store.state['enrollments'].append(e)
                     store.save()
@@ -486,8 +518,8 @@ class App(mesh.Handler):
                 store.save()
                 store.event(('Windows' if platform == 'windows' else 'Linux') + ' probe completed', s['name'] + '; waiting for worker heartbeat')
                 return self.send(200, {'token': agent_token})
-        s = self.agent()
         with store.lock:
+            s = self.agent()  # Authenticate atomically with heartbeat; disconnection cannot be undone.
             s['lastSeen'] = int(time.time())
             if s.get('probeDone'):
                 s['verified'] = True
