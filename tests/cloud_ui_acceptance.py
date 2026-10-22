@@ -47,7 +47,7 @@ with sync_playwright() as p:
     expect(page.locator('h1')).to_have_text('Robo Cloud');expect(page.locator('#storageQuotaText')).to_have_text('1 GB')
     assert not page.locator('#openSidebarBtn').is_visible()
     assert 'private' not in page.locator('#fileGrid').inner_text()
-    page.screenshot(path=str(ROOT/'docs/cloud-original-light-1.2.0.png'),full_page=True)
+    page.screenshot(path=str(ROOT/'docs/cloud-original-light-1.2.1.png'),full_page=True)
     def card(name):return page.locator('#fileGrid > div').filter(has=page.locator('h4',has_text=name))
     card('notes.txt').click();expect(page.locator('#expandedCodeEditorContainer.ace_editor')).to_be_visible()
     page.locator('#expandedCodeModeBtn').click();page.evaluate("() => expandedCodeEditor.setValue('Edited through original Ace editor', -1)")
@@ -91,17 +91,53 @@ with sync_playwright() as p:
     used=api('api/servers/'+s['id']+'/test',{})['server']['used'];api('api/servers/'+s['id']+'/settings',{'name':s['name'],'limit':used})
     response=context.request.post(url+'api/upload',data={'server':s['id'],'path':'over.txt','data':'eA=='},headers={'X-Robo-Request':'1'});assert response.status==507
     api('api/servers/'+s['id']+'/settings',{'name':s['name'],'limit':1_000_000_000})
-    page.emulate_media(color_scheme='dark');page.screenshot(path=str(ROOT/'docs/cloud-original-dark-1.2.0.png'),full_page=True)
+    page.emulate_media(color_scheme='dark');page.screenshot(path=str(ROOT/'docs/cloud-original-dark-1.2.1.png'),full_page=True)
     page.set_viewport_size({'width':390,'height':844});assert page.evaluate('document.documentElement.scrollWidth<=innerWidth')
     page.locator('#openSidebarBtn').click();expect(page.locator('#sidebarAside')).to_be_visible();page.locator('[data-cat=image]').click()
-    page.screenshot(path=str(ROOT/'docs/cloud-original-mobile-1.2.0.png'),full_page=True)
-    # Actual administrative landing uses the same document, not the rejected replacement.
-    admin_context=browser.new_context(extra_http_headers={'X-Robo-Admin':config['admin_key']},viewport={'width':1440,'height':950});a=admin_context.new_page();a.goto(BASE+'/');frame=a.frame_locator('#cloud-browser')
-    expect(frame.locator('#cloudStoragePicker option')).to_have_count(sum(v['status']!='removed' for v in api('api/state')['servers']));frame.locator('#cloudStoragePicker').select_option(s['id']);expect(frame.locator('h1')).to_have_text('Robo Cloud');expect(frame.locator('#fileGrid h4',has_text='renamed.txt')).to_be_visible()
-    a.screenshot(path=str(ROOT/'docs/cloud-aegis-shell-1.2.0.png'),full_page=True)
+    page.screenshot(path=str(ROOT/'docs/cloud-original-mobile-1.2.1.png'),full_page=True)
+    # Restore the actual pre-Robo management layout, not an explorer shell.
+    admin_context=browser.new_context(extra_http_headers={'X-Robo-Admin':config['admin_key']},viewport={'width':1440,'height':950});a=admin_context.new_page();a.on('pageerror',lambda e:errors.append(str(e)));a.goto(BASE+'/')
+    expect(a.get_by_role('heading',name='Server groups',exact=True)).to_be_visible()
+    assert a.locator('#cloud-browser,link[href="assets/robo.css"],script[src="assets/robo-theme.js"]').count()==0
+    a.screenshot(path=str(ROOT/'docs/aegis-management-1.2.1.png'),full_page=True)
+    a.locator('[data-act=open-group][data-id="'+g['id']+'"]').click();a.locator('[data-act=server-settings][data-id="'+s['id']+'"]').click();a.locator('[data-act=settings-tab][data-tab=partitions]').click()
+    def queue(label,path,size):
+        a.locator('#partition-label').fill(label);a.locator('#partition-path').fill(path);a.locator('#partition-size').fill(str(size));a.locator('[data-plan=queue]').click()
+    def apply():
+        a.locator('[data-plan=review]').click();expect(a.locator('[data-plan=apply]')).to_be_disabled();a.locator('#partition-ack').check()
+        with a.expect_response(lambda r:r.request.method=='POST' and r.url.endswith('/partitions')) as result:a.locator('[data-plan=apply]').click()
+        assert result.value.ok,result.value.text();expect(a.locator('[data-plan=new]').last).to_be_enabled()
+    queue('Empty archive','empty',0.4)
+    assert next(x for x in api('api/state')['servers'] if x['id']==s['id'])['partitions']==[]
+    a.locator('[data-plan=new]').last.click();queue('Small nested budget','empty/nested',0.000000008)
+    a.locator('[data-plan=new]').last.click();queue('Hidden partition','private/empty',0.1)
+    a.locator('#modal .modal-body').evaluate('(e)=>e.scrollTop=0');a.screenshot(path=str(ROOT/'docs/partition-planner-1.2.1.png'))
+    before=next(x for x in api('api/state')['servers'] if x['id']==s['id'])['inventory'];apply()
+    after=next(x for x in api('api/state')['servers'] if x['id']==s['id'])
+    assert after['inventory']==before and len(after['partitions'])==3 and not (folder/'empty').exists()
+    a.locator('[data-act=close-modal]').first.click()
+    # Empty and nested partitions are folders even before any filesystem directory exists.
+    page=context.new_page();page.goto(url);expect(card('empty')).to_be_visible();assert page.locator('#cloudManageLink').count()==0
+    assert 'Partition' in card('empty').inner_text() and 'private' not in page.locator('#fileGrid').inner_text()
+    card('empty').click();expect(card('nested')).to_be_visible();card('nested').click()
+    page.locator('#fileInput').set_input_files({'name':'nested.txt','mimeType':'text/plain','buffer':b'1234'});expect(card('nested.txt')).to_be_visible()
+    assert (folder/'empty/nested/nested.txt').read_bytes()==b'1234'
+    denied=context.request.post(url+'api/upload',data={'server':s['id'],'path':'empty/nested/over.txt','data':base64.b64encode(b'123456789').decode()},headers={'X-Robo-Request':'1'});assert denied.status==507
+    page.locator('#breadcrumbContainer button').first.click();expect(card('empty')).to_be_visible()
+    # The three-dot information drawer must be a root-level, hittable layer above glass.
+    for width,theme in [(1440,'light'),(1440,'dark'),(390,'dark')]:
+        page.set_viewport_size({'width':width,'height':950 if width==1440 else 844});page.emulate_media(color_scheme=theme)
+        card('renamed.txt').click();expect(page.locator('#expandedCodeEditorContainer')).to_be_visible();page.locator('#expandedInfoBtn').click()
+        drawer=page.locator('body > #previewDrawer.preview-info-over-modal');expect(drawer).to_be_visible()
+        assert page.locator('#closePreviewBtn').evaluate('(e)=>{const r=e.getBoundingClientRect();return document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)?.closest("#previewDrawer")!==null}')
+        page.screenshot(path=str(ROOT/('docs/preview-info-'+theme+'-'+str(width)+'-1.2.1.png')),full_page=True)
+        page.locator('#renameFileBtn').click();expect(page.locator('#renameModal')).to_be_visible();page.locator('#cancelRenameBtn').click()
+        page.locator('#closePreviewBtn').click();expect(page.locator('#expandedPreviewModal')).to_be_visible();page.locator('#closeExpandedPreviewBtn').click()
+    print('PATCH: original Aegis management/root restored; staged graphical partition planner, review/confirm and atomic apply; empty/nested partition folders, hidden metadata ACL, real nested writes and quota denial: PASS')
+    print('PATCH: preview three-dot info panel root portal, above glass and clickable in desktop light/dark and 390px mobile; nested rename modal above panel: PASS')
     assert not errors,errors;assert not external,external
     print('ACTUAL SUPPLIED UI + REAL LINUX WORKER: original grid/list, folder navigation, thumbnail/preview, Ace edit/save, HTML Render sandbox, rename, new folder, new file, upload, confirmed single/bulk delete, zero-byte folder marker, filename HTML escaping and read-only controls: PASS')
     print('Basic/ACL/server isolation, admin separation, 1 GB allocation, quota 507 and media byte range 206: PASS')
-    print('Original light/dark/mobile layout, Aegis shell and same original admin browser; no external provider/CDN requests; JS errors: []')
+    print('Original light/dark/mobile layout, original Aegis management layout; no external provider/CDN requests; JS errors: []')
     print('Local CA HTTPS fixture, not a public/provider/custom-domain acceptance claim.')
     browser.close();admin.dispose()

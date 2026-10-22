@@ -24,18 +24,18 @@
   "styleBlocksPreservedByteForByte": true,
   "allOriginalControlIdsPreserved": true,
   "addedIds": [
-    "cloudManageLink",
     "cloudSourceLabel",
     "cloudStoragePicker"
   ],
   "synthSha256": "9f8723b99cf3b244437bf469b2b3fcf50dc5e5dcb502de56ddb4f8924fbf95ae",
   "applicationOriginalBytes": 216984,
-  "applicationIntegratedBytes": 212773,
+  "applicationIntegratedBytes": 213226,
   "changes": [
     "Storage/auth/quota gateway binding",
     "Robo Cloud display name",
     "Local dependency packaging",
     "HTML/PDF preview isolation and server-side rename safety",
-    "Remove exported Cloudflare challenge scripts"
+    "Remove exported Cloudflare challenge scripts",
+    "Partition metadata folders; management button removed; additive overlay fix CSS with body-level info portal"
   ]
 }

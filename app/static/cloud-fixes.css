@@ -1,0 +1,6 @@
+/* Explicit overlay tiers; original 19 style blocks remain untouched. */
+#expandedPreviewModal{z-index:100!important}
+body>#previewDrawer.preview-info-over-modal{z-index:120!important;isolation:isolate;pointer-events:auto}
+#newFileModal,#uploadModal,#newFolderModal,#deleteModal,#renameModal{z-index:200!important}
+#toastNotification{z-index:240!important}
+#fileContextMenu{z-index:210!important}

@@ -1,0 +1,55 @@
+TAP version 13
+# Subtest: automatic HTTPS route is ready only after identity + nonce; public proxy cannot reach administration
+ok 1 - automatic HTTPS route is ready only after identity + nonce; public proxy cannot reach administration
+  ---
+  duration_ms: 93.999051
+  ...
+# Subtest: group route remains Basic-auth preserving, group-scoped and owned; group and agent records coexist
+ok 2 - group route remains Basic-auth preserving, group-scoped and owned; group and agent records coexist
+  ---
+  duration_ms: 52.692973
+  ...
+# Subtest: provisioning errors recover automatically, HTTP and DNS-pending routes never become ready
+ok 3 - provisioning errors recover automatically, HTTP and DNS-pending routes never become ready
+  ---
+  duration_ms: 16.173907
+  ...
+# Subtest: default group route ignores stale nested input and works without a linked domain
+ok 4 - default group route ignores stale nested input and works without a linked domain
+  ---
+  duration_ms: 10.337202
+  ...
+# Subtest: group identity mismatch stays pending; concurrent launches share one tunnel
+ok 5 - group identity mismatch stays pending; concurrent launches share one tunnel
+  ---
+  duration_ms: 33.186244
+  ...
+# Subtest: server-specific routes are rejected and custom bases must be offered by Burrow
+ok 6 - server-specific routes are rejected and custom bases must be offered by Burrow
+  ---
+  duration_ms: 5.982883
+  ...
+# Subtest: configured extra root alias is selected without changing primary/global naming
+ok 7 - configured extra root alias is selected without changing primary/global naming
+  ---
+  duration_ms: 14.028658
+  ...
+# Subtest: unchecked rejects prefixed-only host before creating or changing a tunnel
+ok 8 - unchecked rejects prefixed-only host before creating or changing a tunnel
+  ---
+  duration_ms: 6.931801
+  ...
+# Subtest: unchecked uses the bare root when the host actually supports root-level routing
+ok 9 - unchecked uses the bare root when the host actually supports root-level routing
+  ---
+  duration_ms: 7.377175
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 310.855746

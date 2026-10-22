@@ -395,8 +395,10 @@
       }
       const items = [];
       const subfolderSet = new Set();
+      cloudAddPartitions(items, subfolderSet, currentPath);
 
       allS3Items.forEach(item => {
+        if(item.virtualPartition)return;
         const relativeKey = item.key.slice(currentPath.length);
         if (!relativeKey) return; // current directory placeholder
 
@@ -507,7 +509,7 @@
           </div>
           <div>
             <h4 class="font-medium text-xs text-slate-700 dark:text-slate-200 truncate group-hover:text-brand-300 transition-colors" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</h4>
-            <p class="text-[11px] text-slate-600 dark:text-slate-500 mt-0.5 font-mono">${item.isFolder ? 'Folder' : formatBytes(item.size)}</p>
+            <p class="text-[11px] text-slate-600 dark:text-slate-500 mt-0.5 font-mono">${item.isFolder ? (item.isPartition ? 'Partition · '+(item.partitionLimit ? formatBytes(item.partitionLimit) : 'inherited') : 'Folder') : formatBytes(item.size)}</p>
           </div>
         `;
         gridCard.style.animationDelay = Math.min(itemIndex * 24, 180) + 'ms';
@@ -555,7 +557,7 @@
             <button title="Rename" data-rename-btn class="opacity-0 group-hover:opacity-100 icon-circle icon-circle-sm rounded-full hover:bg-slate-900/[0.04] dark:hover:bg-white/10 text-slate-500 dark:text-slate-400 hover:text-brand-500 transition-colors">
               <i class="fa-solid fa-pen text-[11px]"></i>
             </button>
-            <span class="text-slate-600 dark:text-slate-500 font-mono w-24 text-right">${item.isFolder ? 'Folder' : formatBytes(item.size)}</span>
+            <span class="text-slate-600 dark:text-slate-500 font-mono w-24 text-right">${item.isFolder ? (item.isPartition ? 'Partition · '+(item.partitionLimit ? formatBytes(item.partitionLimit) : 'inherited') : 'Folder') : formatBytes(item.size)}</span>
             <span class="text-slate-600 dark:text-slate-500 font-mono w-32 hidden sm:inline text-right">${item.lastModified ? new Date(item.lastModified).toLocaleDateString() : '-'}</span>
           </div>
         `;
@@ -3364,6 +3366,7 @@
       renameError.classList.remove('hidden');
     }
     function openRenameModal(item) {
+      if(item?.isFolder && cloudIsPartitionFolder(item.key)){showToast('Partition folders are managed in Aegis.', 'error');return;}
       if (!item) return;
       pendingRenameItem = item;
       renameInput.value = item.name;

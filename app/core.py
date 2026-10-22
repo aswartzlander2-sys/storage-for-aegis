@@ -80,7 +80,10 @@ def validate_partitions(partitions, server_limit):
             closest = max(ancestors, key=lambda a: len(a['path'])) if ancestors else None
             if closest is parent:
                 children.append(p)
-        ceiling = parent['limit'] if parent else server_limit
+        ceilings = ([server_limit] if server_limit else []) + ([parent['limit']] if parent and parent['limit'] else [])
+        if parent:
+            ceilings += [a['limit'] for a in partitions if parent['path'].startswith(a['path'] + '/') and a['limit']]
+        ceiling = min(ceilings) if ceilings else 0
         if ceiling:
             require(sum(p['limit'] for p in children) <= ceiling, 'Child partition budgets exceed their parent or server quota.')
             require(all(not p['limit'] or p['limit'] <= ceiling for p in children), 'A partition budget exceeds its parent or server quota.')

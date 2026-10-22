@@ -8,7 +8,7 @@ Weft source: https://github.com/alexd-aero/weft
 
 ## Aegis shared stylesheet
 
-`app/static/aegis.css` is an unmodified copy of Aegis × Burrow’s `public/ui.css` at commit `3f48e0dbeda3628c33e3c005a9fe19b04816f3bc` (2.24.2). Copyright (c) 2026 Alexd Aero. Its complete upstream MIT notice is retained in `docs/AEGIS-LICENSE.txt`. The management page retains this host shell. App-specific layout CSS and scoped `robo.css` supply the Robo surfaces; the actual supplied file explorer uses its byte-preserved custom CSS plus self-hosted generated Tailwind.
+`app/static/aegis.css` is an unmodified copy of Aegis × Burrow’s `public/ui.css` at commit `3f48e0dbeda3628c33e3c005a9fe19b04816f3bc` (2.24.2). Copyright (c) 2026 Alexd Aero. Its complete upstream MIT notice is retained in `docs/AEGIS-LICENSE.txt`. The management page retains this host shell. The original 1.0.1 `style.css` and management layout are restored in 1.2.1; `robo.css` and the theme switch are not loaded by management; the actual supplied file explorer uses its byte-preserved custom CSS plus self-hosted generated Tailwind.
 
 Source: https://github.com/alexd-aero/aegis-burrow
 

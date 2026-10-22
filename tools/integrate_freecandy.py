@@ -22,7 +22,7 @@ s=re.sub(r'<link[^>]+rel="preconnect"[^>]*>','',s)
 s=s.replace('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css','assets/vendor/all.min.css')
 s=s.replace('id="sidebarAside"','id="sidebarAside"') # Explicitly unchanged sidebar.
 s=s.replace('<!-- Header Actions -->','''<!-- Header Actions -->''')
-selector='''<select id="cloudStoragePicker" aria-label="Select storage server" class="w-full min-w-0 bg-white/80 dark:bg-white/[0.06] border border-slate-200 dark:border-white/10 rounded-full px-2 py-2 text-xs text-slate-700 dark:text-slate-200"></select><a id="cloudManageLink" href="manage" target="_top" title="Manage Robo Cloud" class="hidden glass-chip flex items-center justify-center gap-2 py-2 px-3 rounded-full text-xs text-slate-700 dark:text-slate-200"><i class="fa-solid fa-gear"></i>Manage Robo Cloud</a>'''
+selector='''<select id="cloudStoragePicker" aria-label="Select storage server" class="w-full min-w-0 bg-white/80 dark:bg-white/[0.06] border border-slate-200 dark:border-white/10 rounded-full px-2 py-2 text-xs text-slate-700 dark:text-slate-200"></select>'''
 s=s.replace('<div id="storageWidget" class="pt-3 mt-2 border-t border-slate-200/70 dark:border-white/10 shrink-0">','<div id="storageWidget" class="pt-3 mt-2 border-t border-slate-200/70 dark:border-white/10 shrink-0">'+selector)
 s=s.replace('us-west-4 &middot;', '<span id="cloudSourceLabel">Storage</span> &middot;')
 s=s.replace('<html lang="en"','<html lang="en" data-cloud-admin="__CLOUD_ADMIN__"')
@@ -47,7 +47,10 @@ def scripts(m):
  if 'function loadDirectory' in js:
   app_original=js
   js=js.replace('const STORAGE_QUOTA_BYTES = 10 * 1024 * 1024 * 1024; // 10 GB','let STORAGE_QUOTA_BYTES = 0; // Supplied by the configured server allocation.')
+  js=js.replace('const subfolderSet = new Set();', 'const subfolderSet = new Set();\n      cloudAddPartitions(items, subfolderSet, currentPath);')
+  js=js.replace('allS3Items.forEach(item => {', "allS3Items.forEach(item => {\n        if(item.virtualPartition)return;")
   js=js.replace('const k = 1024;', 'const k = 1000;').replace(' to S3`',' to Robo Cloud`')
+  js=js.replace('function openRenameModal(item) {', "function openRenameModal(item) {\n      if(item?.isFolder && cloudIsPartitionFolder(item.key)){showToast('Partition folders are managed in Aegis.', 'error');return;}")
   js=js.replace('fileGrid.appendChild(gridCard);','gridCard.dataset.cloudKey = item.key; fileGrid.appendChild(gridCard);').replace('fileList.appendChild(listRow);','listRow.dataset.cloudKey = item.key; fileList.appendChild(listRow);')
   js=js.replace('btn.disabled = !dirty;', 'btn.disabled = !dirty || (selectedItem && !cloudCanWrite(selectedItem.key));')
   js=js.replace('readOnly: false,          // files are editable;', "readOnly: !cloudCanWrite(selectedItem?.key || ''), // permission-aware;")
@@ -79,6 +82,7 @@ def scripts(m):
     }
 ''' + js[end:]
   js=js.replace('Failed to connect to S3 bucket','Unable to load storage').replace('from IDrive e2 S3','from Robo Cloud')
+  js=js.replace("item.isFolder ? 'Folder' : formatBytes(item.size)", "item.isFolder ? (item.isPartition ? 'Partition · '+(item.partitionLimit ? formatBytes(item.partitionLimit) : 'inherited') : 'Folder') : formatBytes(item.size)")
   app_generated=js;(OUT/'cloud-ui.js').write_text(js);return '<script src="assets/cloud-ui.js"></script>'
  if len(js)>1_000_000:
   synth_hash=hashlib.sha256(js.encode()).hexdigest();(OUT/'cloud-synth.js').write_text(js);return '<script src="assets/cloud-synth.js"></script>'
@@ -87,11 +91,12 @@ def scripts(m):
 s=re.sub(r'<script\b([^>]*)>(.*?)</script>',scripts,s,flags=re.S|re.I)
 s=s.replace('onclick="document.getElementById(\'openUploadModalBtn\').click()"','data-cloud-upload')
 # Product text only; layout, classes, dialogs and custom styles remain from the file.
-s=s.replace('Upload File to S3','Upload File to Robo Cloud')
+s=s.replace('Upload File to S3','Upload File to Robo Cloud').replace('Full S3 Path','Full storage path')
+s=s.replace('</head>','<link rel="stylesheet" href="assets/cloud-fixes.css"></head>')
 (OUT/'cloud.html').write_text(s)
 ids=lambda x:set(re.findall(r'\bid="([^\"]+)"',x))
 source_controls=re.sub(r'<style\b[^>]*>.*?</style>','',source,flags=re.S|re.I)
 assert ids(source_controls)<=ids(s+app_generated), 'An original HTML control was lost'
-audit={'sourceSha256':hashlib.sha256(source.encode()).hexdigest(),'sourceStyleSha256':[hashlib.sha256(x.encode()).hexdigest() for x in styles],'styleBlocksPreservedByteForByte':True,'allOriginalControlIdsPreserved':True,'addedIds':sorted(ids(s+app_generated)-ids(source_controls)),'synthSha256':synth_hash,'applicationOriginalBytes':len(app_original.encode()),'applicationIntegratedBytes':len(app_generated.encode()),'changes':['Storage/auth/quota gateway binding','Robo Cloud display name','Local dependency packaging','HTML/PDF preview isolation and server-side rename safety','Remove exported Cloudflare challenge scripts']}
+audit={'sourceSha256':hashlib.sha256(source.encode()).hexdigest(),'sourceStyleSha256':[hashlib.sha256(x.encode()).hexdigest() for x in styles],'styleBlocksPreservedByteForByte':True,'allOriginalControlIdsPreserved':True,'addedIds':sorted(ids(s+app_generated)-ids(source_controls)),'synthSha256':synth_hash,'applicationOriginalBytes':len(app_original.encode()),'applicationIntegratedBytes':len(app_generated.encode()),'changes':['Storage/auth/quota gateway binding','Robo Cloud display name','Local dependency packaging','HTML/PDF preview isolation and server-side rename safety','Remove exported Cloudflare challenge scripts','Partition metadata folders; management button removed; additive overlay fix CSS with body-level info portal']}
 (ROOT/'docs/REFERENCE-FIDELITY.json').write_text(json.dumps(audit,indent=2)+'\n')
 print(json.dumps(audit,indent=2))

@@ -1,0 +1,15 @@
+Original credential literal scan PASS; values never logged; raw HTML not bundled
+lib.sh byte-identical upstream 754d3b3287b3925093debde581805724b68f2680f40a7d625ad2b28a8283b463
+mesh.py byte-identical upstream 08a01f5e6d6d25fccaeda9694ff929eb7bff4d2073268228c68f6d5a7412d607
+Aegis upstream stylesheet byte-identical PASS
+Original 1.0.1 management stylesheet restored byte-for-byte dc4741e50da52c3a5db98ffa9230ecf66b871c15737dd88edc00cbcd14c948c2
+Management root original layout; no Robo CSS/theme/explorer shell PASS
+Explorer management button removed; local-only assets; provider-neutral path label PASS
+All 19 original explorer CSS blocks and control IDs preserved PASS; additive overlay patch separate
+JavaScript/shell syntax PASS
+Bundled dependency licenses retained PASS; user asset rights unchanged
+Exact required README final credits retained PASS
+Stable ID/data-compatible routes; display Robo Cloud; release 1.2.1 PASS
+Final packaging scan PASS: no raw reference, live config, test runtime, session, key/certificate, symlink, generated cache or original credential literals.
+Identified private workers/services stopped; disposable runtimes removed; explicitly labeled original-Aegis demo retained on 8080.
+Final source/evidence file count: 273

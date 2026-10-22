@@ -1,8 +1,8 @@
 # Robo Cloud for Aegis
 
-**1.2.0 — actual supplied Robo interface, minimally connected to the storage gateway.**
+**1.2.1 — original Aegis management restored; graphical logical partitions and explorer fixes.**
 
-The rejected inspired redesign is replaced by the original application markup/styles/controls. Real Linux-worker and actual Aegis-host checks passed; real E2/CloudGate/custom-domain/systemd/reboot acceptance is not claimed. See the validation report.
+Management uses the original pre-Robo Aegis layout. Only the file explorers use the supplied Robo UI; the unnecessary management button is removed. Real Linux-worker and actual Aegis-host checks passed; real E2/CloudGate/custom-domain/systemd/reboot acceptance is not claimed. See the validation report.
 
 A Weft addon with its own Aegis dashboard, home-screen tile and storage groups spanning **IDrive E2**, a deployed **CloudGate client**, and **Linux directories**. Uses the user-supplied Robo logo. The uploaded access-key example and the credentials/configuration in the supplied reference dashboards are **not included or used**.
 
@@ -20,7 +20,7 @@ The supplied prompt suggests `requires.burrow: ">=2.0.0"`; the normative SPEC pe
 - Linux directory accepts `~/…` and `/…`. Press the square enter button before any enrollment command is shown. The directory is created if missing. Verification requires a successful storage probe plus an authenticated worker heartbeat.
 - Server cards, real inventory tests, capacity contributions, 150 px group distribution bars, 75 px server usage bars, and file-type color legends.
 - Server and nested-directory quota budgets; child partitions display with a 15% indent. **Logical quotas only**: no loopback images, disks, placeholder files or fake reservations.
-- The actual supplied file explorer, with its original viewers/editor/dialogs and safely integrated storage operations. Signed-in addon and public group entry points share that document; existing provider/allocation/user configuration remains under Manage Robo Cloud.
+- The actual supplied file explorer, with its original viewers/editor/dialogs and safely integrated storage operations. The addon opens the original Aegis management dashboard. Public group/server links use the actual supplied explorer; an authenticated standalone explorer remains at `/cloud`.
 - Aegis top navigation remains unchanged. All browser dependencies are self-hosted; no embedded reference credentials or direct S3 browser signing is distributed.
 - Multiple users per group; enable/disable accounts, change usernames and rotate passwords. File/directory rules support read/write, view-only and hidden. The most-specific rule wins; unmatched paths are denied.
 - Browser-native HTTP Basic login on storage links; scrypt password hashes; passwords never appear in links. Use HTTPS.
@@ -28,18 +28,19 @@ The supplied prompt suggests `requires.burrow: ">=2.0.0"`; the normative SPEC pe
 - Copy/read-back verification, source-change check, conflict refusal, explicit errors and persistent job history. Source entries remain draining on failure; interrupted jobs do not automatically resume deletion.
 - Group activity log, read-only mode, provider status and responsive layout.
 
-## What changed in 1.2.0
+## What changed in 1.2.1
 
-This release uses the **actual supplied `freecandy5-drive (46).html`**, not the rejected 1.1.0 approximation. All 19 original custom CSS blocks are byte-preserved; original control IDs and application layout are retained. `docs/REFERENCE-FIDELITY.json` records the input/style/MIDI-sample hashes and targeted changes. The original file contained literal provider credentials: the untouched input is not distributed, and its credentials are neither used nor copied.
+- **Original Aegis management restored.** `/` and `/manage` use the original 1.0.1 management markup/layout and stylesheet (with the Robo Cloud display name and new partition tool). No Robo glass stylesheet, theme switch or explorer-shell landing is applied to the editor/settings. Aegis navigation is unchanged.
+- **Explorer only:** the actual supplied `freecandy5-drive (46).html` remains the file explorer. Its 19 original CSS blocks and all original controls are retained. The added Manage Robo Cloud button is removed. A small separate stylesheet fixes overlay tiers rather than redesigning the source.
+- **Partitions are folders**, including empty and nested registered budgets with no files or physical directory yet. This uses ACL-filtered partition metadata, not invented marker files or fake usage. Nested writes use the same directory path and inherited quota. Hidden partition names/paths are not sent to public clients. Normal user-created empty folders still use `.keep` objects as before.
+- **Graphical partition manager:** allocation map with unallocated budget, folder/label/usage/budget table, exact unit sizing and keyboard-accessible size slider, queue, undo/discard, review and explicit Apply. Changes are committed atomically as metadata only. Existing paths are fixed; the tool does not format disks, move files or erase data. Removing a budget leaves all files in place.
+- Plans enforce effective allocation, inherited ceilings, sibling totals (including legacy inherited/no-ceiling parents), existing usage and path/file collisions. A stale plan or changed server ceiling returns **409**, rather than overwriting another administrator's edits. Usage is a last-inventory snapshot; use Test before planning. New plans support up to 256 entries.
+- Registered partition folders cannot be renamed or bulk-deleted through the explorer; their contents can be managed normally. This prevents stale budget paths and accidental destructive partition removal.
+- **Preview three-dot information panel** is portaled above the glass preview at body level and restored on close. Dialogs remain above the information panel. Desktop light/dark and mobile click-through are tested; the planner footer is always visible while its body scrolls.
+- Gateway Basic/admin authentication, hidden/read-only ACLs, safe HTML sandbox, local assets, decimal quotas, original Ace/media controls and the **16 MiB/file** limit are retained. Rename remains verified copy/delete, needs temporary quota space, and is not atomic. Bulk file deletion remains sequential.
+- Prior root-domain routing, 1 GB-versus-physical allocation and save-after-Generate fixes are retained. Real E2/CloudGate/custom-domain/systemd/reboot acceptance is still not claimed.
 
-- The original document is used for both the signed-in addon landing/file browser and Basic-authenticated group pages. Aegis navigation stays outside it. **Manage Robo Cloud** opens the existing provider/group/user/quota configuration controls at `/manage`; those configuration forms are not claimed to have existed in the uploaded file.
-- Original search, categories, Recent, grid/list, allocation view, dialogs, Ace editor, PDF/media viewers, MIDI sample bank, folder/file upload, new-file, rename, folder creation and selection controls are retained. Only storage/authentication/quota bindings and necessary safety fixes were substituted. Keeping a feature does not certify every browser codec or MIDI export path.
-- No browser S3 credentials or signing. Original `s3*` calls are bound to the same-origin authenticated gateway. Selected storage is explicit, editor cache is cleared on switching, and the selector is locked during outstanding lists/mutations.
-- Effective decimal allocations replace the hard-coded 10 GB display. Inventory/ACLs/quota remain server-authoritative; hidden names are not sent to group clients. Zero-byte `.keep` objects represent newly created empty folders.
-- Renaming uses a server-side **verified copy then delete**, not a browser multi-call copy. It refuses collisions, checks both ACLs and source changes, and requires temporary quota headroom. It is **not atomic**: failure may leave verified destination copies or partially removed sources; no automatic rollback is claimed.
-- Bulk deletion keeps the supplied confirmation dialog and checks every visible selected path. It is sequential, not an atomic transaction. Hidden descendants are not silently deleted.
-- HTML source remains inert; the original Render View uses an empty-sandbox iframe with scripts disabled. Filename attributes/text are escaped. Preview/download byte ranges and safe MIME handling use bounded reads. **16 MiB per file** remains the gateway limit.
-- Dependencies/fonts are local and licensed in `app/static/vendor/`; no runtime CDN/provider requests. Browser light/dark/mobile acceptance and real Linux operations, plus actual Aegis install/update/uninstall, are recorded in `docs/TEST-REPORT.md`.
+`docs/REFERENCE-FIDELITY.json` records original source/style/sample hashes. The raw reference's credentials are never used or bundled. Full current results: `docs/TEST-REPORT.md`; previous release reports remain historical.
 
 ## Retained corrections from 1.0.1
 
@@ -60,7 +61,7 @@ This release uses the **actual supplied `freecandy5-drive (46).html`**, not the 
 ### Retained from 0.1.1
 
 - Removed the manual enrollment base-URL setting. Burrow provisions and checks the agent route automatically; Connections displays its current readiness. Each generated command pins its verified callback URL, rather than depending on a later setting change.
-- Introduced Aegis’s actual shared stylesheet and host navigation. In 1.2.0 the actual supplied application is retained at the file-browser entry points; existing configuration panels and the unmodified host stylesheet are preserved. See `THIRD-PARTY.md`.
+- Introduced Aegis’s actual shared stylesheet and host navigation. In 1.2.1 the original Aegis configuration layout is restored; the actual supplied application is retained only at file-browser entry points. See `THIRD-PARTY.md`.
 - Upgrades preserve groups, users and storage data. The obsolete manual setting is ignored. Regenerate unused 0.1.0 enrollment links. Already-enrolled workers retain their own callback configuration, so do not remove an old user-created route while workers still use it.
 
 ## Install

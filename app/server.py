@@ -23,7 +23,8 @@ from core import Store, Problem, require, uid, digest, password_check, clean_pat
 from backends import backend, AgentBroker, host_call
 from enrollment import route_status
 from routing import routing_view
-from cloud import CLOUD_CSP, file_view, rename as rename_files
+from partitions import apply_plan
+from cloud import visible_partitions, CLOUD_CSP, file_view, rename as rename_files
 
 cfg = mesh.load_config(sys.argv[1])
 DATA = Path(sys.argv[1]).resolve().parent
@@ -256,12 +257,12 @@ class App(mesh.Handler):
         if path == '/cloud':
             return self.cloud_document(True)
         if path in ('/', '/manage'):
-            file = ROOT / 'static' / ('cloud-shell.html' if path=='/' else 'index.html')
+            file = ROOT / 'static' / 'index.html'
         elif path == '/assets/logo.png':
             file = ROOT.parent / 'logo.png'
         else:
             name = path.removeprefix('/assets/')
-            allowed={'app.js','style.css','aegis.css','files.js','files.html','robo.css','robo-theme.js','e2.svg','cloudgate.svg','linux.svg','cloud-logo.png','cloud-reference.css','cloud-mime.js','cloud-bridge.js','cloud-ui.js','cloud-synth.js','cloud-pdf-config.js','cloud-shell.js'}
+            allowed={'app.js','style.css','aegis.css','files.js','files.html','robo.css','robo-theme.js','e2.svg','cloudgate.svg','linux.svg','cloud-logo.png','cloud-reference.css','cloud-mime.js','cloud-bridge.js','cloud-ui.js','cloud-synth.js','cloud-pdf-config.js','cloud-shell.js','cloud-fixes.css','partition-manager.js','partition-manager.css'}
             vendor=name.startswith('vendor/') and name.count('/')==1 and not name.split('/')[-1].startswith('.') and (ROOT/'static'/name).is_file()
             require(name in allowed or vendor, 'Not found.',404)
             file=ROOT/'static'/name
@@ -327,7 +328,7 @@ class App(mesh.Handler):
         if m:
             with store.lock:
                 return store.user(m[1], body)
-        m = re.fullmatch(r'/api/servers/([a-f0-9]+)/(test|settings|partition|enrollment|drain|pause)', path)
+        m = re.fullmatch(r'/api/servers/([a-f0-9]+)/(test|settings|partition|partitions|enrollment|drain|pause)', path)
         if m:
             s = store.get('servers', m[1])
             action = m[2]
@@ -372,6 +373,8 @@ class App(mesh.Handler):
                     require(not limit or limit >= s['used'], 'Quota cannot be below current usage.')
                     validate_partitions(s['partitions'], limit)
                     s.update(limit=limit, name=label(body.get('name', s['name'])), readOnly=body.get('readOnly', s.get('readOnly', False)) is True)
+                if action == 'partitions':
+                    apply_plan(s,body)
                 if action == 'partition':
                     p = clean_path(body.get('path', ''), False)
                     limit = quota(body.get('limit', 0))
@@ -485,7 +488,7 @@ class App(mesh.Handler):
             s = next((s for s in servers if s['id'] == selected), None)
             require(not sid or selected == sid, 'This link is scoped to one server.', 403)
             files = [f for f in s['inventory'] if visible(user, f['path'])] if s else []
-            return self.send(200, {'group': group['name'], 'username': user['username'], 'servers': [{'id': s['id'], 'name': s['name'], 'status': s['status'], 'used': s['used'], 'limit': s['limit'], 'readOnly': s.get('readOnly', False), **capacity_view(s)} for s in servers], 'selected': selected, 'files': files, 'rules': user['rules']})
+            return self.send(200, {'partitions':visible_partitions(s,user) if s else [], 'group': group['name'], 'username': user['username'], 'servers': [{'id': s['id'], 'name': s['name'], 'status': s['status'], 'used': s['used'], 'limit': s['limit'], 'readOnly': s.get('readOnly', False), **capacity_view(s)} for s in servers], 'selected': selected, 'files': files, 'rules': user['rules']})
         body = self.body() if method == 'POST' else {}
         selected = body.get('server') or q.get('server', [sid or ''])[0]
         s = next((s for s in servers if s['id'] == selected), None)

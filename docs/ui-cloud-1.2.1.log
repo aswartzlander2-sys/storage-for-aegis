@@ -1,0 +1,6 @@
+PATCH: original Aegis management/root restored; staged graphical partition planner, review/confirm and atomic apply; empty/nested partition folders, hidden metadata ACL, real nested writes and quota denial: PASS
+PATCH: preview three-dot info panel root portal, above glass and clickable in desktop light/dark and 390px mobile; nested rename modal above panel: PASS
+ACTUAL SUPPLIED UI + REAL LINUX WORKER: original grid/list, folder navigation, thumbnail/preview, Ace edit/save, HTML Render sandbox, rename, new folder, new file, upload, confirmed single/bulk delete, zero-byte folder marker, filename HTML escaping and read-only controls: PASS
+Basic/ACL/server isolation, admin separation, 1 GB allocation, quota 507 and media byte range 206: PASS
+Original light/dark/mobile layout, original Aegis management layout; no external provider/CDN requests; JS errors: []
+Local CA HTTPS fixture, not a public/provider/custom-domain acceptance claim.

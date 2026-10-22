@@ -1,29 +1,19 @@
-"""Robo management theme is scoped inside the unchanged Aegis navigation. Demo only."""
+"""Regression: management is original Aegis, not Robo glass or an explorer shell."""
 from pathlib import Path
-from playwright.sync_api import sync_playwright, expect
+from playwright.sync_api import sync_playwright,expect
 ROOT=Path(__file__).resolve().parents[1]
 with sync_playwright() as p:
-    browser=p.chromium.launch();page=browser.new_page(viewport={'width':1440,'height':1100},color_scheme='light');errors=[]
-    page.on('pageerror',lambda e:errors.append(str(e)))
-    page.goto('http://127.0.0.1:8080/manage')
-    expect(page.locator('.group-card').first).to_be_visible()
-    nav=page.locator('.top').evaluate('(e)=>[getComputedStyle(e).backgroundColor,getComputedStyle(e).color]')
-    light=page.locator('.robo-admin').evaluate('(e)=>getComputedStyle(e).color')
-    assert page.locator('.robo-admin .card').first.evaluate('(e)=>getComputedStyle(e).backdropFilter')!='none'
-    page.screenshot(path=str(ROOT/'docs/robo-management-light-1.2.0.png'),full_page=True)
-    page.get_by_label('Switch to dark theme',exact=True).click()
-    expect(page.locator('html')).to_have_attribute('data-robo-theme','dark')
-    assert page.locator('.robo-admin').evaluate('(e)=>getComputedStyle(e).color')!=light
-    assert page.locator('.top').evaluate('(e)=>[getComputedStyle(e).backgroundColor,getComputedStyle(e).color]')==nav
-    page.reload();expect(page.locator('html')).to_have_attribute('data-robo-theme','dark')
-    expect(page.locator('.group-card').first).to_be_visible()
-    page.screenshot(path=str(ROOT/'docs/robo-management-dark-1.2.0.png'),full_page=True)
-    page.locator('[data-act=add-server]').first.click();expect(page.locator('#modal')).to_have_class('robo-admin-dialog')
-    assert page.locator('#modal').evaluate('(e)=>getComputedStyle(e).color')==page.locator('.robo-admin').evaluate('(e)=>getComputedStyle(e).color')
-    page.get_by_label('Close dialog',exact=True).click()
-    page.set_viewport_size({'width':390,'height':844});assert page.evaluate('document.documentElement.scrollWidth<=innerWidth')
-    page.screenshot(path=str(ROOT/'docs/robo-management-mobile-1.2.0.png'),full_page=True)
-    assert not errors,errors
-    print('Robo management glass panels, light/dark persistence, dialog theme, 390px mobile/no overflow: PASS')
-    print('Aegis top navigation computed colors unchanged across Robo theme switch; JavaScript errors: []')
-    browser.close()
+ b=p.chromium.launch();page=b.new_page(viewport={'width':1440,'height':950},color_scheme='light');errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
+ page.goto('http://127.0.0.1:8080/');expect(page.locator('.group-card').first).to_be_visible()
+ assert page.locator('#cloud-browser,.robo-admin,.robo-theme-button,link[href="assets/robo.css"],script[src="assets/robo-theme.js"]').count()==0
+ assert page.locator('body').evaluate('(e)=>getComputedStyle(e).backgroundColor')=='rgb(3, 3, 4)'
+ nav=page.locator('.top').evaluate('(e)=>[getComputedStyle(e).backgroundColor,getComputedStyle(e).color]')
+ page.emulate_media(color_scheme='dark');assert nav==page.locator('.top').evaluate('(e)=>[getComputedStyle(e).backgroundColor,getComputedStyle(e).color]')
+ page.screenshot(path=str(ROOT/'docs/aegis-original-dashboard-1.2.1.png'),full_page=True)
+ page.locator('[data-act=open-group]').first.click();page.locator('[data-act=server-settings]').nth(1).click();page.locator('[data-tab=partitions]').click();expect(page.locator('.partition-disk')).to_be_visible()
+ page.set_viewport_size({'width':390,'height':844});assert page.evaluate('document.documentElement.scrollWidth<=innerWidth')
+ box=page.locator('#modal .modal-foot').bounding_box();assert box and box['y']+box['height']<=844
+ page.screenshot(path=str(ROOT/'docs/aegis-partition-mobile-1.2.1.png'))
+ assert not errors,errors
+ print('Original Aegis dashboard/root/layout, no Robo glass/theme buttons or explorer shell; unchanged Aegis navigation, professional planner with visible mobile footer/no page overflow: PASS; JS errors []')
+ b.close()

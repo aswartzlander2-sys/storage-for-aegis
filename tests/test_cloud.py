@@ -52,3 +52,16 @@ class CloudTests(unittest.TestCase):
         self.assertTrue(audit['styleBlocksPreservedByteForByte']);self.assertTrue(audit['allOriginalControlIdsPreserved']);self.assertEqual(len(audit['sourceStyleSha256']),19)
         manifest=json.loads((ROOT/'forge-addon.json').read_text());self.assertEqual(manifest['id'],'robo-storage-aegis');self.assertEqual(manifest['name'],'Robo Cloud')
         ui=(ROOT/'app/static/cloud-ui.js').read_text();self.assertIn('sandbox="" id="htmlRenderIframe"',ui);self.assertIn('isEvalSupported: false',ui)
+    def test_visible_empty_partition_metadata_is_acl_filtered(self):
+        from cloud import visible_partitions,file_view
+        self.s['partitions']=[{'path':'empty','name':'Empty','limit':10},{'path':'private','name':'Hidden label','limit':10}]
+        self.user['rules'].append({'path':'private','access':'none'})
+        self.assertEqual([p['path'] for p in visible_partitions(self.s,self.user)],['empty'])
+        self.user['username']='tester'
+        data=file_view(self.store,[self.s],self.s['id'],self.user,'Cloud')
+        self.assertEqual(data['partitions'][0]['path'],'empty');self.assertNotIn('Hidden label',json.dumps(data))
+    def test_registered_partition_folder_cannot_be_renamed(self):
+        self.s['partitions']=[{'path':'dir/child','name':'Child','limit':10}]
+        self.files={'dir/child/a.txt':b'a'}
+        with self.assertRaises(Problem) as e:self.run_rename(path='dir/',newPath='new/',folder=True)
+        self.assertEqual(e.exception.status,409);self.assertEqual(self.files,{'dir/child/a.txt':b'a'})
