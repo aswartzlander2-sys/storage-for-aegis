@@ -118,7 +118,7 @@ func confirmInstall() bool {
 		put(uint16(0))
 	}
 	control(0x50000003, 12, 12, 24, 24, 101, 0x82, "APP")
-	control(0x50000000, 44, 12, 224, 60, 100, 0x82, "Install Robo Cloud Enrollment on this PC?\r\n\r\nIt connects only the folder you choose and starts at your Windows sign-in. Cancel makes no installation changes.")
+	control(0x50000000, 44, 12, 224, 60, 100, 0x82, "Install Robo Cloud Enrollment on this PC?\r\nDeveloper: "+appDeveloper+"\r\n\r\nIt connects only the folder you choose and starts at Windows sign-in. Cancel makes no installation changes.")
 	control(0x50010000, 122, 82, 70, 17, 2, 0x80, "Cancel")
 	control(0x50010001, 198, 82, 70, 17, 1, 0x80, "Continue")
 	callback := syscall.NewCallback(func(hwnd, msg, w, l uintptr) uintptr {

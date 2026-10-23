@@ -108,7 +108,7 @@ func TestPayload(t *testing.T) {
 	c := Config{URL: "https://checked.example.com", Enrollment: "sensitive-test-only-token", ID: "1234567890abcdef12345678"}
 	data, _ := json.Marshal(c)
 	var b bytes.Buffer
-	b.WriteString("MZplaceholder")
+	b.Write(testPE())
 	b.Write(data)
 	binary.Write(&b, binary.LittleEndian, uint32(len(data)))
 	b.WriteString(trailer)
@@ -166,5 +166,123 @@ func TestCertificateVerificationAndNoRedirect(t *testing.T) {
 	}
 	if seen.Load() != 0 {
 		t.Fatal("credential forwarded across redirect")
+	}
+}
+
+// Synthetic certificate bytes test layout, NOT cryptographic trust.
+func testPE() []byte {
+	b := make([]byte, 1024)
+	copy(b, "MZ")
+	binary.LittleEndian.PutUint32(b[0x3c:], 128)
+	copy(b[128:], "PE\x00\x00")
+	binary.LittleEndian.PutUint16(b[132:], 0x8664)
+	binary.LittleEndian.PutUint16(b[134:], 1)
+	binary.LittleEndian.PutUint16(b[148:], 240)
+	o := 152
+	binary.LittleEndian.PutUint16(b[o:], 0x20b)
+	binary.LittleEndian.PutUint32(b[o+60:], 512)
+	binary.LittleEndian.PutUint32(b[o+108:], 16)
+	section := o + 240
+	copy(b[section:], ".text")
+	binary.LittleEndian.PutUint32(b[section+8:], 512)
+	binary.LittleEndian.PutUint32(b[section+12:], 4096)
+	binary.LittleEndian.PutUint32(b[section+16:], 512)
+	binary.LittleEndian.PutUint32(b[section+20:], 512)
+	return b
+}
+func payloadBytes() []byte {
+	data, _ := json.Marshal(Config{URL: "https://checked.example.com", Enrollment: "test-only", ID: "1234567890abcdef12345678"})
+	out := append([]byte{}, data...)
+	out = binary.LittleEndian.AppendUint32(out, uint32(len(data)))
+	return append(out, []byte(trailer)...)
+}
+func certificateFixture(prefix []byte) []byte {
+	out := append([]byte{}, prefix...)
+	for len(out)%8 != 0 {
+		out = append(out, 0)
+	}
+	offset := len(out)
+	out = append(out, []byte{12, 0, 0, 0, 0, 2, 2, 0, 'T', 'E', 'S', 'T', 0, 0, 0, 0}...)
+	binary.LittleEndian.PutUint32(out[152+144:], uint32(offset))
+	binary.LittleEndian.PutUint32(out[152+148:], 16)
+	return out
+}
+func TestPayloadCertificateLayoutAndPadding(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "signed-layout.exe")
+	for extra := 0; extra < 8; extra++ {
+		prefix := append(testPE(), make([]byte, extra)...)
+		prefix = append(prefix, payloadBytes()...)
+		raw := certificateFixture(prefix)
+		os.WriteFile(path, raw, 0600)
+		c, err := readPayload(path)
+		if err != nil || c.Enrollment != "test-only" {
+			t.Fatal(extra, c, err)
+		}
+	}
+}
+func TestPayloadRejectsCertificateConfusion(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "invalid.exe")
+	good := certificateFixture(append(testPE(), payloadBytes()...))
+	for _, change := range []func([]byte) []byte{
+		func(b []byte) []byte { return append(b, 1) },
+		func(b []byte) []byte { binary.LittleEndian.PutUint32(b[152+144:], 512); return b },
+		func(b []byte) []byte { binary.LittleEndian.PutUint32(b[152+148:], 0); return b },
+		func(b []byte) []byte { offset := binary.LittleEndian.Uint32(b[152+144:]); b[offset+4] = 1; return b },
+		func(b []byte) []byte { offset := binary.LittleEndian.Uint32(b[152+144:]); b[offset+6] = 1; return b },
+	} {
+		raw := change(append([]byte{}, good...))
+		os.WriteFile(path, raw, 0600)
+		if _, err := readPayload(path); err == nil {
+			t.Fatal("invalid certificate table accepted")
+		}
+	}
+	// Certificate-only attacker payload at EOF must not override covered data.
+	prefix := testPE()
+	offset := len(prefix)
+	fake := append(make([]byte, (8-(8+len(payloadBytes()))%8)%8+8), payloadBytes()...)
+	binary.LittleEndian.PutUint32(fake, uint32(len(fake)))
+	binary.LittleEndian.PutUint16(fake[4:], 0x200)
+	binary.LittleEndian.PutUint16(fake[6:], 2)
+	raw := append(prefix, fake...)
+	binary.LittleEndian.PutUint32(raw[152+144:], uint32(offset))
+	binary.LittleEndian.PutUint32(raw[152+148:], uint32(len(fake)))
+	os.WriteFile(path, raw, 0600)
+	if _, err := readPayload(path); err == nil {
+		t.Fatal("enrollment inside excluded certificate data accepted")
+	}
+}
+
+func TestPayloadCertificateDataCannotOverride(t *testing.T) {
+	prefix := append(testPE(), payloadBytes()...)
+	for len(prefix)%8 != 0 {
+		prefix = append(prefix, 0)
+	}
+	offset := len(prefix)
+	data, _ := json.Marshal(Config{URL: "https://attacker.example.com", Enrollment: "attacker-token", ID: "1234567890abcdef12345678"})
+	forged := append([]byte{}, data...)
+	forged = binary.LittleEndian.AppendUint32(forged, uint32(len(data)))
+	forged = append(forged, []byte(trailer)...)
+	cert := append(make([]byte, 8+(8-(8+len(forged))%8)%8), forged...)
+	binary.LittleEndian.PutUint32(cert, uint32(len(cert)))
+	binary.LittleEndian.PutUint16(cert[4:], 0x200)
+	binary.LittleEndian.PutUint16(cert[6:], 2)
+	raw := append(prefix, cert...)
+	binary.LittleEndian.PutUint32(raw[152+144:], uint32(offset))
+	binary.LittleEndian.PutUint32(raw[152+148:], uint32(len(cert)))
+	path := filepath.Join(t.TempDir(), "certificate-confusion.exe")
+	os.WriteFile(path, raw, 0600)
+	c, err := readPayload(path)
+	if err != nil || c.Enrollment != "test-only" || c.URL != "https://checked.example.com" {
+		t.Fatal("certificate data overrode covered payload", c, err)
+	}
+}
+func TestOptionalAuthenticodeFixture(t *testing.T) {
+	path := os.Getenv("ROBO_AUTHENTICODE_TEST_EXE")
+	if path == "" {
+		t.Skip("optional real certificate-layout fixture not supplied; not a public-trust test")
+	}
+	c, err := readPayload(path)
+	if err != nil || c.Enrollment != "SIGNING-LAYOUT-TEST-NOT-VALID" {
+		t.Fatal(c, err)
 	}
 }

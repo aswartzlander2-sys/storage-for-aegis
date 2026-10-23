@@ -145,7 +145,11 @@ def run(config):
         except Exception:
             time.sleep(5)
 
+DEVELOPER = "Robo Universal"
+
 def bootstrap(encoded):
+    print("Robo Cloud Enrollment — developer: " + DEVELOPER, flush=True)
+    print("Signing status: unsigned HTTPS enrollment. Developer branding is not a verified signature.", flush=True)
     cfg = json.loads(base64.urlsafe_b64decode(encoded))
     if not cfg['url'].startswith('https://'):
         raise ValueError('Enrollment requires HTTPS')

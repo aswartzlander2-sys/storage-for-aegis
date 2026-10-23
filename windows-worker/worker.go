@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"crypto/rand"
+	"debug/pe"
 	"encoding/base64"
 	"encoding/binary"
 	"encoding/hex"
@@ -21,6 +22,7 @@ import (
 )
 
 const appName = "Robo Cloud Enrollment"
+const appDeveloper = "Robo Universal"
 
 const maxFile = 16 * 1024 * 1024
 const trailer = "ROBOCLOUD-ENROLL-V1"
@@ -317,23 +319,83 @@ func readPayload(path string) (Config, error) {
 	if e != nil {
 		return c, e
 	}
+
+	end := st.Size()
 	n := len(trailer) + 4
-	if st.Size() < int64(n) {
+	if end < int64(n) {
 		return c, errors.New("Download a fresh installer from Aegis")
 	}
-	tail := make([]byte, n)
-	if _, e = f.ReadAt(tail, st.Size()-int64(n)); e != nil {
-		return c, e
+	image, err := pe.NewFile(f)
+	if err != nil {
+		return c, errors.New("Invalid enrollment executable")
 	}
-	if string(tail[4:]) != trailer {
-		return c, errors.New("Download a personalized installer from Aegis")
+	defer image.Close()
+	optional, ok := image.OptionalHeader.(*pe.OptionalHeader64)
+	if !ok || image.Machine != pe.IMAGE_FILE_MACHINE_AMD64 || optional.NumberOfRvaAndSizes < 5 {
+		return c, errors.New("Invalid installer PE header")
+	}
+	rawEnd := int64(optional.SizeOfHeaders)
+	for _, section := range image.Sections {
+		if v := int64(section.Offset) + int64(section.Size); v > rawEnd {
+			rawEnd = v
+		}
+	}
+	directory := optional.DataDirectory[4]
+	offset, length := int64(directory.VirtualAddress), int64(directory.Size)
+	tail := make([]byte, n)
+	if offset == 0 && length == 0 {
+		if _, e = f.ReadAt(tail, end-int64(n)); e != nil {
+			return c, e
+		}
+		if string(tail[4:]) != trailer {
+			return c, errors.New("Download a personalized installer from Aegis")
+		}
+	} else {
+		// Authenticode excludes certificate data from the digest. NEVER accept a
+		// payload inside that table, even if its bytes end with our trailer magic.
+		// Parsing layout does NOT verify a signature or publisher trust.
+		if offset < rawEnd || offset%8 != 0 || length < 8 || length%8 != 0 || length > 16*1024*1024 || offset+length != end {
+			return c, errors.New("Invalid installer certificate table")
+		}
+		for position := offset; position < end; {
+			var header [8]byte
+			if _, err = f.ReadAt(header[:], position); err != nil {
+				return c, err
+			}
+			count := int64(binary.LittleEndian.Uint32(header[:4]))
+			if count < 8 || position+count > end || binary.LittleEndian.Uint16(header[4:6]) != 0x200 || binary.LittleEndian.Uint16(header[6:8]) != 2 {
+				return c, errors.New("Invalid WIN_CERTIFICATE entry")
+			}
+			position += (count + 7) &^ 7
+			if position > end {
+				return c, errors.New("Invalid certificate alignment")
+			}
+		}
+		found := false
+		for padding := int64(0); padding <= 7 && offset-padding >= int64(n); padding++ {
+			end = offset - padding
+			if _, e = f.ReadAt(tail, end-int64(n)); e != nil {
+				return c, e
+			}
+			if string(tail[4:]) == trailer {
+				found = true
+				break
+			}
+			var zero [1]byte
+			if _, e = f.ReadAt(zero[:], end-1); e != nil || zero[0] != 0 {
+				break
+			}
+		}
+		if !found {
+			return c, errors.New("No enrollment payload before signature")
+		}
 	}
 	size := int64(binary.LittleEndian.Uint32(tail[:4]))
-	if size < 1 || size > 16384 || size+int64(n) > st.Size() {
+	if size < 1 || size > 16384 || size+int64(n) > end || end-int64(n)-size < rawEnd {
 		return c, errors.New("Invalid installer configuration")
 	}
 	data := make([]byte, size)
-	if _, e = f.ReadAt(data, st.Size()-int64(n)-size); e != nil {
+	if _, e = f.ReadAt(data, end-int64(n)-size); e != nil {
 		return c, e
 	}
 	if e = json.Unmarshal(data, &c); e != nil {

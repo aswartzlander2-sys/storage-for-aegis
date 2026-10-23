@@ -1,0 +1,25 @@
+{
+  "sourceFilename": "Robo Storage Logo.png",
+  "sourceSha256": "17765d5e8824bedface16ba8f24ffd7df22761f89ea302084da9b5c2b76c27e8",
+  "width": 500,
+  "height": 500,
+  "mode": "RGBA",
+  "copiedWithoutReencoding": true,
+  "runtimeCopies": [
+    "logo.png",
+    "app/static/cloud-logo.png"
+  ],
+  "flattened": false,
+  "addedBackground": false,
+  "recolored": false,
+  "cropped": false,
+  "windowsIconSizes": [
+    16,
+    32,
+    48,
+    64,
+    256
+  ],
+  "windowsIconTransparencyTestsPassed": true,
+  "nativeWindowsDisplayTested": false
+}

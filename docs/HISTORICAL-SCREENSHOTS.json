@@ -336,5 +336,8 @@
       "sha256": "61760b9cd74fc7fded6693155caa368885ea3c81e7a24dc15a6b7dfaa6843141",
       "bytes": 168488
     }
-  }
+  },
+  "archiveContainer": "Robo-Cloud-1.3.0-and-1.3.1-history.tar.xz",
+  "archiveMember": "Robo-Cloud-for-Aegis-1.3.1.zip",
+  "archiveContainerSha256": "d69045a4c4c7737f488ddcd055718f661978941afed3fe792f6a062569e85f9b"
 }

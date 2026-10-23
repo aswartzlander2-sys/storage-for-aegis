@@ -2,20 +2,20 @@
   "spec": 1,
   "id": "robo-storage-aegis",
   "name": "Robo Cloud",
-  "version": "1.3.2",
+  "version": "1.3.4",
   "description": "Storage groups for IDrive E2, CloudGate, Linux and Windows folder workers. Native Aegis dashboard with quotas, path permissions and safe draining.",
-  "author": "Robo Storage contributors",
+  "author": "Robo Universal",
   "license": "MIT",
   "logo": "logo.png",
   "update_card": {
     "theme": "gray",
     "icon": "wrench",
     "badge": "UPDATE",
-    "tagline": "Real Tux artwork and safe removal of unverified setup entries.",
+    "tagline": "Original transparent Robo server logo, unchanged PNG pixels.",
     "highlights": [
-      "Original Linux Tux artwork, self-hosted with attribution",
-      "Remove unverified servers without scanning or erasing remote files",
-      "Recover unverified entries stuck draining; revoke installer and worker access"
+      "User-supplied transparent PNG copied byte-for-byte",
+      "Transparent Robo logo in dashboard and file explorer",
+      "Windows icon regenerated with alpha; Robo Universal branding retained"
     ]
   },
   "requires": {

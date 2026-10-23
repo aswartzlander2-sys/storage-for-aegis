@@ -24,6 +24,7 @@ import mesh
 from core import Store, Problem, require, uid, digest, password_check, clean_path, quota, label, subdomain, MAX_FILE, validate_partitions, capacity_view
 from backends import backend, AgentBroker, host_call
 from enrollment import route_status
+from installers import personalize_windows
 from routing import routing_view
 from partitions import apply_plan
 from cloud import visible_partitions, CLOUD_CSP, file_view, rename as rename_files
@@ -476,10 +477,10 @@ class App(mesh.Handler):
                 binary = (ROOT / 'windows/Robo Cloud Enrollment.exe').read_bytes()
                 require(binary.startswith(b'MZ') and len(binary) < 32 * 1024 * 1024, 'Windows worker is not available.', 503)
                 payload = json.dumps({'url': e['baseUrl'], 'enrollment': token, 'id': e['id'][:24]}, separators=(',', ':')).encode()
-                return self.send(200, binary + payload + struct.pack('<I', len(payload)) + b'ROBOCLOUD-ENROLL-V1', 'application/vnd.microsoft.portable-executable', {'Content-Disposition': 'attachment; filename="Robo Cloud Enrollment.exe"'})
+                return self.send(200, personalize_windows(binary, payload), 'application/vnd.microsoft.portable-executable', {'Content-Disposition': 'attachment; filename="Robo Cloud Enrollment.exe"'})
             payload = base64.urlsafe_b64encode(json.dumps({'url': e['baseUrl'], 'enrollment': token, 'root': s['path']}).encode()).decode()
             source = base64.b64encode((ROOT / 'agent.py').read_bytes()).decode()
-            script = '#!/usr/bin/env bash\nset -euo pipefail\ncommand -v python3 >/dev/null || { echo "Install Python 3 first"; exit 1; }\nf=$(mktemp)\ntrap \'rm -f "$f"\' EXIT\nprintf %s ' + shlex.quote(source) + ' | base64 -d > "$f"\npython3 "$f" bootstrap ' + shlex.quote(payload) + '\n'
+            script = '#!/usr/bin/env bash\n# Product: Robo Cloud Enrollment\n# Developer: Robo Universal\n# Signing status: unsigned; developer branding is not a verified signature.\nset -euo pipefail\ncommand -v python3 >/dev/null || { echo "Install Python 3 first"; exit 1; }\nf=$(mktemp)\ntrap \'rm -f "$f"\' EXIT\nprintf %s ' + shlex.quote(source) + ' | base64 -d > "$f"\npython3 "$f" bootstrap ' + shlex.quote(payload) + '\n'
             return self.send(200, script, 'text/x-shellscript')
         require(method == 'POST', 'Not found.', 404)
         body = self.body()

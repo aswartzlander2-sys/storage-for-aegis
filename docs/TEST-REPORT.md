@@ -1,42 +1,35 @@
-# Robo Cloud 1.3.2 — original Linux artwork and removable unverified setups
+# Robo Cloud 1.3.4 — original transparent Robo logo
 
-Date: **2026-10-22** (America/New_York). Addon ID `robo-storage-aegis`, existing persistent state and group routes unchanged.
+Date: **2026-10-22** (America/New_York). Logo-only application change plus release version/resources. Existing addon ID, storage state, routing, unverified-server removal and signing behavior are retained.
 
-## Root cause and fix
+## Exact artwork preservation
 
-The previous removal flow could mark an **unverified** source draining and then wait for a remote scan that could never succeed. Its management gate also blocked cancellation while draining. The old cancellation endpoint accepted only never-enrolled, empty **pending** folder workers, leaving failed providers and probed-but-not-heartbeating workers without a safe metadata-only removal path.
+The supplied **Robo Storage Logo.png**, 500×500 with an RGBA alpha channel, is copied **byte-for-byte** to `logo.png` and `app/static/cloud-logo.png`. The PNG was not re-encoded, flattened, recolored, cropped or given any added background. Its SHA-256 is:
 
-- Unverified `/drain` requests now fail **before** a job is created or status changes.
-- **Remove unverified server…** disconnects a setup entry without any backend scan, migration, write or erasure. It requires the exact server name and an explicit keep-remote-files acknowledgment. This supports Linux, Windows, E2 and CloudGate, including already-draining unverified entries.
-- Never-enrolled workers retain their existing confirmed cancellation action, now also usable for failed draining setups. Existing clients using `/cancel-enrollment` remain compatible.
-- Removal revokes outstanding enrollment links and active worker credentials, clears stored provider credentials, leaves the group/shared route untouched, and preserves a tombstone/inventory. Failed/interrupted jobs become cancelled with their original state/error detail retained. Permanent consumed Windows installer hashes remain permanent.
-- A real in-flight storage operation cannot be hidden or raced: it must finish before disconnection. Busy locks fail promptly with an explicit retry message. A legacy per-server published route must be explicitly unpublished first; the new operation never guesses ownership or mutates a shared group route.
-- Heartbeat authentication and state update are atomic with disconnection. Enrollment-link creation rechecks status under the state lock, registration/removal races cannot resurrect a server, and removed entries cannot be rescanned into active storage.
-- Verified sources still use safe Move/Erase, retain source records on failure and require the separate destructive erasure confirmation. An offline-but-previously-verified server is not treated as an empty failed setup.
+`17765d5e8824bedface16ba8f24ffd7df22761f89ea302084da9b5c2b76c27e8`
 
-## Linux artwork
+The dashboard, favicon and explorer consume these self-hosted files. Real HTTP tests verify both served asset routes return exactly these original bytes. Existing UI/layout backgrounds and styling are unchanged; the transparent image naturally shows the surrounding UI underneath it.
 
-The simplified approximation is replaced by the **original Tux PNG by Larry Ewing, created with The GIMP**, embedded losslessly in the existing self-contained `linux.svg` path. Original dimensions 265×314; embedded PNG SHA-256 `e4f4c8010312078a37ca1797a8c9eaa5156d0fec407d7875522ca31a3d78c586`. Attribution, permission quote and source URLs are in `licenses/TUX-NOTICE.txt`. No AI redraw, pixel modification, CDN or runtime remote fetch.
+Windows APP icon resources were regenerated from the same PNG at 16/32/48/64/256px. Actual embedded PNG/DIB pixel alpha was decoded in tests: **every size has transparent corners, fully transparent pixels and fully opaque artwork pixels**. Native icon derivatives are necessarily resized, but are not composited against black, white or another matte. `LOGO-PROVENANCE.json` and `WINDOWS-BUILD.json` record the input and binary/source hashes.
 
-## Validation run for this patch
+The product remains **Robo Cloud Enrollment**, company/developer **Robo Universal**, dashboard **Robo Cloud**. The installer is still **unsigned**; developer metadata does not create a verified publisher.
 
-| Suite | Actual result | Evidence |
+## Validation actually run
+
+| Check | Actual result | Evidence |
 |---|---|---|
-| Full Python suite | **121 tests passed** | `python-1.3.2.log` |
-| Real HTTP removal: four provider types, pending and legacy draining, known inventory preserved, no provider transport calls, confirmation/auth gates, unverified drain blocked, probed worker revocation, spent Windows replay retained | **PASS** | `tests/test_unverified_removal.py` |
-| Registration, first-heartbeat and replacement-link races; busy lock/running job/legacy-route protection | **PASS** | `tests/test_unverified_removal.py` |
-| Actual Chromium clicks: stuck-draining removal for all four providers; unchecked/wrong-name rejection; old Cancel enrollment recovery; verified Move/Erase second confirmation; original Tux decoded in setup and server cards; 390px footer; escaped untrusted names; local-only assets | **PASS; JS errors []** | `unverified-ui-1.3.2.log`, `unverified-removal-1.3.2.jpg`, `unverified-removal-mobile-1.3.2.jpg` |
-| Node extension routing/ownership regressions | **9 passed** | `extension-1.3.2.log` |
-| Actual Weft install/update/uninstall, retained data, adopt/link, idempotence, read-only detect, foreign-port/stale-PID ownership | **PASS** | `lifecycle-1.3.2.log` |
-| Normative publish checker | **Zero errors** | `check-1.3.2.log` |
-| Source/helper/style/secret/archive audit | **PASS** | `static-1.3.2.log` |
+| Full Python suite, including original PNG byte hashes, HTTP asset identity and alpha of all actual embedded Windows icons | **130 tests passed** | `python-1.3.4.log`, `tests/test_logo.py`, `tests/test_signing.py` |
+| Portable Go worker/payload regressions | **10 passed, 1 optional real signing fixture skipped** | `go-1.3.4.log` |
+| Windows/amd64 GUI cross-build, cross-target Go vet, pinned resource generation, repeated-build reproducibility | **PASS; unsigned cross-build only** | `windows-build-1.3.4.log`, `WINDOWS-BUILD.json` |
+| Node extension routing/ownership regressions | **9 passed** | `extension-1.3.4.log` |
+| Real Weft lifecycle, data retention, adopt/link, idempotence, read-only detection and foreign-port/stale-PID ownership | **PASS** | `lifecycle-1.3.4.log` |
+| Normative publish checker | **Zero errors** | `check-1.3.4.log` |
+| Immutable helper/style/source fidelity, secret exclusion, license/credit and package audit | **PASS** | `static-1.3.4.log` |
 
-All removal acceptance used disposable local state and synthetic credentials. Provider transport was deliberately disabled in the HTTP/Chromium fixture: metadata-only removal still succeeded. No real provider account or user storage was used. A file sentinel remained unchanged. Temporary test servers and fixture directories were cleaned up by test teardown.
+## Limits / historical evidence
 
-## Retained evidence and limits
+Native Windows icon appearance, native dialog layout, DPAPI/NTFS/sign-in/SmartScreen and trusted-publisher verification remain **NOT RUN**. Pixel/resource inspection is not a real Windows display test. No production signing certificate, key or service was configured; the 1.3.3 signing helpers and explicit unsigned notices are unchanged. The optional real certificate-layout fixture was not regenerated for this logo-only patch; its prior disposable-test-identity results remain historical.
 
-The Windows source, resources, logo and binary are **unchanged from 1.3.1**. `WINDOWS-BUILD.json` still correctly describes that binary (PE product version 1.3.1), not a newly compiled worker. Its source/binary hashes and PE branding tests were checked in this patch. Go build/vet/portable execution were **not rerun**; their historical results remain in `TEST-REPORT-1.3.1.md` and versioned logs.
+Browser visual acceptance and real provider/public-domain TLS/systemd/reboot tests were not run for this artwork-only patch. Prior targeted browser checks (1.3.2) and wider explorer/planner/local-CA/actual-host checks (1.3.0) remain versioned historical evidence, not fresh execution claims.
 
-**Native Windows execution remains NOT RUN; the EXE remains unsigned.** Cross-build/resource/protocol tests are not Windows rendering, DPAPI/NTFS/sign-in or SmartScreen acceptance. Real E2/CloudGate/public-domain TLS/systemd/reboot tests also remain unperformed. The wider explorer/planner/local-CA TLS/actual-Aegis-host acceptance from 1.3.0 was not rerun for this targeted patch; see `TEST-REPORT-1.3.0.md`.
-
-Older generated screenshots are retained byte-for-byte in the unchanged original **1.3.1 release ZIP**, rather than duplicated in each current runtime/source package. `HISTORICAL-SCREENSHOTS.json` records each path/hash and the immutable archive hash. No unique user-uploaded artwork or runtime asset was removed. All current source, runtime assets, licenses, new tests/screenshots and versioned text evidence are in this release. Historical release-file manifests apply only to their matching original ZIPs.
+Older immutable 1.3.0 and 1.3.1 ZIPs were preserved **losslessly, with original member hashes verified**, inside `Robo-Cloud-1.3.0-and-1.3.1-history.tar.xz` in the workspace. Their original ZIP bytes and checksums are retained; no user artwork, source work or release content was discarded. `HISTORICAL-SCREENSHOTS.json` records how to locate the matching historical ZIP/evidence. More recent release ZIPs remain separately available. Historical file manifests apply only to their matching original releases.

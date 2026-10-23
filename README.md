@@ -1,6 +1,6 @@
 # Robo Cloud for Aegis
 
-**1.3.2 — Original Linux Tux artwork and removable unverified servers, including failed draining setups.**
+**1.3.4 — The supplied transparent Robo server logo, preserved byte-for-byte.**
 
 Management uses the original pre-Robo Aegis layout. Only the file explorers use the supplied Robo UI; the unnecessary management button is removed. Earlier real Linux-worker and actual Aegis-host checks passed; see the versioned evidence. The Windows x64 GUI EXE is cross-compiled and protocol/filesystem safeguards are tested, but native Windows execution/sign-in/SmartScreen acceptance is **not** claimed. Real E2/CloudGate/custom-domain/systemd/reboot acceptance is not claimed. See the validation report.
 
@@ -28,13 +28,29 @@ The supplied prompt suggests `requires.burrow: ">=2.0.0"`; the normative SPEC pe
 - Copy/read-back verification, source-change check, conflict refusal, explicit errors and persistent job history. Verified source entries remain draining on failure; interrupted jobs do not automatically resume deletion.
 - Group activity log, read-only mode, provider status and responsive layout.
 
-## What changed in 1.3.2
+## What changed in 1.3.4
+
+- Replaced the previous opaque logo with the exact user-uploaded **500×500 RGBA PNG**. `logo.png` and `app/static/cloud-logo.png` are byte-for-byte identical to the supplied file; no flattening, added background, recoloring, cropping or PNG re-encoding.
+- The dashboard, favicon, explorer and Windows enrollment icon now use that artwork. Windows icon sizes 16/32/48/64/256px were regenerated from it and checked for real transparent alpha, not a painted black/white background. Native Windows icon appearance still requires native acceptance.
+- **Robo Universal** developer branding and **Robo Cloud Enrollment** application name are unchanged. Installers remain explicitly **unsigned**, and unverified-server removal behavior is unchanged.
+- Original PNG SHA-256: `17765d5e8824bedface16ba8f24ffd7df22761f89ea302084da9b5c2b76c27e8`.
+
+## Retained from 1.3.3
+
+- **Robo Universal** is the Windows EXE `CompanyName`, native installer developer label, addon author metadata, and Linux enrollment/developer branding. The application name remains **Robo Cloud Enrollment**, and the main dashboard remains **Robo Cloud**. Existing copyright/license ownership is unchanged.
+- **This is developer branding, not a verified publisher signature.** The user chose branding/workflow preparation without a production certificate. Downloads remain explicitly **unsigned**; Windows may still display Unknown publisher/SmartScreen warnings. Linux shell installers have no equivalent Windows Verified Publisher field.
+- Developer-only Windows and Linux signing helpers and requirements are documented in **[docs/SIGNING.md](docs/SIGNING.md)**. No private key, PFX, password, trust-root change, warning bypass or automatic signing service is included. Production signing needs a certificate/service that actually validates the requested identity.
+- Signing must happen **after personalization**. The download endpoint refuses signed base templates rather than invalidating a signature by appending a new token. The Windows worker can locate its covered enrollment trailer before the aligned certificate table; it never accepts enrollment data from excluded certificate bytes. Parsing certificate layout does not verify trust.
+- The current Linux `curl -fsSL … | bash` command is retained and is not represented as detached-signature verification. Future recipients of manually signed scripts must download/verify the exact script and a matching detached signature with an independently authenticated key fingerprint before execution.
+- Native Windows UI/publisher display and the PowerShell signing helper with a real Windows certificate remain **NOT RUN**. Portable signing-layout tests and disposable test keys are not public publisher verification.
+
+## Retained from 1.3.2
 
 - The Linux badge is the **original Tux artwork by Larry Ewing, created with The GIMP**, not a hand-drawn approximation. It is self-hosted, with unchanged original PNG pixels inside the SVG and attribution in `docs/licenses/TUX-NOTICE.txt`.
 - **Unverified servers can be removed without contacting storage**, for Linux, Windows, IDrive E2 and CloudGate. In server settings → **Remove server**, use **Remove unverified server…**, type the exact name, and acknowledge that remote files are kept. Never-enrolled workers retain the simpler confirmed **Cancel unenrolled server…** action.
 - This also recovers unverified setup entries already stuck **Draining** after a failed attempt. They no longer require an unreachable worker/provider to return an empty scan. The group/shared tunnel stays in place, outstanding enrollment links and worker credentials are revoked, stored credentials are removed, and an inventory/history tombstone remains. Files are **not** scanned, moved, erased or claimed to be empty.
 - Unverified `/drain` requests are rejected before creating a job. Verified sources still require the established Move/Erase workflow and separate erasure confirmation. An actually running storage operation must finish before disconnection; a busy operation returns a prompt error instead of blocking the request. Failed/interrupted jobs are marked cancelled with their prior error details retained. Service restart never resumes erasure automatically.
-- No Windows worker source/binary changes: this addon release reuses the validated **1.3.1 Robo Cloud Enrollment** binary/resources, preserving its build provenance and unsigned/native-acceptance limitations.
+- Historical note: the 1.3.2-only patch reused the 1.3.1 Windows binary. Version 1.3.3 now rebuilds the worker/resources for Robo Universal branding and signing-ready payload parsing; native acceptance remains outstanding.
 
 ## Retained from 1.3.1
 
@@ -202,7 +218,7 @@ Additional disposable-host, actual public-network and local CA-trusted HTTPS acc
 
 Optional Windows build: Go **1.25+** and pinned go-winres v0.3.3 (build-only; downloaded by the build script), `python3 tools/build_windows.py --go /path/to/go`; tests: `cd windows-worker && go test -v ./...`, plus cross-target `GOOS=windows GOARCH=amd64 go vet ./...`. No Go modules, resource tool or compiler are needed on the addon host. The worker still links only the Go standard library; go-winres is a development-time resource generator. Build info/source hashes are recorded in `docs/WINDOWS-BUILD.json`. A personalized installer is generated by appending a bounded JSON enrollment trailer to the bundled GUI executable; it is not code-signed.
 
-Historical generated screenshots are preserved byte-for-byte in the unchanged **1.3.1 release ZIP**, not duplicated in every newer runtime package. `docs/HISTORICAL-SCREENSHOTS.json` lists their original archive paths and SHA-256 hashes. This release includes its own current removal screenshots, tests and logs; no user-uploaded artwork or runtime assets were removed.
+Historical generated screenshots are preserved byte-for-byte in the unchanged **1.3.1 release ZIP**, not duplicated in every newer runtime package. `docs/HISTORICAL-SCREENSHOTS.json` lists their original archive paths and SHA-256 hashes. The original 1.3.0/1.3.1 ZIP bytes and checksums are now losslessly preserved together in the workspace history container `Robo-Cloud-1.3.0-and-1.3.1-history.tar.xz`; extract the matching ZIP member when needed. This release includes its own current removal screenshots, tests and logs; no user-uploaded artwork or runtime assets were removed.
 
 Optional isolated demo: `python3 tests/preview.py /absolute/path/to/demo-data` (binds port 8080). Its clearly marked sample data is **never created by installation**, and live provider tests, tunnel launch, migrations and erasure are disabled. Demo data must not be used as production state.
 

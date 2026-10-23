@@ -3,21 +3,23 @@
   "target": "windows/amd64",
   "subsystem": "Windows GUI",
   "signed": false,
+  "companyName": "Robo Universal",
+  "signingStatus": "unsigned \u2014 developer metadata only",
   "binaryPath": "app/windows/Robo Cloud Enrollment.exe",
-  "binarySha256": "bc8b284c0f9fb826367479adeabd26095d956c4dd3f914194bd610045e040043",
-  "bytes": 7455232,
+  "binarySha256": "c7a303631316631e6660fe387a748fbce5447ba9807c2c4740ec2b99d38458e2",
+  "bytes": 7537152,
   "sources": {
     "windows-worker/go.mod": "51418c7c6e988620cfcff964f6436ace621f7fd0eed65e0bbe96c9288a8fa0d6",
-    "windows-worker/main_windows.go": "c046e953f66ca5a9c2986845a7fae4bd0c61ad27f2a10606a3d7e09ad16dd448",
+    "windows-worker/main_windows.go": "1db5ab7a8a3fe9b37f3b8186a786058953c3024fbc623885517a7af4b58fe5af",
     "windows-worker/platform_other.go": "83fad1b95cbe7959ceb49bcddd256453ff1488d6afe502ea048737ee8cc17172",
-    "windows-worker/rsrc_windows_amd64.syso": "53fdbbf8b6198024b8452532ab2a9f96b1ded5b11f2941c245a159335e3ab726",
-    "windows-worker/winres.json": "e4e2991eea7f5786b70b50d7b7d7a6235d7836b4f284679c08b9348649732a0a",
-    "windows-worker/worker.go": "70d8399d2881b068fda6ecaff47fb6fa3209f7cceaf31358c42561552a5bda7c"
+    "windows-worker/rsrc_windows_amd64.syso": "8e79077a7a239930a8fd26d9f7ceb0de6718cdb5591a29be4258aefbebd31f45",
+    "windows-worker/winres.json": "74815b5725fe2c394a1cbee30e78576f6dc4cfb2a4d4f69399b60b3311f6b8be",
+    "windows-worker/worker.go": "85248c6728844d1414aac3014f95d239985f7a0142ea303ec55fc3c24f38f9ae"
   },
   "nativeWindowsExecutionTested": false,
   "applicationName": "Robo Cloud Enrollment",
   "downloadFilename": "Robo Cloud Enrollment.exe",
   "iconSource": "logo.png",
-  "iconSourceSha256": "c4c4ee92add7238cd01da1c8d57d86875bace987ee3f1948ffed5a3040938722",
+  "iconSourceSha256": "17765d5e8824bedface16ba8f24ffd7df22761f89ea302084da9b5c2b76c27e8",
   "resourceCompiler": "github.com/tc-hib/go-winres@v0.3.3"
 }

@@ -118,6 +118,7 @@ class WindowsBrandingTests(unittest.TestCase):
         collect(block(0))
         for key in ['ProductName','FileDescription','InternalName']:self.assertEqual(strings[key],'Robo Cloud Enrollment')
         self.assertEqual(strings['OriginalFilename'],'Robo Cloud Enrollment.exe')
+        self.assertEqual(strings['CompanyName'],'Robo Universal')
         group=r[(14,'APP',0)];reserved,kind,count=struct.unpack_from('<HHH',group);self.assertEqual((reserved,kind),(0,1));self.assertEqual(count,5)
         sizes=[]
         for i in range(count):

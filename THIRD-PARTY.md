@@ -60,3 +60,5 @@ Windows resource generation uses build-only `github.com/tc-hib/go-winres@v0.3.3`
 ## Linux Tux artwork
 
 `app/static/linux.svg` embeds the unchanged original 265×314 Tux PNG by **Larry Ewing (1996, lewing@isc.tamu.edu)**, created with **The GIMP**. Original file and permission record: https://commons.wikimedia.org/wiki/File:Tux.png; imported file https://upload.wikimedia.org/wikipedia/commons/a/af/Tux.png. The SVG wrapper preserves all original PNG bytes and transparency; no redraw, recoloring or runtime remote download. Complete attribution, original permission quote and SHA-256 are in `docs/licenses/TUX-NOTICE.txt`. This artwork is not relicensed under the addon's MIT code license. Linux is a trademark of Linus Torvalds; identifying the provider is not endorsement.
+
+The 1.3.4 Robo server logo is the exact user-uploaded transparent 500×500 RGBA PNG, copied without re-encoding, flattening, recoloring or background replacement. Ownership is unchanged. Source/copy hashes and alpha-preserving Windows icon sizes are recorded in `docs/LOGO-PROVENANCE.json`.
